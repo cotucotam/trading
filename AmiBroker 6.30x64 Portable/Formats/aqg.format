@@ -1,0 +1,13 @@
+# AmiQuote historical quotes download format (.AQG extension)
+# Format for Google Finance
+# Revision 1.1 Removed $VOLFACTOR 0.01
+# Revision 1.2 Swapped Open-Close in new Google EOD download
+$FORMAT Date_DMY,Close,High,Low,Open,Volume
+$SKIPLINES 0
+$BREAKONERR 0
+$SEPARATOR ,
+$DEBUG 1
+$AUTOADD 1
+$CONT 1
+$GROUP 254
+

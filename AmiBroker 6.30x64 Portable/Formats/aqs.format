@@ -1,0 +1,10 @@
+# AmiQuote Stooq.pl quotes download format (.AQS extension)
+$FORMAT Date_YMD,Open,High,Low,Close,Volume
+$SKIPLINES 1
+$BREAKONERR 0
+$SEPARATOR ,
+$DEBUG 1
+$AUTOADD 1
+$CONT 1
+$GROUP 254
+

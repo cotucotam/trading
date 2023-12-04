@@ -1,0 +1,12 @@
+# AmiQuote Tiingo.com quotes download format (.AQT extension)
+# CSV version
+# Below format imports adjusted prices and raw close into Aux1 field
+$FORMAT Date_YMD,Aux1,Skip,Skip,Skip,Skip,Close,High,Low,Open,Volume,Skip,Skip
+$SKIPLINES 1
+$BREAKONERR 0
+$SEPARATOR ,
+$DEBUG 1
+$AUTOADD 1
+$CONT 1
+$GROUP 254
+

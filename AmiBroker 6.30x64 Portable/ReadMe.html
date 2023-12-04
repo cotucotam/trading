@@ -1,0 +1,1008 @@
+<html>
+<head>
+<title>AmiBroker 6.30.0 RC Read Me</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<style type="text/css">
+<!--
+body {  font-family: Arial, Helvetica, sans-serif; font-size: small}
+.jscript1-comment { color: #808080; }
+.jscript1-event { }
+.jscript1-identifier { color: #006FDD; }
+.jscript1-non-reservedkeyword { }
+.jscript1-number { color: #000000; }
+.jscript1-reservedword { color: #71CE55; }
+.jscript1-space { }
+.jscript1-string { color: #000000; }
+.jscript1-symbol { color: #FF2424; }
+-->
+</style>
+<style type="text/css">
+<!--
+li {
+	line-height: 150%;
+}
+-->
+</style>
+</head>
+<body bgcolor="#FFFFFF">
+<h2><b>AmiBroker 6.30.0  RC Read Me</b></h2>
+<p> 
+  <!-- #BeginDate format:Am1m -->November 18, 2018  18:13<!-- #EndDate -->
+</p>
+<p><b><font color="#CC0000">This is Release Candidate version.<br>
+  <br>
+  Backup your data
+      files and entire AmiBroker folder
+first! </font></b></p>
+<p><b>INSTALLATION INSTRUCTIONS</b></p>
+<p>Run the  setup program and follow the instructions. </p>
+<p>Then run AmiBroker. You should see &quot;AmiBroker 6.30.0&quot; written
+   in the About box.</p>
+<p><b>See CHANGE LOG below for detailed list of changes. </b>Note that only changes
+    that affect end-user directly are listed here. Internal code changes/refactoring
+is usually not mentioned.</p>
+<p><strong>UPGRADE POLICY:</strong> This version is a free upgrade for users
+  who purchased AmiBroker license after <strong>November 18, 2016</strong>.</p>
+<p><strong>6.30 FEATURE HIGHLIGHT:</strong></p>
+<p>6.30 includes AFL, UI, Analysis improvements, updated documentation and all
+  new features from 6.21-6.30 cycle. See CHANGE LOG and Users Guide for details.</p>
+<p><strong>6.29 FEATURE HIGHLIGHT:</strong></p>
+<p>6.29 is focused on AFL and UI improvements. See CHANGE LOG for details.</p>
+<p><strong>6.28 FEATURE HIGHLIGHT:</strong></p>
+<p>6.28 is focused on AFL improvements. See CHANGE LOG for details.</p>
+<p><strong>6.27 FEATURE HIGHLIGHT:</strong></p>
+<p>6.27 is focused on improvements of features introduced earlier. See CHANGE
+  LOG for details.</p>
+<p><strong>6.26 FEATURE HIGHLIGHT:</strong></p>
+<p>This version brings:</p>
+<ul>
+  <li>static variable declaration </li>
+  <li> new Voice functions (VoiceSetRate/VoiceSetVolume/VoiceWaitUntilDone)</li>
+  <li>clickable links in Analysis result list</li>
+  <li>comment folding in the editor</li>
+  <li>ability to handle Internet connection errors in the formula via GetLastOSError</li>
+  <li>new mouse hover notifications in GUI controls (notifyMouseEnter / notifyMouseLeave)
+    that allow to trigger actions in the formula on mouse hover (without checking
+    mouse position and without constant refreshes)</li>
+  <li>fixes to passing by reference in AFL</li>
+  <li>fixes &amp; improvements to Gui functions and much more - check the CHANGE
+  LOG below !</li>
+</ul>
+<p><strong>6.25 FEATURE HIGHLIGHT:</strong></p>
+<p>This version brings:</p>
+<ul>
+  <li> new Gui controls (toggle button, checkbox, radio button)</li>
+  <li>new AFL functions for GUI</li>
+  <li> passing variables by reference in AFL, </li>
+  <li>Auto-optimization framework</li>
+  <li> HTML5 compatibility in Web Research </li>
+  <li> many other improvements </li>
+</ul>
+<p><strong>6.22 FEATURE HIGHLIGHT:</strong></p>
+<p>This version is experimental because we are migrating<strong> 64-bit version</strong> to
+  brand new compiler (VC++ 2017). Such migrations pretty often brings some compatibility
+  risks therefore backup is highly recommended (although you can always go back
+  by just installing previous version). We needed to migrate not only the program
+  itself but many internal libraries taking care not to break backward compatibility.</p>
+<p>Note that migration does NOT affect 32-bit version. It is still compiled with
+  old compiler.</p>
+<p>Why do we migrate to new compiler with 64-bit version?</p>
+<ol>
+  <li> New compiler supports new CPU instructions (SSE3/AVX) that we can use
+  to offer better performance</li>
+  <li>According to our tests new compiler support produces faster code by itself
+  (better optimizations, auto-vectorization, etc)</li>
+  <li>New compiler is better with error checking (less bugs to slip through)</li>
+  <li>We don't need to care about compatibility with pre-Vista systems in 64-bits
+    version and all 64-bit capable CPUs are &quot;modern&quot; enough.</li>
+</ol>
+<p>Why do we stay with old compiler in 32-bit version?</p>
+<ol>
+  <li>New compiler does not produce code compatible with older operating systems
+    (XP or earlier).
+  Old compiler offers 100% compatibility with all Windows versions</li>
+  <li>New compiler requires modern CPUs</li>
+</ol>
+<p>Exact performance improvement is function dependent and hardware dependent.
+  Many functions are faster by 30-50% but in some cases such as Min()/Max() functions
+  as large
+  as
+  8x speed
+  up can be observed in 64-bit version. </p>
+<p><strong>6.21 FEATURE HIGHLIGHT:</strong></p>
+<p>This version features preliminary support for native chart GUI (buttons and
+  edits at the moment). Please be resonable with Gui* functions and be aware
+  of Windows limits.<br>
+  As all controls in Windows (buttons, edit boxes, etc) are actual Window objects
+  they are subject to Windows limitation.<br>
+  And there is a limit of 10000 windows PER PROCESS. So don't try to create thousands
+  of buttons (like a button for every bar of data) because <br>
+  first you will see huge performance decrease and next you will hit the limit
+  and run into problems (crash)<br>
+  <a href="https://blogs.msdn.microsoft.com/oldnewthing/20070718-00/?p=25963">https://blogs.msdn.microsoft.com/oldnewthing/20070718-00/?p=25963</a></p>
+<p>Best practice is to keep the number under 100-200.</p>
+<p>If you need more consider using low-level graphics instead.</p>
+<p>Here is a sample formula that shows basic usage of Gui* functions:</p>
+<p><CODE><font color="#0000FF">GuiButton</font>( <font color='#800080'>"Custom button"</font>, <font color='#800080'>1</font>, <font color='#800080'>10</font>, <font color='#800080'>40</font>, <font color='#800080'>100</font>, <font color='#800080'>30</font>, <font color='#800080'>7</font> ); <br>
+    <font color="#0000FF">GuiButton</font>( <font color='#800080'>"Dynamic "</font>+<font color='#0000ff'>Date</font>(), <font color='#800080'>2</font>, <font color='#800080'>120</font>, <font color='#800080'>40</font>, <font color='#800080'>150</font>, <font color='#800080'>30</font>, <font color='#800080'>7</font> ); <br>
+    <font color="#0000FF">GuiButton</font>( <font color='#800080'>"System button"</font>, <font color='#800080'>3</font>, <font color='#800080'>320</font>, <font color='#800080'>40</font>, <font color='#800080'>100</font>, <font color='#800080'>30</font>, <font color='#800080'>7</font> ); <br>
+    <font color="#0000FF">GuiEdit</font>( <font color='#800080'>5</font>, <font color='#800080'>450</font>, <font color='#800080'>40</font>, <font color='#800080'>100</font>, <font color='#800080'>20</font>, <font color='#800080'>31</font> ); <br>
+  <br>
+  <font color="#0000FF">GuiSetColors</font>( <font color='#800080'>1</font>, <font color='#800080'>3</font>, <font color='#800080'>2</font>, <b>colorRed</b>, <b>colorBlack</b>, <b>colorRed</b>, <b>colorWhite</b>, <b>colorBlue</b>, <b>colorYellow</b>, <b>colorRed</b>, <b>colorBlack</b>, <b>colorYellow</b> ); <br>
+  <font color="#0000FF">GuiSetColors</font>( <font color='#800080'>3</font>, <font color='#800080'>3</font>, <font color='#800080'>0</font> ); <font color='#008000'>//
+  default (system) look <br>
+  </font> <br>
+  editText = <font color="#0000FF">GuiGetText</font>( <font color='#800080'>5</font> ); <br>
+  <br>
+  <b>Title</b> = <font color='#800080'>"Text entered: "</font> + editText + <font color='#800080'>"\nLast
+  event: "</font> + <font color="#0000FF">GuiGetEvent</font>( <font color='#800080'>0</font>, <font color='#800080'>2</font> ); <br>
+  <br>
+  id = <font color="#0000FF">GuiGetEvent</font>( <font color='#800080'>0</font>, <font color='#800080'>0</font> ); <br>
+  event = <font color="#0000FF">GuiGetEvent</font>( <font color='#800080'>0</font>, <font color='#800080'>1</font> ); <br>
+  <br>
+  <font color='#800000'><b>if</b></font>( id == <font color='#800080'>3</font> && event
+  == <font color='#800080'>1</font> ) <font color="#0000FF">GuiSetText</font>(<font color='#800080'>"Button
+clicked"</font>,<font color='#800080'>5</font>);</CODE></p>
+<p><strong>CHANGE LOG</strong></p>
+<p><strong>CHANGES FOR VERSION 6.30.0 (as compared to 6.29.0)</strong></p>
+<ul>
+  <li>AFL: GfxSelectPen function - added support for geometric pens (including
+  flat endcap):<br>
+  <br>
+  <CODE>PS_ENDCAP_FLAT = <font color='#800080'>0x200</font>; <br>
+  PS_ENDCAP_SQUARE = <font color='#800080'>0x100</font>; <br>
+  <br>
+  <font color='#0000ff'>GfxFillSolidRect</font>( <font color='#800080'>100</font>, <font color='#800080'>80</font>, <font color='#800080'>200</font>, <font color='#800080'>260</font>, <b>colorGreen</b> ); <br>
+  <br>
+  <font color='#008000'>// flat end cap <br>
+  </font><font color='#0000ff'>GfxSelectPen</font>( <b>colorRed</b>, <font color='#800080'>10</font>,
+  PS_ENDCAP_FLAT ); <br>
+  <font color='#0000ff'>GfxMoveTo</font>( <font color='#800080'>100</font>, <font color='#800080'>100</font> ); <br>
+  <font color='#0000ff'>GfxLineTo</font>( <font color='#800080'>200</font>, <font color='#800080'>200</font> ); <br>
+  <br>
+  <font color='#008000'>// square end cap <br>
+  </font><font color='#0000ff'>GfxSelectPen</font>( <b>colorRed</b>, <font color='#800080'>10</font>,
+  PS_ENDCAP_SQUARE ); <br>
+  <font color='#0000ff'>GfxMoveTo</font>( <font color='#800080'>100</font>, <font color='#800080'>120</font> ); <br>
+  <font color='#0000ff'>GfxLineTo</font>( <font color='#800080'>200</font>, <font color='#800080'>220</font> ); <br>
+  <br>
+  <font color='#008000'>// round end cap (default) <br>
+  </font><font color='#0000ff'>GfxSelectPen</font>( <b>colorRed</b>, <font color='#800080'>10</font> ); <br>
+  <font color='#0000ff'>GfxMoveTo</font>( <font color='#800080'>100</font>, <font color='#800080'>140</font> ); <br>
+  <font color='#0000ff'>GfxLineTo</font>( <font color='#800080'>200</font>, <font color='#800080'>240</font> );</CODE></li>
+  <li>AFL: GuiEnable( id, enable ) - enables / disables GUI control.
+    Disabled control
+  can not be clicked and has &quot;grayed&quot; look</li>
+  <li>AFL: GuiGetValue( id )
+    - gets the value of GUI control (for example slider position). For non-slider
+    controls value is number representing control text
+  converted to number)</li>
+  <li>AFL: GuiSetValue( id, value ) - sets the value of GUI
+    control (for example slider position). For non-slider control value will
+    be converted to text
+  and assigned as GuiSetText( id, NumToStr( value ) )</li>
+  <li>AFL: GuiSetVisible( id,
+  visible ) - shows/hides GUI control<br>
+  <CODE><font color='#008000'>// control identifiers <br>
+  </font>idSlider = <font color='#800080'>1</font>; <br>
+  idEnable = <font color='#800080'>2</font>; <br>
+  idDisable = <font color='#800080'>3</font>; <br>
+  idShow = <font color='#800080'>4</font>; <br>
+  idHide = <font color='#800080'>5</font>; <br>
+  <br>
+  <font color='#800000'><b>function</b></font> CreateGUI() <br>
+  { <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <font color='#800000'><b>if</b></font> ( <font color='#0000ff'>GuiSlider</font>(
+  idSlider, <font color='#800080'>10</font>, <font color='#800080'>30</font>, <font color='#800080'>200</font>, <font color='#800080'>30</font>, <b>notifyEditChange</b> )
+  == guiNew ) <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  { <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <font color='#008000'>// init values on control creation <br>
+  </font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color='#0000ff'>GuiSetValue</font>(
+  idSlider, <font color='#800080'>5</font> ); <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <font color='#0000ff'>GuiSetRange</font>( idSlider, <font color='#800080'>1</font>, <font color='#800080'>100</font>, <font color='#800080'>0.1</font>, <font color='#800080'>100</font> ); <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  } <br>
+  <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <font color='#0000ff'>GuiButton</font>( <font color='#800080'>"enable"</font>,
+  idEnable, <font color='#800080'>10</font>, <font color='#800080'>60</font>, <font color='#800080'>100</font>, <font color='#800080'>30</font>, <b>notifyClicked</b> ); <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <font color='#0000ff'>GuiButton</font>( <font color='#800080'>"disable"</font>,
+  idDisable, <font color='#800080'>110</font>, <font color='#800080'>60</font>, <font color='#800080'>100</font>, <font color='#800080'>30</font>, <b>notifyClicked</b> ); <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <font color='#0000ff'>GuiButton</font>( <font color='#800080'>"show"</font>,
+  idShow, <font color='#800080'>10</font>, <font color='#800080'>90</font>, <font color='#800080'>100</font>, <font color='#800080'>30</font>, <b>notifyClicked</b> ); <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <font color='#0000ff'>GuiButton</font>( <font color='#800080'>"hide"</font>,
+  idHide, <font color='#800080'>110</font>, <font color='#800080'>90</font>, <font color='#800080'>100</font>, <font color='#800080'>30</font>, <b>notifyClicked</b> ); <br>
+  } <br>
+  <br>
+  <br>
+  <font color='#800000'><b>function</b></font> HandleEvents() <br>
+  { <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  id = <font color='#0000ff'>GuiGetEvent</font>( <font color='#800080'>0</font>, <font color='#800080'>0</font> ); <br>
+  <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <font color='#800000'><b>switch</b></font> ( id ) <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  { <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <font color='#800000'><b>case</b></font> <font color='#800080'>2</font>: <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <font color='#0000ff'>GuiEnable</font>( idSlider, <b>True</b> ); <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <font color='#800000'><b>break</b></font>; <br>
+  <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <font color='#800000'><b>case</b></font> <font color='#800080'>3</font>: <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <font color='#0000ff'>GuiEnable</font>( idSlider, <b>False</b> ); <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <font color='#800000'><b>break</b></font>; <br>
+  <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <font color='#800000'><b>case</b></font> <font color='#800080'>4</font>: <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <font color='#0000ff'>GuiSetVisible</font>( idSlider, <b>True</b> ); <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <font color='#800000'><b>break</b></font>; <br>
+  <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <font color='#800000'><b>case</b></font> <font color='#800080'>5</font>: <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <font color='#0000ff'>GuiSetVisible</font>( idSlider, <b>False</b> ); <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <font color='#800000'><b>break</b></font>; <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  } <br>
+  } <br>
+  <br>
+  <br>
+  CreateGUI(); <br>
+  HandleEvents(); <br>
+  <br>
+  <b>Title</b> = <font color='#800080'>"Value = "</font> + <font color='#0000ff'>GuiGetValue</font>(
+  idSlider ); <br>
+  <br>
+  </CODE>  </li>
+  <li>AFL: Hexadecimal numbers can be now written
+  using 0x prefix (as in C/C++)</li>
+  <li>AFL: In 6.29 GfxSelectPen function was not functioning
+  without geometric style. Fixed.</li>
+  <li>AFL: InternetOpenURL( url, flags = 0 ) - added 'flags' parameter<br>
+    <br>
+    Note 1: Flags are the same as defined by WINAPI, examples:<br>
+    INTERNET_FLAG_RELOAD = 0x80000000;<br>
+    INTERNET_FLAG_NO_COOKIES = 0x00080000;
+    <p>Flags should be combined using binary OR operator: |</p>
+    <p>Note 2: ASCII transfers are used always</p>
+    <p><CODE>INTERNET_FLAG_RELOAD = <font color='#800080'>0x80000000</font>; <br>
+      INTERNET_FLAG_NO_COOKIES = <font color='#800080'>0x00080000</font>; <br>
+      <br>
+      <font color='#008000'>// Example don't use cached content and don't use
+      cookies <br>
+      </font>ih = <font color='#0000ff'>InternetOpenURL</font>( <font color='#800080'>"http://www.google.com"</font>,
+      INTERNET_FLAG_RELOAD | INTERNET_FLAG_NO_COOKIES ); <br>
+      <br>
+    <font color='#0000ff'>InternetClose</font>( ih );</CODE></p>
+    </li>
+  <li>AFL: new function GuiSetRange( min,
+  max, step, ticfreq ) - sets the min-max range of slider control<br>
+  <CODE><font color='#800000'><b>if</b></font>( <font color='#0000ff'>GuiSlider</font>( <font color='#800080'>1</font>, <font color='#800080'>10</font>, <font color='#800080'>30</font>, <font color='#800080'>200</font>, <font color='#800080'>30</font>, <b>notifyEditChange</b> )
+  == guiNew ) <br>
+  { <br>
+  &nbsp;&nbsp;
+  <font color='#008000'>// init values on control creation <br>
+  </font>&nbsp;&nbsp; <font color='#0000ff'>GuiSetValue</font>( <font color='#800080'>1</font>, <font color='#800080'>5</font> ); <br>
+  &nbsp; &nbsp;<font color='#0000ff'>GuiSetRange</font>( <font color='#800080'>1</font>, <font color='#800080'>1</font>, <font color='#800080'>100</font>, <font color='#800080'>0.1</font>, <font color='#800080'>100</font> ); <br>
+  } <br>
+  <br>
+  <b>Title</b> = <font color='#800080'>"Value = "</font> + <font color='#0000ff'>GuiGetValue</font>( <font color='#800080'>1</font> );</CODE>  </li>
+  <li>AFL: new function
+  GuiSlider( id, x, y, width, height, notifyflags ) - creates slider control<br>
+  </li>
+  <li>AFL:
+    new function remap( x, fromMin, fromMax, toMin, toMax ) - performs re-mapping
+  from one range to another, works on scalars and arrays</li>
+  <li>AFL: When OLEDATE type
+    (read from OLE objects) is assigned to AFL variable it gets converted to
+    string using ISO format (YYYY-MM-DD HH:MM:SS). Time
+  part only appears for records within non-zero time component</li>
+  <li>ASCII import:
+    Aux1/2 fields can now be imported separately from two different files (combined)
+  when using $HYBRID</li>
+  <li>In 6.29 estimated number of optimization steps displayed
+    in 'warning' in case of tiny (fractional) step increment may be lower than
+    actual number
+  of steps</li>
+  <li>In 6.29, due to changes, some chart Gui* controls (owner draw) did
+  not repaint on window resize. Fixed.</li>
+  <li>UI: File-&gt;New Database-&gt; Create
+    button now recursively creates all missing directories if multiple nested
+  non-existing dirs were typed in</li>
+  <li>UI: new databases are now created in separate &quot;databases&quot; subfolder
+    by default</li>
+</ul>
+<p><strong>CHANGES FOR VERSION 6.29.0 (as compared to 6.28.0)</strong></p>
+<ul>
+  <li>AFL: added GuiDateTime function<br>
+    <br>
+    <CODE>lastdate = <font color='#0000ff'>StaticVarGetText</font>(<font color='#800080'>"lastdate"</font>); <br>
+    <br>
+      <font color='#800000'><b>if</b></font>( GuiDateTime( <font color='#800080'>100</font>, <font color='#800080'>10</font>, <font color='#800080'>35</font>, <font color='#800080'>200</font>, <font color='#800080'>30</font>,
+      notifyEditChange ) == guiNew ) <br>
+      { <br>
+&nbsp;&nbsp;&nbsp; GuiSetText( lastdate, <font color='#800080'>100</font> ); <br>
+&nbsp;&nbsp;&nbsp;
+      <font color='#0000ff'>_TRACE</font>(<font color='#800080'>"new!!!!"</font>); <br>
+      } <br>
+    <br>
+      id = GuiGetEvent( <font color='#800080'>0</font>, <font color='#800080'>0</font> ); <br>
+      code = GuiGetEvent( <font color='#800080'>0</font>, <font color='#800080'>1</font> ); <br>
+    <br>
+      <font color='#800000'><b>if</b></font>( id == <font color='#800080'>100</font> && code
+      == notifyEditChange ) <br>
+      { <br>
+lastdate = GuiGetText( <font color='#800080'>100</font> ); <br>
+<font color='#0000ff'>StaticVarSetText</font>( <font color='#800080'>"lastdate"</font>,
+lastdate ); <br>
+} <br>
+<br>
+<b>Title</b> = <font color='#800080'>""</font> + lastdate; <br>
+<font color='#0000ff'>Plot</font>(<b>C</b>,<font color='#800080'>"t"</font>, <b>colorRed</b> );<br>
+  </CODE></li>
+  <li>AFL: Gui creation functions (GuiButton, GuiEdit, GuiDateTime and others)
+    return <font face="Courier New, Courier, mono">guiNew</font> (1) when control is newly created or <font face="Courier New, Courier, mono">guiExisting</font> (2) when control
+    already exists. This is useful for one-time initialization when control is
+  being created.</li>
+  <li>AFL: InternetSetAgent(&quot;agent&quot;)
+    - new function to set user agent for InternetOpenURL </li>
+  <li>AFL: new Error 70 -
+      displayed on attempt yo use InternetSetAgent when it is already set or
+    connection was already open</li>
+  <li>Analysis: added Notice 802: Trade size limite
+      of X% of entry bar volume has been hit N times.</li>
+  <li>Charts: Vertical line (Y
+      axis line) between chart area and Y axis scale is drawn with ZOrder = 0
+    instead of ZOrder = 128</li>
+  <li>Charts: Y-axis scale for huge negative values (below
+      minus 1 billion) was incorrect. Fixed</li>
+  <li>File: Chart template, complete now
+      also saves the content of files included using #include_once</li>
+  <li>New Analysis:
+      decreased number of cases when IEEE rounding of fractional steps result
+    in one step less than naive expecation in optimization</li>
+  <li>UI: 'Backtest settings'
+      caption changed to 'Analysis Settings' and changed the layout of 'general'
+      tab - data settings (that
+        apply to
+                  everything
+    mode) grouped separately from purely backtest settings</li>
+  <li>UI: increased
+      number of user-definable Tool window menu items to 20 (from 10)</li>
+</ul>
+<p><strong>CHANGES FOR VERSION 6.28.0 (as compared to 6.27.1)</strong></p>
+<ul>
+  <li>AFL:
+    AddToComposite will issue error 69 if user passes field code other than &quot;O&quot;, &quot;H&quot;, &quot;L&quot;, &quot;C&quot;, &quot;V&quot;, &quot;I&quot;, &quot;1&quot;, &quot;2&quot;,
+  or &quot;X&quot;</li>
+  <li>AFL: another protection for users shooting themselves in
+    the foot: AddToComposite will issue error 68 when user passes invalid symbol
+    string (empty or with
+    characters like comma or new line or tab)</li>
+  <li>AFL: improved type checking for
+    bad type of array arguments</li>
+  <li>AFL: New warning 508 is displayed if same category
+    type is used multiple times in the Filter settings window and formula calls
+    GetOption(&quot;FilterInclude*&quot;)
+    or GetOption(&quot;FilterExclude*). Code using such statements is incorrect
+    for such filters.</li>
+  <li>AFL: now you can pass references as arguments to built-in
+    funcitons and they will be automatically dereferenced (&quot;by value&quot; sematics
+    enforced)</li>
+  <li>AFL: user-defined functions that return matrix reclaim memory faster
+    than before to avoid large memory consumption on super-long loops calling
+    them</li>
+  <li>AFL: VarGet was not working properly with matrices on 64 bit version.
+    Fixed.</li>
+  <li>AQ: 3.29 - when current working directory is set incorrectly it sets
+    it back to where it should be. Correct working dir is required for relative
+    paths
+    to work</li>
+  <li>Backtest: interest earned on cash balances and charged on margin load
+    is reported separately in backtest report now (if non-zero)</li>
+  <li>Core: sizes of
+    some hash tables increased to speed up lookups</li>
+  <li>enable_static_decl created
+    prefixes in original case (both upper and lowercase). Since StaticVar* functions
+    always use lowercase names this made them unable
+    to read declared statics other than all lowercase. Now declared variables
+    are internally lowecase </li>
+  <li>Gui control custom colors - defaults changed to use
+    Windows default &quot;hot&quot; color
+    (blue) for hover outline and (hover + selected) state is now drawn with hover
+    border and text but 'selected' background</li>
+  <li>GuiGetCheck returned 0 on owner
+    draw toggle (custom colors) due to Windows limitation. Fixed.</li>
+  <li>IB plugin: right
+    mouse button click : Backfill Current was causing exception for symbols longer
+    than 26 letters. Fixed. (Version 2.0.10)</li>
+  <li>If user formula had run-time errors
+    and produced zero trades the &quot;Info&quot; tab
+    issued &quot;Reporting has been turned off by SetOption&quot; since there
+    was no report generated but not because of option, but because of formula
+    error.
+    Fixed (the message is not displaye</li>
+  <li>IQFeed: in mixed mode EOD data got preference
+    if there is not enough room to fit all intraday and all eod in defined &quot;number
+    of bars&quot;</li>
+  <li>New Analysis: added 'notices' to Info tab that inform the user
+    about potential problems and recommended actions. Currently one notice is
+    displayed when
+    user tries to use ranking or composites without enabling padding. Will add
+    more
+    notices in the future</li>
+  <li>New Analysis: progress bar will not display &quot;remaining
+    time&quot; until
+    at least one step is completed. Also if remaing time is &gt; 2 billion years
+    it will display (unknown), and will report remaing time in million years
+    if necessary (for example when user star</li>
+  <li>Setup 64-bit: program and all plugins
+    use newest compiler and newest VC++2017 runtime </li>
+  <li>Setup 64-bit: activation key should work without installing VC2005 runtime</li>
+  <li>UI: &quot;OK&quot; button
+    appears on splash screen only if it does not auto-close</li>
+</ul>
+<p><strong>CHANGES FOR VERSION 6.27.1 (as compared to 6.26.0)</strong></p>
+<ul>
+  <li>AFL Editor: preprocessor command (#include/#include_once/#pragma) are highlighted
+    with different color to give visual clue that preprocessor command is NOT
+    regular code</li>
+  <li>AFL: #pragma enable_static_decl accepts prefix given in quotation
+    marks (as
+    regular string).<br>
+  #pragma enable_static_decl &quot;myprefix{chartid}&quot;  </li>
+  <li>AFL: due to changes in 6.25 BETA TimeFrameSet applied on
+    1-tick base interval could result in division by zero exception. Fixed.</li>
+  <li>AFL:
+    Error 66 has new meaning now. It is issued to prevent attempts to mix static
+    declarations with old style access. Error 66. Variables with '---'
+    prefix are inaccesible via StaticVarGet/Set/Remove in this formula. This
+    prefix is
+    reserved by #pragma ena</li>
+  <li>AFL: Removed Error 66: invalid identifier from VarSet/VarGet.
+    Instead of issuing error message, VarGet/VarSet automatically sanitizes invalid
+    identifiers
+    by
+    replacing all characters other than digits and A-Z, a-z letters by underscore</li>
+  <li>AFL:
+    runtime tokens {chartid}, {symbol}, {interval} are now supported in #pragma
+    enable_static_decl</li>
+  <li>AFL: SetFormulaName - displays error 67 if user tries to
+    use file-system forbidden characters for formula name</li>
+  <li>AFL: StaticVarRemove()
+    when called with EMPTY string: StaticVarRemove(&quot;&quot;)
+    nullifies all static variables declared with static keyword within given
+    formula, so this:<CODE><br>
+    <br>
+    <font color='#800000'><b>#pragma enable_static_decl(test) <br>
+    static</b></font> _x, _y, _z; <br>
+    <br>
+    _x = <font color='#800080'>1</font>; <br>
+    _y = <font color='#800080'>2</font>; <br>
+    _z = <font color='#800080'>3</font>; <br>
+    <br>
+    <font color='#0000ff'>StaticVarRemove</font>(<font color='#800080'>""</font>); <font color='#008000'>//
+    nullify all declared static variables <br>
+    </font> <br>
+    <font color='#0000ff'>printf</font>(<font color='#800080'>"%g %g %g"</font>,
+    _x, _y, _z ); <br>
+    <br>
+    </CODE>is equivalent to writing <br>
+    <CODE><br>
+    <font color='#800000'><b>#pragma enable_static_decl(test) <br>
+    static</b></font> _x, _y, _z; <br>
+    <br>
+    _x = <font color='#800080'>1</font>; <br>
+    _y = <font color='#800080'>2</font>; <br>
+    _z = <font color='#800080'>3</font>; <br>
+    <br>
+    _x = <b>Null</b>; _y = <b>Null</b>; _z = <b>Null</b>; <br>
+    <br>
+    <font color='#0000ff'>printf</font>(<font color='#800080'>"%g %g %g"</font>,
+    _x, _y, _z ); <br>
+    <br>
+    <font color='#008000'>// note that setting declared static variable to Null
+    value results in removing it from memory <br>
+    </font> <br>
+    <font color='#0000ff'>StaticVarRemove</font>(<font color='#800080'>""</font>)
+    </CODE>- returns
+    number of variables nullified. Returns <font color='#800080'>0</font> on
+      failure (no declared <font color='#800000'><b>static</b></font> variables
+      found in current formula) <CODE><br>
+        </CODE> </li>
+  <li>AFL: when declared static variable is assigned the NULL value, it
+    will be removed from memory when formula finishes</li>
+  <li>ASCII importer: importer
+    logged &quot;ran of industry space&quot; even if
+    it didn't. Fixed.</li>
+  <li>CBT: If user called ApplyStop AND calls EnterTrade from
+    low-level backtest and did not switch backtestRegular mode to raw mode (which
+    should be done),
+    backtester would automatically turn on 2nd phase stops handling to prevent
+    crash</li>
+  <li>Charts: a crash could occur if user had lots of drawn trendlines on
+    multiple panes and some of them had start date BEFORE first available bar
+    and RT stream
+    was frequently updating. Fixed.</li>
+  <li>Make #pragma enable_static_decl is now private
+    functionality. This means that it will work just fine but we don't provide
+    any help/support except
+    of what
+    is written in readme/manual</li>
+  <li>New Analysis: you can now copy dates between &quot;From&quot; and &quot;To&quot; date
+    pickers (right click menu or Ctrl+C/Ctrl+V)</li>
+  <li>UI: Bar replay From-to controls
+    support copy-paste (right click or Ctrl+C/Ctrl+V)</li>
+  <li>UI:added preprocessor color
+    picker in Tools-&gt;Preferences, &quot;Editor&quot;</li>
+  <li>6.27.1 fix: In 6.27.0 VarSet did not work properly. Fixed.</li>
+  <li>6.27.1 fix: Backtest: since 6.25 crash could occur if &quot;detailed log&quot; was
+    enabled and trade was not entered due to unsufficent funds because format
+  string was not matching arguments. Fixed.</li>
+</ul>
+<p><strong>CHANGES FOR VERSION 6.26.0 (as compared to 6.25.0)</strong></p>
+<ul>
+  <li>AFL: new static keyword: declare identifier as static variable - a little
+    'revolution' in static variable use, declare variable as static and use as
+  'regular' variable, no need to call functions<br>
+  <br>
+  <CODE><font color='#008000'>// the pragma below is required to enable support
+  for static declarations <br>
+  // it also defines the prefix which is added to variables declared with static
+  keyword <br>
+  // it is one prefix per formula. <br>
+  </font><font color='#8b0000'><b>#pragma enable_static_decl(prefix) <br>
+  </b></font> <br>
+  <font color='#008000'>// it is really good idea to consequently use naming
+  convention that <br>
+  // distinguishes declared static variables from the others <br>
+  // we highly recommend using UNDERSCORE '_' before all declared static variables <br>
+  // so they can be easily spotted in the code <br>
+  // The other choice could be s_ prefix <br>
+  </font> <br>
+  <font color='#8b0000'><b>static</b></font> _myvar;&nbsp;&nbsp;<font color='#008000'>//
+  this var is also accessible by "prefix_myvar" <br>
+  </font> <br>
+  <font color='#0000ff'>printf</font>( <font color='#009300'>"This variable is
+  really static %g"</font>, _myvar++ ); <br>
+  <br>
+  <font color='#008000'>// keep in mind that for speed static variable is read
+  only once at the declaration <br>
+  // and saved only once - when formula execution is completed <br>
+  // This way declared static variables offer same speed as regular variables
+  (no speed penalty)</font></CODE><br>
+</li>
+  <li>AFL Editor: contrast of error location indicator on dark backgrounds increased</li>
+  <li>AFL
+  Editor: C-style comments /* ... */ are now foldable in the editor</li>
+  <li>AFL Editor:
+    new menu choices View-&gt;Fold Comments / Unfold Comments - allow
+  to fold/unfold all multi-line comments (enclosed with /* .... */)</li>
+  <li>AFL: added
+    constants notifyClicked, notifySetFocus, notifyKillFocus, notifyHitReturn,
+  notifyEditChange, notifySelChange, notifyMouseEnter, notifyMouseLeave</li>
+  <li>AFL:
+    Another protection against users shooting themselves in foot, VarSet/VarGet
+    now displays error when you try to use characters different than A-Z, 0-9
+  and '_' in variable names</li>
+  <li>AFL: Attempt to use single subscript on matrix variable
+    now results in error message &quot;Accessing Matrix elements requires two
+  subscript operators&quot;</li>
+  <li>AFL: Due to the fact that Windows may send WM_MOUSEMOVE
+    message even if mouse did not move, AmiBroker now has internal check that
+    prevents ReqestMouseMoveRefresh
+  from triggering if mouse position did not change</li>
+  <li>AFL: GetLastOSError (for
+  getting last error message from Windows) - allows getting information about
+  and handling of runtime OS errors<br>
+  <br>
+  <CODE><font color='#008000'>// Example 1: <br>
+  </font> 
+  fh = <font color='#0000ff'>fopen</font>(<font color='#800080'>"non_existing_file.txt"</font>, <font color='#800080'>"r"</font> ); <br>
+  <br>
+  <font color='#800000'><b>if</b></font>( ! fh ) <br>
+  { <br>
+  &nbsp;&nbsp; 
+  <font color='#0000ff'>printf</font>(<font color='#800080'>"File can not be
+  open because: %s"</font>, <font color='#0000ff'>GetLastOSError</font>() ); <br>
+  } <br>
+  <br>
+  <font color='#008000'>// Example 2: <br>
+  </font> 
+  ih = <font color='#0000ff'>InternetOpenUrl</font>(<font color='#800080'>"http://non_existing_host.com"</font> ); <br>
+  <br>
+  <font color='#800000'><b>if</b></font>( ! ih ) <br>
+  { <br>
+  &nbsp;&nbsp; 
+  <font color='#0000ff'>printf</font>(<font color='#800080'>"Internet connection
+  can not be open because: %s"</font>, <font color='#0000ff'>GetLastOSError</font>()
+  ); <br>
+  }</CODE>  </li>
+  <li>AFL: GuiButton and GuiToggle in native
+    OS style use background color of the chart for small border instead of default
+  grey</li>
+  <li>AFL: GuiButton/GuiCHeckBox/GuiToggle/GuiRadio support now new events
+    notifyMouseEnter (64) and notifyMouseLeave(128) which detect hovering without
+    need for constant
+  refreshes<br>
+  <br>
+  <CODE><font color='#8b0000'><b>#pragma enable_static_decl(myprefix) <br>
+  </b></font> <br>
+  <font color='#8b0000'><b>static</b></font> _counter; <br>
+  <br>
+  flags = <b>notifyMouseEnter</b> | <b>notifyMouseLeave</b>; <br>
+  <br>
+  <font color='#0000ff'>GuiButton</font>(<font color='#009300'>"test"</font>, <font color='#8b0000'>1</font>, <font color='#8b0000'>20</font>, <font color='#8b0000'>20</font>, <font color='#8b0000'>100</font>, <font color='#8b0000'>100</font>,
+  flags); <br>
+  <font color='#0000ff'>GuiCheckBox</font>(<font color='#009300'>"test 2"</font>, <font color='#8b0000'>2</font>, <font color='#8b0000'>200</font>, <font color='#8b0000'>20</font>, <font color='#8b0000'>200</font>, <font color='#8b0000'>20</font>,
+  flags ); <br>
+  <br>
+  <font color='#0000ff'>GuiSetColors</font>( <font color='#8b0000'>2</font>, <font color='#8b0000'>2</font>, <font color='#8b0000'>0</font>, <b>colorRed</b>, <b>colorBlue</b> ); <br>
+  <br>
+  <b>Title</b> = <font color='#0000ff'>StrFormat</font>( <font color='#009300'>"%s.
+  Refresh # %g\n"</font>, <font color='#0000ff'>GuiGetEvent</font>( <font color='#8b0000'>0</font>, <font color='#8b0000'>2</font> ),
+  _counter++ ); <br>
+  <br>
+  nc = <font color='#0000ff'>GuiGetEvent</font>( <font color='#8b0000'>0</font> , <font color='#8b0000'>1</font> ); <br>
+  <br>
+  <font color='#8b0000'><b>if</b></font>( nc == <b>notifyMouseEnter</b> ) <font color='#0000ff'>GfxTextOut</font>( <font color='#009300'>"MOUSE
+  ENTER"</font>, <font color='#8b0000'>200</font>, <font color='#8b0000'>50</font> ); <br>
+  <font color='#8b0000'><b>if</b></font>( nc == <b>notifyMouseLeave</b> ) <font color='#0000ff'>GfxTextOut</font>( <font color='#009300'>"MOUSE
+  LEAVE"</font>, <font color='#8b0000'>200</font>, <font color='#8b0000'>50</font> ); <br>
+  <br>
+  <font color='#0000ff'>_TRACE</font>(<b>Title</b> );</CODE><br>
+</li>
+  <li>AFL: GuiCheckBox and GuiRadio now support custom colors of text
+  and background</li>
+  <li>AFL: In 6.25 Gui* keyboard navigation interferred with delete
+    key and possibly other shortcuts due to the way how windows works. Implemented
+    workaround
+  so keys are only intercepted if child window (control) has focus.</li>
+  <li>AFL: In
+    6.25 Gui* keyboard navigation was turned on by default, now it is off by
+    default but can be turned on if you use SetOption(&quot;GuiEnableKeyboard&quot;,
+  True )</li>
+  <li>AFL: In 6.25 GuiGetCheck returned -1 on unchanged. Now it returns only
+  0 (unchecked) or 1 (checked)</li>
+  <li>AFL: In case of Windows INET API error, Internet*
+    functions now report Warning 507 instead of generic error 47. Warning 507
+    is Level-3 warning, i.e. editor-only,
+    which means it will pop up in the formula editor, but won't break execution
+  in runtime (indic</li>
+  <li>AFL: Now can use subscript operator [ ] on references
+  to arrays and matrices</li>
+  <li>AFL: Passing by reference does not create nested references
+  in user-defined function calls</li>
+  <li>AFL: VoiceSetRate( rate ) - sets SAPI voice
+    (speech synthesis) rate. Rate of 0 (zero) is &quot;normal&quot;, negative
+  is slower, positive is faster (allowable range -10..+10)</li>
+  <li>AFL: VoiceSetVolume(
+    volume ) - sets SAPI voice (speech synthesis) volume (0..100)</li>
+  <li>AFL: VoiceWaitUntilDone(
+      timeout ) - waits until voice has finished speaking or specified timeout
+      (1..100ms) has elapsed. Returns True if voice finished,
+        False if the timeout elapsed<br>
+        <br>
+        <CODE><font color='#0000ff'>VoiceSetRate</font>( -<font color='#8b0000'>10</font> ); <br>
+        <font color='#0000ff'>Say</font>(<font color='#009300'>"I am speaking
+        slowly"</font>, <b>False</b>); <br>
+        <br>
+        <font color='#8b0000'><b>while</b></font>( ! <font color='#0000ff'>VoiceWaitUntilDone</font>( <font color='#8b0000'>100</font> )
+        ); <br>
+        <font color='#0000ff'>printf</font>(<font color='#009300'>"Done 1\n"</font>); <br>
+        <br>
+        <font color='#0000ff'>VoiceSetRate</font>( <font color='#8b0000'>0</font> ); <br>
+        <font color='#0000ff'>Say</font>(<font color='#009300'>"I am speaking
+        normally"</font>, <b>False</b>); <br>
+        <br>
+        <font color='#8b0000'><b>while</b></font>( ! <font color='#0000ff'>VoiceWaitUntilDone</font>( <font color='#8b0000'>100</font> )
+        ); <br>
+        <font color='#0000ff'>printf</font>(<font color='#009300'>"Done 2\n"</font>); <br>
+        <br>
+        <font color='#0000ff'>VoiceSetRate</font>( <font color='#8b0000'>5</font> ); <br>
+        <font color='#0000ff'>Say</font>(<font color='#009300'>"I am speaking
+        fast"</font>, <b>False</b>); <br>
+        </CODE><br>
+  </li>
+  <li>broker.master file is saved to a new name and renamed later to avoid
+        corruption when Windows decides to shutdown, restart or sleep during
+      save</li>
+  <li>Dev: 64-bit new compiler (VC2017) broke backward compatibility with
+      singletons that UI lib uses causing infinite loop when High Contrast scheme
+      was
+        used. Workaround implemented.</li>
+  <li>Misc: 64-bit: Restored correct manifest
+      (from pre6.22) with compat records so Win 10 does not lie about version
+    number and re-added 24-bit
+            large
+          PNG icon</li>
+  <li>New Analysis: Added support for clickable links. If you put
+      @link URL in any cell of Analysis result list it creates a clickable row.
+              If
+              you double
+              click
+            on the row while holding down ALT key it will open the link<br>
+            <br>
+            <CODE><font color='#0000ff'>AddTextColumn</font>(<font color='#009300'>"@link
+            http://www.amibroker.com/"</font>, <font color='#009300'>"double
+            click me with ALT key"</font>); <br>
+            <br>
+            <font color='#008000'>// Hidden links are possible if you add the
+            @link in the column past the last defined one <br>
+            </font><font color='#0000ff'>AddRow</font>( <font color='#009300'>"ticker\tdatetime\ttest\t@link
+            http://www.amibroker.com"</font> ); <br>
+  </CODE>  </li>
+</ul>
+<p><strong>CHANGES FOR VERSION 6.25.0 (as compared to 6.22.0)</strong></p>
+<ul>
+  <li>64-bit: In 6.22 the array division could produce 1ulp (units at least place)
+    rounding errors due to too excessive new VC++2017 compiler optimizations.
+  Workaround implemented to avoid that.</li>
+  <li>Added support for formatDateTimeISON
+    (ISO format NO dashes: YYYYMMDD for end
+    of day and YYYYMMDD HHMMSS for intraday)<br>
+    AddColumn( DateTime(), &quot;dt&quot;, formatDateTimeISON );<br>
+  Filter = 1;<br>
+</li>
+  <li>AFL Editor: added one-time message &quot;In
+    the Debug mode number of bars is limited to 200 bars. You can change it in
+    Tools-&gt;Preferences, Debugger tab&quot; because
+    users don't read docs</li>
+  <li>AFL: ApplyStop now has 8th argument: ActivationFloor
+    that defines the amount of profit (in dollars or percents, according to stopmode)
+    that must be exceeded
+    before stop is activated</li>
+  <li>AFL: Gui* - controls are created in the order of
+    occurence in AFL formula (instead shuffled or reverse as in previous version)</li>
+  <li>AFL:
+    Gui* - keyboard navigation is now enabled (you can tab between controls and
+    use arrows to navigate control groups such as radio boxes)</li>
+  <li>AFL: IsNull() accepts
+    matrix input and returns 0 (False), i.e. &quot;variable
+    is not null&quot; if variable is of matrix type</li>
+  <li>AFL: math functions such as
+    sin(), sqrt(), etc can now be applied to matrices (element-wise operation)
+    (previously such attempt resulted in access violation)</li>
+  <li>AFL: New feature: Passing
+    arguments as reference (allows modification of arguments passed - easy way
+    to return multiple values), to pass by reference
+    use &amp; (address-of)
+    operator before variable identifier<br>
+    Reference is actually a pointer to (address of) the variable. If it is passed
+    to function it allows original variable to be modified.<br>
+    The difference between AFL and C language is that while you are using address-of
+    operator when you call function, <br>
+    you don't need any special syntax in the function itself. This has advantage
+    that same function can be called with arguments passed by value and by reference<br>
+    and which one is used is just directed by the way you call the function.
+    AFL automatically and transparently knows that it needs to dereference addresses
+    when<br>
+    references are used in aritmetic operations, function calls or assignments.
+    <p>function test( x, y )<br>
+      {<br>
+  x += 1;<br>
+  y += 2;<br>
+  }</p>
+    <p>a = 23;<br>
+      b = 25;<br>
+      printf(&quot;Before function call: a=%g, b=%g\n&quot;, a, b );</p>
+    <p>test( &amp;a, &amp;b ); // pass references (variables get modified)</p>
+    <p>printf(&quot;After function by ref call: a=%g, b=%g\n&quot;, a, b );</p>
+    <p>test( a, b ); // pass values (no modification happens)</p>
+    <p>printf(&quot;After function by val call: a=%g, b=%g\n&quot;, a, b );</p>
+    <br>
+  </li>
+  <li>AFL: new function GuiCheckBox - creates
+    check box</li>
+  <li>AFL: new function GuiGetCheck( id ) - gets 'checked' or &quot;ON&quot; state
+    of toggle, checkbox and radio buttons</li>
+  <li>AFL: new function GuiRadio - creates
+    radio button</li>
+  <li>AFL: new function GuiSetCheck( id, checked ) - sets 'checked'
+    or 'ON' state of toggle, checkbox and radio buttons</li>
+  <li>AFL: new function GuiSetFont( &quot;fontface&quot;,
+    size )</li>
+  <li>AFL: new function GuiToggle - creates toggle button (like normal button
+    but it toggles between &quot;on&quot; and &quot;off&quot; state with each
+    click)</li>
+  <li>AFL: SetOption(&quot;OptimizeSaveParams&quot;, True ); - turns on generation
+    of AFL file that contains values of optimization parameters producing best
+    result. The generated file has the same name as formula run but has .opt.afl
+    extension<br>
+    <br>
+    This functionality is provided to simplify creation of auto-optimization
+    schemes
+    <p>How to use:</p>
+    <p>1. Create your main formula, say it's file name is &quot;Formulas/Custom/MainFormula.afl&quot;<br>
+      2. Create your opt param formula: &quot;Formulas/Custom/MainFormula.opt.afl&quot;<br>
+      In the opt param formula type:<br>
+      // This file will be automatically overwritten by optimizer with best values<br>
+      first_param = 6;<br>
+      second_param = 12;</p>
+    <p>3. In the main formula type:</p>
+    <p>#include &quot;Formulas/Custom/MainFormula.opt.afl&quot;</p>
+    <p>x = Optimize(&quot;first_param&quot;, first_param, 3, 10, 1 );<br>
+      y = Optimize(&quot;second_param&quot;, second_param, 11, 30, 1 );</p>
+    <p>// causes automatic generation of MainFormula.opt.afl<br>
+      SetOption(&quot;OptimizeSaveParams&quot;, 1 ); </p>
+    <p>// dummy system using two params<br>
+      Buy = Cross( C, MA( C, x ) );<br>
+      Sell = Cross( MA( C, y ), C ); </p>
+    <p>4. Run optimization</p>
+    <p>After it is complete MainFormula.opt.afl will be overwritten with optimum
+      values</p>
+    <p></p>
+    <br>
+  </li>
+  <li>AFL: When using TimeFrame functions, QuickAFL now uses ratio of
+    requested_interval/current_interval multipled by 30 to better estimate required
+    bars </li>
+  <li>ships with newest AmiQuote 3.22 (see AmiQuote read me for details)</li>
+  <li>Analysis:
+    Detailed log displays information about ignored ScaleIn/Outs because of insufficient
+    funds or trade size constraints</li>
+  <li>Analysis: Detailed log now displays all warnings
+    about skipped/ignored signals in RED color so they are easier to spot</li>
+  <li>Data:
+    when performing X:Y split and X or Y exceeded 255 the factor was incorrectly
+    displayed (negative) in the Symbol window. Fixed.</li>
+  <li>formatDateTimeISO and formatDateTimeISON
+    added to syntax highlighter definitions</li>
+  <li>Scheduler: Repeat &quot;Daily&quot; mode
+    repeated batch run every day even if some days were unchecked. Fixed.</li>
+  <li>UI:
+    Place Order dialog - allows typing stop distances smaller than 0.1 now</li>
+  <li>UI:
+    Prefs/Charting: Turning on &quot;Collapse parameter sections&quot; option
+    causes all sections in Parameter window to be collapsed (NOT good idea for
+    newbies as they wont see the controls !)</li>
+  <li>Web Research: many HTML5 pages did
+      not display properly because of the fact that web browser used old IE7
+    mode. Now browser uses IE11 mode at minimum
+      for proper HTML5 rendering</li>
+</ul>
+<p><strong>CHANGES FOR VERSION 6.22.0 (as compared to 6.21.0)</strong></p>
+<ul>
+  <li>64-bit: migrated all code to new compiler VC++2017 which seems to produce
+    better code for x64 resulting in 30...50% speed improvements for many AFL
+  functions. The only negative seems to be much bigger runtime libs</li>
+  <li>64-bit: AFL: Sum() function 2x faster</li>
+  <li>64-bit: AFL:  Max() and Min() functions 8x faster</li>
+  <li>64-bit: AFL: Ref() funciton 2x faster</li>
+  <li>64-bit: AFL: MACD(), ROC(), StDev(), LinearReg() and many other functions
+    faster by 30-50%</li>
+  <li>AFL: GetExtraData
+      does not trigger code check and profile warning about
+    referencing future quotes if plugin implements new GetExtraDataEx function</li>
+  <li>AFL:
+      GuiEdit complained about 2nd parameter instead of 1st (being less than
+    zero)</li>
+</ul>
+<p><strong>CHANGES FOR VERSION 6.21.0 (as compared to 6.20.1)</strong></p>
+<ul>
+  <li>AFL: decreased memory fragmentation when user changes type of variable
+  from array to scalar and back thousands of times</li>
+  <li>AFL: GuiButton( &quot;Text&quot;,
+  id, x, y, width , height , notifyflags ) - creates a button<br>
+  &quot;Text&quot; is a text to be displayed on the button<br>
+  x, y are pixel coordinates of top-left corner of the control<br>
+  width, height are pixel width and height of the control
+  <p>notifyflags - decides which events fire execution of your formula, it can
+    be any combination of values below<br>
+    1 - clicked (button)<br>
+    2 - setfocus (all)<br>
+    4 - killfocus (all)<br>
+    8 - hit enter/return key (edit)<br>
+    16 - edit change (edit)</p>
+  <p></p>
+  </li>
+  <li>AFL: GuiEdit(
+  id, x, y, width, height, notifyflags ); - creates an edit field<br>
+  x, y are pixel coordinates of top-left corner of the control<br>
+  width, height are pixel width and height of the control
+  <p>notifyflags - decides which events fire execution of your formula, it can
+    be any combination of values below<br>
+    1 - clicked (button)<br>
+    2 - setfocus (all)<br>
+    4 - killfocus (all)<br>
+    8 - hit enter/return key (edit)<br>
+    16 - edit change (edit)</p>
+  <p></p>
+  </li>
+  <li>AFL: GuiGetEvent(
+  num, what = 0 )<br>
+  what = 0 - ID of control that received event (number)<br>
+  what = 1 - the notification code (number)<br>
+  what = 2 - the ID, the code and the notification description as text (string)
+  <p>num parameter defines the index of notification in the queue. 0 is first
+    received (or &quot;oldest&quot;) since last execution.</p>
+  <p>Usually there is zero (when formula execution was not triggered by UI event)
+    or one event in the queue but <br>
+    note that there can be MORE than one event notification in the queue if your
+    formula is slow to process. To retrieve them all use increasing &quot;num&quot; parameter
+    as long as GuiGetEvent does not return zero (in what =0, =1 mode) or empty
+    string (what=2).</p>
+  <p><br>
+    // read all pending events<br>
+    for( i = 0; id = GuiGetEvent( i ); i++ )<br>
+    {<br>
+  code = GuiGetEvent( i, 1 );<br>
+  text = GuiGetEvent( i, 2 );<br>
+  }</p>
+  </li>
+  <li>AFL: GuiGetText( id ) - get text from control </li>
+  <li>AFL: GuiSetColors( idFrom,
+    idTo, border , clrText = -1, clrBack = -1, clrBorder = -1, clrSelText = -1,
+    clrSelBack = -1, clrSelBorder = -1, clrHoverText =
+    -1, clrHoverBack = -1, clrHoverBorder = -1, clrDisText = -1, clrDisBack =
+    -1, clrDisBorder
+  = -1)<br>
+  <br>
+  idFrom, idTo - define range of control IDs that will use new colors. To set
+  color for single control use the same value for both idFrom and idTo<br>
+  border - defines border width of button (does not affect other control types)
+  <p>clrText, clrBack, clrBorder - define colors of control text (fgcolor), background
+    (bgcolor) and border (if border width is &gt; 0 ) in &quot;default&quot; control
+    state (unselected)<br>
+    selectfgcolor. -1 means colorDefault and if all colors are set to default
+    then control uses SYSTEM (Windows) look</p>
+  <p> clrSelText, clrSelBack, clrSelBorder - define colors in selected state<br>
+  clrHoverText, clrHoverBack, clrHoverBorder - define colors in hover (mouse
+    over) state<br>
+  clrDisText, clrDisBack, clrDisBorder - define colors in disabled state</p>
+  <p>Please note that currently only buttons support custom colors and custom
+    border<br>
+    As for v6.21 Edit fields always use system look<br>
+  </p>
+  </li>
+  <li>AFL: GuiSetText( &quot;text&quot;, id ) - set text of the control<br>
+  </li>
+  <li>AFL: RequestMouseMoveRefresh()
+    - request formula execution / refresh when mouse is moved INSIDE given chart
+    pane (so it only triggers for ONE window
+    under
+  the cursor)<br>
+  This provides less resource consuming way to handle chart graphics that depends
+  on mouse hovering over chart pane than using RequestTimedRefresh as it only
+  triggers one window currently under the cursor and only does not trigger refreshes
+  when mouse does not move
+  <p>NOTE2: mouse move refreshes come &quot;as fast as possible&quot;. if your
+    code is fast you can get butter smooth animation (even 50fps)</p>
+  Example:<br>
+  <CODE><font color='#0000ff'>Plot</font>( <b>C</b>, <font color='#800080'>"Price"</font>, <b>colorDefault</b> ); <br>
+  <font color='#0000ff'>GfxCircle</font>( <font color='#0000ff'>GetCursorXPosition</font>(<font color='#800080'>1</font>), <font color='#0000ff'>GetCursorYPosition</font>(<font color='#800080'>1</font>), <font color='#800080'>7</font> ); <br>
+  <font color='#0000ff'>RequestMouseMoveRefresh</font>();</CODE>  <br>
+  </li>
+  <li>If Quote.exe is missing and AmiBroker can't do auto-update of
+    quotes, a detailed information is displayed of where it expects Quote.exe
+  file to be present</li>
+  <li>Plugin loading changed: first AmiBroker attempts to load
+    plugins for &quot;Plugins&quot; subfolder
+    from where Broker.EXE file is located (new behavior) and if subfolder is
+    NOT found, it then defaults to old behavior (using &quot;Plugins&quot; subfolder
+  under current working </li>
+</ul>
+<div>
+  <p><b>HOW TO REPORT BUGS</b></p>
+</div>
+<p>If you experience any problem with this beta version please send detailed
+  description  of the problem (especially the steps needed to reproduce it) to
+  support at amibroker.com</p>
+</body>
+</html>

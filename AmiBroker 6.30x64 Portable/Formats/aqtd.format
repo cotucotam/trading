@@ -1,0 +1,15 @@
+# Tiingo. Current market snapshot format
+# original header from Tiingo
+# ticker	askPrice	askSize	bidPrice	bidSize	high	last	lastSize	lastSaleTimestamp	low	mid	open	prevClose	quoteTimestamp	timestamp	tngoLast
+# The format could be 
+# $FORMAT Ticker, Skip, Skip, Skip, Skip, High, Close, Skip, Date_YMD, Low, Skip, Open
+# but from testing sometimes last/lastSize is missing, so we don't use that
+# So we use tngoLast column instead
+$FORMAT Ticker, Skip, Skip, Skip, Skip, High, Skip, Skip, Skip, Low, Skip, Open, Skip, Skip, Date_YMD, Close
+$SKIPLINES 1
+$SEPARATOR ,
+$CONT 1
+$GROUP 255
+$AUTOADD 1
+$DEBUG 1
+

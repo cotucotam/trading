@@ -1,0 +1,20 @@
+# AmiQuote historical quotes download format (.AQH extension)
+# Revision 1.4 - changed the order of columns (due to July 22, 2017 Yahoo site change)
+# Revision 1.3 - changed the order of columns (due to May 17, 2017 Yahoo site change)
+# Revision 1.1 - removed $VOLFACTOR 0.01
+# The format line below allows to get data adjusted for SPLITS
+# to get data adjusted for SPLITS AND DIVIDENDS replace 'Skip' by 'AdjClose'
+# 
+$FORMAT Date_DMY,Open,High,Low,Close,Skip,Volume
+$SKIPLINES 0
+$BREAKONERR 0
+$SEPARATOR ,
+$DEBUG 1
+$AUTOADD 1
+$CONT 1
+$GROUP 254
+# the following switches are optional - please consult
+# the read-me for description of those options
+# $RAWCLOSE2OI 1   
+# $RECALCSPLITS 1
+# $ROUNDADJ 4
