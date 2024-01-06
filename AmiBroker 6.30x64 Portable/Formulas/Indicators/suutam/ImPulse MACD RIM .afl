@@ -1,0 +1,74 @@
+_SECTION_BEGIN( "Impulse MACD" );
+/// @link https://www.tradingview.com/script/qt6xLfLi-Impulse-MACD-LazyBear/
+/// Impulse MACD is a modified MACD, formed by filtering out the values in a MA range
+/// (region between MAs of high and low), thereby reducing whipsaw typical in a sideways
+/// market. 
+///
+
+/// SMMA - SMoothed moving average i.e. wilders
+function calc_smma( src, length )
+{
+    return Wilders( src, length );
+}
+
+function calc_zlema( src, length )
+{
+    ema1 = EMA( src, length );
+    ema2 = EMA( ema1, length );
+    diff = ema1 - ema2;
+    result = ema1 + diff;
+    return result;
+}
+
+src = ParamField("Price", 4);
+lengthMA = Param( "length MA", 34, 1, 50, 1 );
+lengthSignal = Param( "length Signal", 9, 1, 50, 1 );
+paramvalues = _PARAM_VALUES();
+linewidth = Param( "Line width", 3, 1, 5, 1 );
+
+// change indicator Impulse MACD default display to line instead of histogram
+// select histogram to display like LazyBear's
+isMACDhistogram = ParamToggle( "Plot Impulse MACD as", "Line|Histogram", 0 );
+show_plot = ParamList( "Show Plot", "Impulse MACD|Impulse w/o histo|Price Chart", 0 );
+PriceChartStyle = ParamStyle( "Price Chart Style" );
+
+hi = calc_smma( high, lengthMA );
+lo = calc_smma( low, lengthMA );
+mi = calc_zlema( src, lengthMA );
+
+md = IIf( mi > hi, ( mi - hi ), IIf( ( mi < lo ), ( mi - lo ),  0 ) );
+sb = ma( md, lengthSignal );
+sh = md - sb;
+mdc = IIf( src > mi, IIf( src > hi, colorLime, colorGreen ), IIf( src < lo, colorRed, colorOrange ) );
+
+if( show_plot == "Price Chart" )
+{
+    SetChartOptions( 1, chartShowArrows | chartShowDates );
+    mode_candle = ( GetPriceStyle() & styleCandle ) == styleCandle;
+    pricestyle = PriceChartStyle | GetPriceStyle();
+    Color_outline = mdc;
+    Color_fill = IIf( mode_candle, IIf( C > O, GetChartBkColor(), Color_outline ), Color_outline );
+
+    SetBarFillColor( Color_fill );
+    Plot( C, "Close", Color_outline, pricestyle, Null, Null, 0, 0, linewidth );
+    Plot( hi, "Hi", colorAqua, styleLine, Null, Null, 0, 1, linewidth );
+    Plot( lo, "Lo", colorAqua, styleLine, Null, Null, 0, 1, linewidth );
+    Plot( mi, "Mi", colorBlue, styleLine, Null, Null, 0, 1, linewidth );
+}
+else
+{
+    SetChartOptions( 1, !chartShowDates );
+    PlotGrid( 0, colorGrey40, 9, 2, True );
+
+plot( IIf( isMACDhistogram, md, Null ), "", mdc, styleHistogram | stylenolabel, Null, Null, 0, -2, linewidth );
+plot( md, "ImpulseMACD" + paramvalues, mdc, styleLine, Null, Null, 0,  0, linewidth );
+plot( sb, "ImpulseMACDSignal", colorBrown, styleLine, Null, Null, 0, 0, linewidth );
+
+if( show_plot != "Impulse w/o histo" )
+    plot( sh, "ImpulseHisto", colorBlue, stylehistogram, Null, Null, 0, -1, linewidth );
+
+}
+_SECTION_END();
+
+Plot(0.7, "20", colorRed, styleThick|styleNoLabel);  // Qua mua
+Plot(-0.7, "70", colorGreen, styleThick|styleNoLabel); // Qua ban

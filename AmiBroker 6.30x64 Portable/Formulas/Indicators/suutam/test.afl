@@ -1,0 +1,653 @@
+
+//------------------------------------------------------------------//
+//------------------Relative Rotation Graphs (RRG) -----------------//
+//																    //
+//---------------------------- QUAN DANG -------------------------- //
+
+_N( base = ParamStr( "Base", "VNINDEX" ) );
+
+_N( list1 = ParamList( "List", "BAN_BUON|BAO_HIEM|BAT_DONG_SAN|CHUNG_KHOAN|CONG_NGHE_THONG_TIN|BAN_LE|CHAM_SOC_SUC_KHOE|KHAI_KHOANG|NGAN_HANG|NONG_LAM_NGU|SXTHIETBI|SX_HANG_GIA_DUNG|CAO_SU|NHUA_HOA_CHAT|THUC_PHAM_DO_UONG|THUY_SAN|VLXD|TIEN_ICH|VAN_TAI|XAY_DUNG|DICHVU|SX_PHU_TRO|THIET_BI_DIEN|DICHVU_TU_VAN" ) );
+
+BANBUON1				= ParamStr("BAN BUON", "PLX,HHS,HAI,KLF,TSC,SHN,PSH,JVC,TLH,AMV,PET,DGW,ABS,SGT,QBS,AAV,SMC,TNI,TTB,TNA");
+BAOHIEM1				= ParamStr("BAO HIEM", "BIC,BMI,BVH,MIG,PGI,PRE,PTI,PVI,VNR");
+BATDONGSAN1				= ParamStr("BAT DONG SAN","VHM,VIC,VRE,NVL,BCM,ITA,FLC,KDH,TCH,DXG,KBC,DIG,PDR,HQC,NLG,SCR,DXS,HUT,KHG,HPX");
+CHUNGKHOAN1 			= ParamStr("CHUNG KHOAN","SSI,HCM,VND,VCI,SHS,VIX,MBS,AGR,ORS,FTS,BSI,TVB,TVS,CTS,VDS,EVS,ART,APS,APG,BVS");
+CONGNGHETHONGTIN1 		= ParamStr("CONG NGHE THONG TIN","FPT,CMG,ELC,DST,ICT,ITD,EID,EBS,SED,GLT,ONE,STC,DAD,VTC,SMN,SGD,ADC,PIA,QST,BED");
+BANLE1					= ParamStr("BANLE","MWG,VGC,AMD,FRT,CTF,HAX,AST,SVC,SVN,CIA,CMV,CCI,CTC,COM,BTT,TMC,VTJ,SFC,HTC,PNC");
+CHAMSOCSUCkHOE1			= ParamStr("CHAM SOC SUC KHOE","FIT,DHG,IMP,DCL,DBD,TNH,TRA,DMC,OPC,DHT,VDP,SPM,LDP,PMC,PPP,DP3,MED,MKV");
+KHAIKHOANG1				= ParamStr("KHAI KHOANG","PVS,PVD,MVB,KSB,ACM,TNT,PVC,TVD,NBC,TC6,DHM,KSQ,TDN,HLC,LCM,THT,NNC,PVB,MDC,SPI");
+NGANHANG1				= ParamStr("NGAN HANG","BID,CTG,VCB,VPB,MBB,TCB,ACB,SHB,HDB,STB,TPB,VIB,MSB,SSB,OCB,EIB,LPB,BAB,NVB,EVF,IPA,OGC,TVC");
+NONGLAMNGU1				= ParamStr("NONG LAM NGU","HNG,HAG,VIF,ASM,SJF,BAF,APC,NSC,HSL,PSW,SSC,CTP,HKT");
+SXTHIETBI1				= ParamStr("SX THIET BI","MCG,THI,NHH,NAG,CTB,SHE,QHD,DZM,CTT,CJC");
+SXHANGGIADUNG1			= ParamStr("SX HANG GIA DUNG","TTF,TNG,TCM,STK,KMR,MSH,FTM,GIL,ADS,EVE,SHA,GMC,TDT,TVT,GDT,X20,SAV,SVD,TET,MHL");
+CAOSU1					= ParamStr("CAO SU","DRC,CSM,SRC,BRC");
+NHUAHOACHAT1			= ParamStr("NHUA HOA CHAT","GVR,DCM,DPM,AAA,APH,DGC,PHR,DNP,NTP,LAS,BMP,TDP,DAG,BFC,SFG,RDP,CSV,DPR,PLP,VAF");
+THUCPHAMDOUONG1			= ParamStr("THUC PHAM DO UONG","VNM,MSN,SAB,SBT,KDC,GTN,BHN,PAN,DBC,LSS,NAF,TAR,DAT,TAC,VHE,SMB,VCF,BCF,BNA,BBC");
+THUYSAN1				= ParamStr("THUY SAN","IDI,VHC,ANV,CMX,FMC,ACL,SJ1,KHS,BLF,ABT,AAM");
+VLXD1					= ParamStr("VLXD","HPG,HSG,HT1,POM,NKG,VCS,BTS,BCC,VIS,HOM,TEG,DTL,VIT,TCR,FCM,VGS,HVX,CVT,TKU,ACC");
+TIENICH1				= ParamStr("TIEN ICH","POW,GAS,DTK,PPC,GEG,IDC,NT2,VSH,BWE,CHP,TTA,VPD,TDM,SHP,PGD,TMP,SJD,SII,TBC,BTP");
+VANTAI1					= ParamStr("VAN TAI","HVN,VJC,PHP,PVT,GMD,VOS,TMS,DL1,CDN,STG,VTO,ASG,VIP,VNS,SKG,GSP,VSC,SCS,HAH,MHC");
+XAYDUNG1				= ParamStr("XAY DUNG","ROS,VCG,THD,REE,BCG,HBC,CII,PC1,LGC,TCD,LCG,FCN,HTN,SCG,VNE,CTX,CTD,IDJ,MST,LIG");
+DICHVU1					= ParamStr("DICH VU","OCH,VNG,NVT,DAH,RIC,SDA,PDC,SGH,DSN,HOT,TTT,ATS,VCM");
+SXPHUTRO1				= ParamStr("SX PHU TRO","DLG,PNJ,SHI,HTP,PLC,TLG,DHC,HAP,KVC,PTB,TLD,TMT,BKG,HHP,SBV,ITQ,INN,NHT,MCP,SVI");
+THIETBIDIEN1			= ParamStr("THIET BI DIEN","GEX,SAM,MBG,CAV,PAC,TYA,DQC,POT,EMC,RAL,KSD,VTB,DHP,PHN,TSB,VTH");
+DICHVUTUVAN1			= ParamStr("DICH VU TU VAN","IBC,KPF,TV2,SDA,TV4,VNC,TV3,VCM,SDC,INC,PPE,VLA");
+
+EnableTextOutput( False );
+GfxSetOverlayMode( 2 );
+
+pxl = Status( "pxchartleft" );
+pxr = Status( "pxchartright" );
+pxt = Status( "pxcharttop" );
+pxb = Status( "pxchartbottom" );
+pxw = ( pxr - pxl ) / 2;
+pxh = ( pxb - pxt ) / 2;
+xm = pxl + pxw;
+ym = pxt + pxh;
+
+GfxSelectSolidBrush(ColorRGB(231,255,255));
+GfxRectangle( xm, ym, pxr, pxt );
+GfxSelectSolidBrush(ColorRGB(231,255,231));
+GfxRectangle( xm, ym, pxl, pxb );
+GfxSelectSolidBrush(ColorRGB(255,231,231));
+GfxRectangle( xm, ym, pxr, pxb );
+GfxSelectSolidBrush(ColorRGB(255,255,231));
+GfxRectangle( xm, ym, pxl, pxt );
+
+
+
+GfxSelectFont("Arial", Status("pxheight")/60 );
+GfxSetTextColor( ParamColor( "Text Color", colorBlack ) );
+GfxSetBkMode(0); // transparent
+GfxSetBkColor(colorPaleGreen);
+GfxTextOut( "D\u1EAAN D\u1EAET", pxr-120 , pxt +50 );			// DAN DAT
+GfxSetBkColor(colorPink);
+GfxTextOut( "T\u1ee4T H\u1EACU", pxl+15, pxb-65 );				// TUT HAU
+GfxSetBkColor(colorLightYellow);
+GfxTextOut( "SUY Y\u1EBEU", pxr-120, pxb-65);					// SUY YEU
+GfxSetBkColor(colorLightBlue);
+GfxTextOut( "C\u1EA2I THI\u1EC6N", pxl+15, pxt+50 );			// CAI THIEN
+GfxSelectFont("", Status("pxheight")/90 );
+GfxTextOut( "QU\u00C2N \u0110\u1EB6NG", Status("pxwidth")/80, Status("pxheight")/1.04 );  
+
+color1 = ParamColor("Symbol 1:", colorRed);
+color2 = ParamColor("Symbol 2:", colorOrange);
+color3 = ParamColor("Symbol 3:", colorBrightGreen);
+color4 = ParamColor("Symbol 4:", colorDarkGreen);
+color5 = ParamColor("Symbol 5:", colorBlue);
+color6 = ParamColor("Symbol 6:", colorCustom10);
+color7 = ParamColor("Symbol 7:", colorPlum);
+color8 = ParamColor("Symbol 8:", colorBrown);
+color9 = ParamColor("Symbol 9:", colorViolet);
+color10 = ParamColor("Symbol 10:", colorCustom12);
+color11 = ParamColor("Symbol 11:", colorPink);
+color12 = ParamColor("Symbol 12:", colorIndigo);
+color13 = ParamColor("Symbol 13:", colorDarkGrey);
+color14 = ParamColor("Symbol 14:", colorTeal);
+color15 = ParamColor("Symbol 15:", colorTan);
+color16 = ParamColor("Symbol 16:", colorCustom16);
+color17 = ParamColor("Symbol 17:", colorBrightGreen);
+color18 = ParamColor("Symbol 18:", colorDarkBlue);
+color19 = ParamColor("Symbol 19:", colorDarkOliveGreen);
+color20 = ParamColor("Symbol 20:", colorYellow);
+list1 = Name()+","+list1;
+
+
+numbuttons = 25; // number of toggle buttons
+
+toggletext1 = "ON,OFF";
+toggletext2 = "off BAN BUON, on BAN BUON";
+toggletext3 = "off BAO HIEM, on BAO HIEM";
+toggletext4 = "off BAT DONG SAN, on BAT DONG SAN";
+toggletext5 = "off CHUNG KHOAN, on CHUNG KHOAN";
+toggletext6 = "off CNTT, on CNTT";
+toggletext7 = "off BAN LE, on BAN LE";
+toggletext8 = "off CHAM SOC SK, on CHAM SOC SK";
+toggletext9 = "off KHAI KHOANG, on KHAI KHOANG";
+toggletext10 = "off NGAN HANG, on NGAN HANG";
+toggletext11 = "off NONG LAM NGU, on NONG LAM NGU";
+toggletext12 = "off SX THIET BI, on SX THIET BI";
+toggletext13 = "off SX HANGGIADUNG, on SX HANGGIADUNG";
+toggletext14 = "off CAO SU, on CAO SU";
+toggletext15 = "off NHUA HOA CHAT, on NHUA HOA CHAT";
+toggletext16 = "off THUC PHAM, on THUC PHAM";
+toggletext17 = "off THUY SAN, on THUY SAN";
+toggletext18 = "off VLXD, on VLXD";
+toggletext19 = "off TIEN ICH, on TIEN ICH";
+toggletext20 = "off VAN TAI, on VAN TAI";
+toggletext21 = "off XAY DUNG, on XAY DUNG";
+toggletext22 = "off DICH VU, on DICH VU";
+toggletext23 = "off SX PHU TRO, on SX PHU TRO";
+toggletext24 = "off THIET BI DIEN, on THIET BI DIEN";
+toggletext25 = "off DICH VU TU VAN, on DICH VU TU VAN";
+
+
+// etc
+initial = 0;// intial toggle setting
+persist = 1;// keep toggle state ON(1) / OFF(0)
+ypos = 15;
+width = 170;
+height = 26;
+
+
+// iterate number of toggle buttons
+for ( toggleID = 1; toggleID <= numbuttons; toggleID++ ) {  
+	toggletext = VarGetText( "toggletext" + toggleID );	
+	
+	GuiToggle( StrExtract(toggletext, 0), toggleID, x = Param("X",10,-100), y = (toggleID+Param("Y",3))*(height-2) + ypos, width, height, notifyflag = 1 );
+	staticname = StrFormat( "GuiParamToggle_%s_%g_%g", GetDatabaseName(), GetChartID(), toggleID );
+	staticget = Nz(StaticVarGet( staticname ), initial);
+	GuiSetCheck(toggleID, staticget);
+
+	togglecheck = GuiGetCheck(toggleID); 
+	VarSet( "toggle" + toggleID, togglecheck );
+	GuiSetColors(1,25,1.5,-1,-1,colorBlack,-1,colorGreen,colorBlack,-1,colorLime,-1,-1,-1,-1);
+	if ( togglecheck ) GuiSetText( StrExtract(toggletext, 1), toggleID ); 
+
+	if ( GuiGetEvent( 0, 0 ) == toggleID && GuiGetEvent( 0, 1 ) == 1 ) {
+		StaticVarSet( staticname, 1-togglecheck, persist );	
+		//Say( " " + StrExtract(toggletext, 1-togglecheck) ); 
+	} 
+}
+
+/// ###########################################################################################################
+// if numbuttons is larger than 1 then better use VarGet 
+// to avoid error message if changing numbuttons to lower value
+
+show1 		= toggle1;
+show2 		= toggle2;	
+show3 		= toggle3;
+show4 		= toggle4;
+show5 		= toggle5;
+show6 		= toggle6;
+show7 		= toggle7;
+show8 		= toggle8;
+show9 		= toggle9;
+show10 		= toggle10;
+show11		= toggle11;
+show12		= toggle12;
+show13		= toggle13;
+show14 		= toggle14;
+show15		= toggle15;
+show16 		= toggle16;
+show17		= toggle17;
+show18 		= toggle18;
+show19 		= toggle19;
+show20 		= toggle20;
+show21 		= toggle21;
+show22 		= toggle22;
+show23 		= toggle23;
+show24 		= toggle24;
+show25 		= toggle25;
+
+tbar = Param( "Trailing Bar", 12, 1, 100, 1 );
+list = "";
+
+	GfxSelectFont("", Status("pxheight")/40 );
+	GfxSetBkMode(1);
+	GfxSelectSolidBrush(colorDarkRed);
+	GfxRectangle(pxl,pxt,pxr,50);
+	GfxSetTextColor(colorWhite);
+	GfxSetTextAlign(6);
+	GfxTextOut("Relative Rotation Graphs (RRG)",Status("pxwidth")/2, Status("pxheight")/80);
+
+GuiSetVisible(2,x);
+GuiSetVisible(3,x);
+GuiSetVisible(4,x);
+GuiSetVisible(5,x);
+GuiSetVisible(6,x);
+GuiSetVisible(7,x);
+GuiSetVisible(8,x);
+GuiSetVisible(9,x);
+GuiSetVisible(10,x);
+GuiSetVisible(11,x);
+GuiSetVisible(12,x);
+GuiSetVisible(13,x);
+GuiSetVisible(14,x);
+GuiSetVisible(15,x);
+GuiSetVisible(16,x);
+GuiSetVisible(17,x);
+GuiSetVisible(18,x);
+GuiSetVisible(19,x);
+GuiSetVisible(20,x);
+GuiSetVisible(21,x);
+GuiSetVisible(22,x);
+GuiSetVisible(23,x);
+GuiSetVisible(24,x);
+GuiSetVisible(25,x);
+x=1;
+
+if (show1)
+{
+	x=0;
+	GuiSetVisible(2,x);
+	GuiSetVisible(3,x);
+	GuiSetVisible(4,x);
+	GuiSetVisible(5,x);
+	GuiSetVisible(6,x);
+	GuiSetVisible(7,x);
+	GuiSetVisible(8,x);
+	GuiSetVisible(9,x);
+	GuiSetVisible(10,x);
+	GuiSetVisible(11,x);
+	GuiSetVisible(12,x);
+	GuiSetVisible(13,x);
+	GuiSetVisible(14,x);
+	GuiSetVisible(15,x);
+	GuiSetVisible(16,x);
+	GuiSetVisible(17,x);
+	GuiSetVisible(18,x);
+	GuiSetVisible(19,x);
+	GuiSetVisible(20,x);
+	GuiSetVisible(21,x);
+	GuiSetVisible(22,x);
+	GuiSetVisible(23,x);
+	GuiSetVisible(24,x);
+	GuiSetVisible(25,x);
+
+
+}
+
+	
+if ( show2 )
+{
+	list = BANBUON1;
+	GfxSelectSolidBrush(colorDarkRed);
+	GfxRectangle(pxl,pxt,pxr,50);
+	GfxTextOut("B\u00C1N BU\u00D4N",Status("pxwidth")/2, Status("pxheight")/80);
+	
+}
+
+if (show3)
+{
+	list = BAOHIEM1;
+	GfxSelectSolidBrush(colorDarkRed);
+	GfxRectangle(pxl,pxt,pxr,50);
+	GfxTextOut("B\u1EA2O HI\u1EC2M",Status("pxwidth")/2, Status("pxheight")/80);
+}
+
+if (show4)
+{
+	list = BATDONGSAN1;
+	GfxSelectSolidBrush(colorDarkRed);
+	GfxRectangle(pxl,pxt,pxr,50);
+	GfxTextOut("B\u1EA4T \u0110\u1ed8NG S\u1EA2N",Status("pxwidth")/2, Status("pxheight")/80);
+}
+
+if (show5)
+{
+	list = CHUNGKHOAN1;
+	GfxSelectSolidBrush(colorDarkRed);
+	GfxRectangle(pxl,pxt,pxr,50);
+	GfxTextOut("CH\u1ee8NG KHO\u00C1N",Status("pxwidth")/2, Status("pxheight")/80);
+}
+
+if (show6)
+{
+	list = CONGNGHETHONGTIN1;
+	GfxSelectSolidBrush(colorDarkRed);
+	GfxRectangle(pxl,pxt,pxr,50);
+	GfxTextOut("C\u00D4NG NGH\u1EC6 TH\u00D4NG TIN",Status("pxwidth")/2, Status("pxheight")/80);
+}
+
+if (show7)
+{
+	list = BANLE1;
+	GfxSelectSolidBrush(colorDarkRed);
+	GfxRectangle(pxl,pxt,pxr,50);
+	GfxTextOut("B\u00C1N L\u1EBA",Status("pxwidth")/2, Status("pxheight")/80);
+}
+
+if (show8)
+{
+	list = CHAMSOCSUCKHOE1;
+	GfxSelectSolidBrush(colorDarkRed);
+	GfxRectangle(pxl,pxt,pxr,50);
+	GfxTextOut("CH\u0102M S\u00D3C S\u1ee8C KH\u1ECEE",Status("pxwidth")/2, Status("pxheight")/80);
+}
+if (show9)
+{
+	list = KHAIKHOANG1;
+	GfxSelectSolidBrush(colorDarkRed);
+	GfxRectangle(pxl,pxt,pxr,50);
+	GfxTextOut("KHAI KHO\u00C1NG",Status("pxwidth")/2, Status("pxheight")/80);
+}
+if (show10)
+{
+	list = NGANHANG1;
+	GfxSelectSolidBrush(colorDarkRed);
+	GfxRectangle(pxl,pxt,pxr,50);
+	GfxTextOut("NG\u00C2N H\u00C0NG",Status("pxwidth")/2, Status("pxheight")/80);
+}
+if (show11)
+{
+	list = NONGLAMNGU1;
+	GfxSelectSolidBrush(colorDarkRed);
+	GfxRectangle(pxl,pxt,pxr,50);
+	GfxTextOut("N\u00D4NG - L\u00C2M - NG\u01af",Status("pxwidth")/2, Status("pxheight")/80);
+}
+if (show12)
+{
+	list = SXTHIETBI1;
+	GfxSelectSolidBrush(colorDarkRed);
+	GfxRectangle(pxl,pxt,pxr,50);
+	GfxTextOut("S\u1EA2N XU\u1EA4T THI\u1EBET B\u1ECA",Status("pxwidth")/2, Status("pxheight")/80);
+}
+if (show13)
+{
+	list = SXHANGGIADUNG1;
+	GfxSelectSolidBrush(colorDarkRed);
+	GfxRectangle(pxl,pxt,pxr,50);
+	GfxTextOut("S\u1EA2N XU\u1EA4T H\u00C0NG GIA D\u1ee4NG",Status("pxwidth")/2, Status("pxheight")/80);
+}
+if (show14)
+{
+	list = CAOSU1;
+	GfxSelectSolidBrush(colorDarkRed);
+	GfxRectangle(pxl,pxt,pxr,50);
+	GfxTextOut("CAO SU",Status("pxwidth")/2, Status("pxheight")/80);
+}
+if (show15)
+{
+	list = NHUAHOACHAT1;
+	GfxSelectSolidBrush(colorDarkRed);
+	GfxRectangle(pxl,pxt,pxr,50);
+	GfxTextOut("NH\u1ef0A - H\u00D3A CH\u1EA4T",Status("pxwidth")/2, Status("pxheight")/80);
+}
+if (show16)
+{
+	list = THUCPHAMDOUONG1;
+	GfxSelectSolidBrush(colorDarkRed);
+	GfxRectangle(pxl,pxt,pxr,50);
+	GfxTextOut("TH\u1ef0C PH\u1EA8M - \u0110\u1ED2 U\u1ed0NG",Status("pxwidth")/2, Status("pxheight")/80);
+}
+if (show17)
+{
+	list = THUYSAN1;
+	GfxSelectSolidBrush(colorDarkRed);
+	GfxRectangle(pxl,pxt,pxr,50);
+	GfxTextOut("TH\u1ee6Y S\u1EA2N",Status("pxwidth")/2, Status("pxheight")/80);
+}
+if (show18)
+{
+	list = VLXD1;
+	GfxSelectSolidBrush(colorDarkRed);
+	GfxRectangle(pxl,pxt,pxr,50);
+	GfxTextOut("V\u1EACT LI\u1EC6U X\u00C2Y D\u1ef0NG",Status("pxwidth")/2, Status("pxheight")/80);
+}
+if (show19)
+{
+	list = TIENICH1;
+	GfxSelectSolidBrush(colorDarkRed);
+	GfxRectangle(pxl,pxt,pxr,50);
+	GfxTextOut("TI\u1EC6N \u00CDCH",Status("pxwidth")/2, Status("pxheight")/80);
+}
+if (show20)
+{
+	list = VANTAI1;
+	GfxSelectSolidBrush(colorDarkRed);
+	GfxRectangle(pxl,pxt,pxr,50);
+	GfxTextOut("V\u1EACN T\u1EA2I - KHO B\u00C3I",Status("pxwidth")/2, Status("pxheight")/80);
+}
+if (show21)
+{
+	list = XAYDUNG1;
+	GfxSelectSolidBrush(colorDarkRed);
+	GfxRectangle(pxl,pxt,pxr,50);
+	GfxTextOut("X\u00c2Y D\u1ef0NG",Status("pxwidth")/2, Status("pxheight")/80);
+}
+
+if (show22)
+{
+	list = DICHVU1;
+	GfxSelectSolidBrush(colorDarkRed);
+	GfxRectangle(pxl,pxt,pxr,50);
+	GfxTextOut("D\u1ECACH V\u1ee4 (L\u01B0u tr\u00FA, \u0102n u\u1ED1ng, Gi\u1EA3i tr\u00ED",Status("pxwidth")/2, Status("pxheight")/80);
+}
+if (show23)
+{
+	list = SXPHUTRO1;
+	GfxSelectSolidBrush(colorDarkRed);
+	GfxRectangle(pxl,pxt,pxr,50);
+	GfxTextOut("S\u1EA2N XU\u1EA4T PH\u1ee4 TR\u1ee2",Status("pxwidth")/2, Status("pxheight")/80);
+}
+if (show24)
+{
+	list = THIETBIDIEN1;
+	GfxSelectSolidBrush(colorDarkRed);
+	GfxRectangle(pxl,pxt,pxr,50);
+	GfxTextOut("THI\u1EBET B\u1ECA \u0110I\u1EC6N",Status("pxwidth")/2, Status("pxheight")/80);
+}
+if (show25)
+{
+	list = DICHVUTUVAN1;
+	GfxSelectSolidBrush(colorDarkRed);
+	GfxRectangle(pxl,pxt,pxr,50);
+	GfxTextOut("D\u1ECACH V\u1ee4 T\u01af V\u1EA4N",Status("pxwidth")/2, Status("pxheight")/80);
+}
+
+list = Name()+","+list;
+
+GfxSelectFont("", Status("pxheight")/60 );
+GfxMoveTo( pxl, ym ); 
+GfxLineTo( pxr, ym );
+GfxMoveTo( xm, pxt );
+GfxLineTo( xm, pxb );
+
+bc = Foreign( base, "C" );
+
+
+function drawpos ( x, y, color, sym, op )
+{ 
+    rsl = VarGet( "rsl" );
+	rsh = VarGet( "rsh" );
+	rml = VarGet( "rml" );
+	rmh = VarGet( "rmh" );
+    xx = pxl + pxw + x * ( pxw / ( Max( rsh, -rsl ) * 1.10 ) );
+	yy = pxb - pxh - y * ( pxh / ( Max( rmh, -rml ) * 1.10 ) );
+
+    
+    xp = Nz( VarGet( "xp" + sym ), xx );
+    yp = Nz( VarGet( "yp" + sym ), yy );
+
+    VarSet( "xp" + sym, xx );
+    VarSet( "yp" + sym, yy );
+
+    GfxMoveTo( xp, yp );
+    GfxSelectPen( color); 
+    GfxLineTo( xx, yy );
+
+    GfxSelectSolidBrush(color);  
+    
+    GfxCircle( xx, yy, IIf( op == 1, 2, 4 ) );
+    
+	GfxSetBkMode ( 1 ); 
+	
+	check = StrMid( sym, 0, 1);
+		if (check == "0" OR check == "1" OR check == "2" OR check == "3" OR check == "4" OR check == "5" OR check == "6" OR check == "7" OR check == "8" OR check == "9")
+			sym = FullName();
+		else
+			sym = Name();
+			
+	GfxSetTextColor( color); 
+    
+
+    if ( op != 1 ) GfxTextOut( sym, xx + 6 , yy - 3 );   
+}
+
+function getrs ( sc, t ) 
+{
+bc = Foreign( base, "C" );  
+sbr = sc / bc;
+
+rs1 = MA( sbr, 12 );
+rs2 = MA( sbr, 26 );
+rs = 100 * ( ( rs1 - rs2 ) / rs2 + 1 );
+
+rm1 = MA( rs, 1 );
+rm2 = MA( rs, 9 );
+rm = 100 * ( ( rm1 - rm2 ) / rm2 + 1 );
+
+return IIf( t, rs , rm ) - 100;
+}
+
+for ( i = 0; ( sym = StrExtract( list, i ) ) != ""; i++ )
+{
+    SetForeign( sym );
+
+	rs = getrs( C, 1 );
+	rm = getrs( C, 0 );
+
+
+    for ( ii = BarCount - tbar; ii > 12 AND ii < BarCount ; ii++ ) 
+    {
+        
+        rs_ = rs[ ii ];
+        rm_ = rm[ ii ];        
+
+        rsh = Nz( VarGet( "rsh" ), rs_ );
+        if ( rs_ >= rsh )
+            VarSet( "rsh", rs_ );
+
+        rsl = Nz( VarGet( "rsl" ), rs_ );
+        if ( rs_ <= rsl )
+            VarSet( "rsl", rs_ );
+
+        rmh = Nz( VarGet( "rmh" ), rm_ );
+        if ( rm_ >= rmh )
+            VarSet( "rmh", rm_ );
+
+        rml = Nz( VarGet( "rml" ), rm_ );
+        if ( rm_ <= rml )
+            VarSet( "rml", rm_ );
+    }
+
+    RestorePriceArrays( True );
+}
+
+for ( i = 0; ( sym = StrExtract( list, i ) ) != ""; i++ ) 
+{
+    SetForeign( sym );
+	rs = getrs( C, 1 );
+	rm = getrs( C, 0 );
+
+
+    
+    switch (i) {
+		case 0:
+			color = color1;
+			break;
+		case 1:
+			color = color2;
+			break;
+		case 2:
+			color = color3;
+			break;
+		case 3:
+			color = color4;
+			break;
+		case 4:
+			color = color5;
+			break;
+		case 5:
+			color = color6;
+			break;
+		case 6:
+			color = color7;
+			break;
+		case 7:
+			color = color8;
+			break;
+		case 8:
+			color = color9;
+			break;
+		case 9:
+			color = color10;
+			break;
+		case 10:
+			color = color11;
+			break;
+		case 11:
+			color = color12;
+			break;
+		case 12:
+			color = color13;
+			break;
+		case 13:
+			color = color14;
+			break;
+		case 14:
+			color = color15;
+			break;
+		case 15:
+			color = color16;
+			break;	
+		case 16:
+			color = color17;
+			break;	
+		case 17:
+			color = color18;
+			break;	
+		case 18:
+			color = color19;
+			break;	
+		case 19:
+			color = color20;
+			break;			
+		default:
+			color = color1;
+			break;
+	}
+    
+    for ( ii = BarCount - tbar; ii > 12 AND ii < BarCount; ii++ )
+    {
+		if (ii == BarCount - 1)
+			op = 0;
+		else
+			op = 1;
+        drawpos( rs[ ii ], rm[ ii ], color, sym, op  );  
+    }
+    //WriteIf( ii == BarCount - 1, sym, "" )
+
+    RestorePriceArrays( True );
+    
+}
+
+
+//////////////////////////////////////////////////////////////////
+// ------------------ LOC XU HUONG CO PHIEU --------------------//
+//////////////////////////////////////////////////////////////////
+
+//Daily
+Lagging = rs < 0 AND rm < 0; 
+Improving = rs < 0 AND rm > 0;
+Leading = rs > 0 AND rm > 0;
+Weakening = rs > 0 AND rm < 0;
+
+xuhuong1 = WriteIf( Lagging, "3. Lagging",WriteIf( Improving, "4. Improving",WriteIf( Leading, "1. Leading",WriteIf( Weakening, "2. Weakening", "5." ) ) ) );
+colorxh1 = IIf( Lagging, colorOrange,IIf( Improving, colorSkyblue,IIf( Leading, colorBrightGreen,IIf( Weakening, colorYellow, colorLightGrey ) ) ) );
+ 
+// Weekly
+TimeFrameSet (inWeekly);
+rsx = getrs (C, 1);
+rmx = getrs (C, 0);
+TimeFrameRestore ();
+rs1 = TimeFrameExpand (rsx, inWeekly);
+rm1 = TimeFrameExpand (rmx, inWeekly);
+
+Lagging1 = rs1 < 0 AND rm1 < 0;
+Improving1 = rs1 < 0 AND rm1 > 0;
+Leading1 = rs1 > 0 AND rm1 > 0;
+Weakening1 = rs1 > 0 AND rm1 < 0;
+
+xuhuong2 = WriteIf( Lagging1, "3. Lagging",WriteIf( Improving1, "4. Improving",WriteIf( Leading1, "1. Leading",WriteIf( Weakening1, "2. Weakening", "5." ) ) ) );
+colorxh2 = IIf( Lagging1, colorOrange,IIf( Improving1, colorSkyblue,IIf( Leading1, colorBrightGreen,IIf( Weakening1, colorYellow, colorLightGrey ) ) ) );
+
+Chg = ROC( C, 1 );
+
+Filter = 1;
+AddColumn( C, "Close", 1.3, colorDefault, colorDefault);
+AddColumn( Chg, "% Thay doi", 1.2, IIf( Chg > 0, colorGreen, IIf( Chg < 0, colorRed, colorDefault ) ), IIf( Chg >= 6, colorPaleGreen, IIf( Chg <= -6, colorPink, colorDefault ) ) ,130);
+AddTextColumn( xuhuong1, "XU HUONG NGAY", 1.0, IIf( colorxh1 == colorLightGrey, colorxh1, colorDefault ), colorxh1,180 );
+AddTextColumn( xuhuong2, "XU HUONG TUAN", 1.0, IIf( colorxh2 == colorLightGrey, colorxh2, colorDefault ), colorxh2,180 );
+SetSortColumns(6);

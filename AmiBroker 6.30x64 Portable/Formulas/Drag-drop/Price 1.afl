@@ -1,0 +1,411 @@
+_SECTION_BEGIN("Price");
+SetChartOptions(0,chartShowArrows|chartShowDates);
+_N(Title = StrFormat("{{NAME}} - {{INTERVAL}} {{DATE}} Open %g, Hi %g, Lo %g, Close %g (%.1f%%) {{VALUES}}", O, H, L, C, SelectedValue( ROC( C, 1 ) ) ));
+Plot( C, "Close", ParamColor("Color", colorDefault ), styleNoTitle | ParamStyle("Style") | GetPriceStyle() ); 
+_SECTION_END();
+
+RequestTimedRefresh (1);
+GraphXSpace=15;
+_SECTION_BEGIN("Haiken"); Candle=ParamList("Candle","Heikin Ashi,Normal Candlestick",0);
+
+if(Candle=="Heikin Ashi")
+{
+HaClose = (O + H + L + C)/4; 
+HaOpen = AMA( Ref( HaClose, -1 ), 0.5 ); 
+HaHigh = Max( H, Max( HaClose, HaOpen ) ); 
+HaLow = Min( L, Min( HaClose, HaOpen ) ); 
+//xDiff = (HaHigh - Halow) * 10000;
+barcolor = IIf(HaClose >= HaOpen,colorBrightGreen,colorRed);
+barcolor1 = IIf(HaClose >= HaOpen,colorGreen,colorDarkRed);
+SetBarFillColor(barcolor1 );
+PlotOHLC( HaOpen, HaHigh, HaLow, HaClose, "", barcolor, styleCandle );
+}
+if(Candle=="Normal Candlestick")
+{
+barcolor1 = IIf(Close >= Open,colorLime,colorDarkRed);
+SetBarFillColor(barcolor1 );
+Plot( C, "",IIf( C < O, colorRed, colorBrightGreen ), styleCandle );
+}
+_SECTION_END();
+Title = GetFnData( "Alias" ) + StrFormat( " Open %g, Hi %g, Lo %g, Close %g (%.1f%%), Vol= %.2f (%.0f%%) {{VALUES}}", O, H, L, C, SelectedValue( ROC( C, 1 ) ),  V/1000, SelectedValue( ROC( V, 1 ) ) ); 
+yDayH = 	TimeFrameGetPrice("H", inDaily, -1);	   		yDayHI = LastValue (yDayH,1); 		// yesterdays high
+yDayL = 	TimeFrameGetPrice("L", inDaily, -1);	 		yDayLI = LastValue (yDayL,1);			// yesterdays low
+yDayC = 	TimeFrameGetPrice("C", inDaily, -1);	 		yDayCI = LastValue (yDayC,1);			// yesterdays close
+Show_Day=ParamToggle("Day","No|Yes",1);
+if(Show_Day){ 
+Plot(yDayH  ,"\nHi", colorRed, styleLine | styleNoRescale );
+Plot(yDayL  ,"Lo", colorGreen, styleLine | styleNoRescale );
+Plot((yDayL+yDayH+yDayC)/3  ,"Av", colorYellow, styleLine | styleNoRescale);
+}
+Plot(HMA(C,150),"H1",colorYellow,styleThick|styleDots|styleNoRescale,0,0,0,0,1);
+_SECTION_BEGIN("NMA3");
+
+k3 = 2.2;//Optimize("K",Param("K3",1.85,1,5,0.05),1,5,0.05);//1.85/5
+
+Per3= 17;//Optimize("atr",Param("atr3",5,3,30,1),3,30,1);
+
+j=(O+H+L+C)/4;
+
+nm= (H-L);
+
+rfsctor = WMA(nm, PER3);
+
+revers = K3 * rfsctor;
+
+Trend3 = 1;
+
+NW3[0] = 0;
+
+for(i = 1; i < BarCount; i++)
+
+{
+
+if(Trend3[i-1] == 1)
+
+{
+
+if(j[i] < NW3[i-1])
+
+{
+
+Trend3[i] = -1;
+
+NW3[i] = j[i] + Revers[i];
+
+}
+
+else
+
+{
+
+Trend3[i] = 1;
+
+if((j[i] - Revers[i]) > NW3[i-1])
+
+{
+
+NW3[i] = j[i] - Revers[i];
+
+}
+
+else
+
+{
+
+NW3[i] = NW3[i-1];
+
+}
+
+}
+
+}
+
+if(Trend3[i-1] == -1)
+
+{
+
+if(j[i] > NW3[i-1])
+
+{
+
+Trend3[i] = 1;
+
+NW3[i] = j[i] - Revers[i];
+
+}
+
+else
+
+{
+
+Trend3[i] = -1;
+
+if((j[i] + Revers[i]) < NW3[i-1])
+
+{
+
+NW3[i] = j[i] + Revers[i];
+
+}
+
+else
+
+{
+
+NW3[i] = NW3[i-1];
+
+}
+
+}
+
+}
+
+}
+
+Plot(NW3, "Blue", IIf(Trend3 == 1, colorBlue, colorBlue), 1,0,0,0,0,2);
+_SECTION_END();
+_SECTION_BEGIN("NMA2");
+
+k2 = 2.6;//Optimize("K",2.5,2,4,0.05);
+
+Per2=10;//Optimize("atr",10,5,15,1);
+
+j=(O+H+L+C)/4;
+
+nm= (H-L);
+
+rfsctor = WMA(nm, PER2);
+
+revers = K2 * rfsctor;
+
+Trend2 = 1;
+
+NW2[0] = 0;
+
+for(i = 1; i < BarCount; i++)
+
+{
+
+if(Trend2[i-1] == 1)
+
+{
+
+if(j[i] < NW2[i-1])
+
+{
+
+Trend2[i] = -1;
+
+NW2[i] = j[i] + Revers[i];
+
+}
+
+else
+
+{
+
+Trend2[i] = 1;
+
+if((j[i] - Revers[i]) > NW2[i-1])
+
+{
+
+NW2[i] = j[i] - Revers[i];
+
+}
+
+else
+
+{
+
+NW2[i] = NW2[i-1];
+
+}
+
+}
+
+}
+
+if(Trend2[i-1] == -1)
+
+{
+
+if(j[i] > NW2[i-1])
+
+{
+
+Trend2[i] = 1;
+
+NW2[i] = j[i] - Revers[i];
+
+}
+
+else
+
+{
+
+Trend2[i] = -1;
+
+if((j[i] + Revers[i]) < NW2[i-1])
+
+{
+
+NW2[i] = j[i] + Revers[i];
+
+}
+
+else
+
+{
+
+NW2[i] = NW2[i-1];
+
+}
+
+}
+
+}
+
+}
+
+
+Plot(NW2, "Pink", IIf(Trend2 == 1, colorCustom12, colorCustom12), 1|styleNoRescale,0,0,0,0,2);
+Show_Song=ParamToggle("SongHMA","No|Yes",1);
+if(Show_Song){ 
+PlotOHLC(NW3,NW3,nw2,nw2, "",IIf(nw3>nw2,  colorLime,(IIf(nw3< nw2,  colorLightOrange, colorBlack))), styleCloud | styleClipMinMax |styleNoLabel);
+}
+_SECTION_END();
+_SECTION_BEGIN("Sup");
+var3=(C-LLV(L,17))/(HHV(H,17)-LLV(L,17))*100;
+var4=WMA(var3,10);var5=WMA(var4,3);j=3*var4-2*var5;
+sub=LLV(j,17);
+_SECTION_END();
+_SECTION_BEGIN("RSI");
+RP = 12;//Param("RSI",12,7,20,1);
+R= RSIa(C, RP);
+Period1=12;//Param("Period 1", 14, 5, 50, 1); 
+Period2=12;//Param("Period 2", 12, 5, 50, 1);
+EMA1= EMA(R,Period1);EMA2= EMA(EMA1,Period2);Difference= EMA1 - EMA2;ZeroLagEMA= EMA1 + Difference;
+PRSI=abs(ZeroLagEMA);
+ExL = Cross(Sub,PRSI) ;//AND Sub>=65; 
+PlotShapes(shapeCircle *ExL, colorYellow,0,H,12);
+Sound= ExL;
+AlertIf( Sound, "SOUND C:\\Windows\\Media\\Windows Logon", "Sell " + C, 2, 1 + 2, 1 );
+
+_SECTION_BEGIN("DTM Fibonacci Retracement");
+//Plot(C,"", colorWhite,styleCandle); 
+fibs = ParamToggle("Plot Fibs","Off|On",0);
+text = ParamToggle("Plot Text","Off|On",1);
+nbar    = Param("Bars Back",60,10,262,1); 
+EndBar 		= EndValue(BarIndex()); 
+StartBar	= EndBar-nbar; // To plot Fibonnaci lines from last 60 bars, this can be customised based on your requirement
+StartBar_C 	= Close[StartBar];
+
+i 	= StartBar; 
+Prd = EndBar - StartBar; 
+
+Lo = LLV(L,Prd); 
+Hi = HHV(H,Prd); 
+Line0 = Line1 = Line2 = Line3 = Line4 = Line5 = Line100 = 0; 
+
+for( i = StartBar; i < EndBar; i++ ) 
+{ 
+if(EndValue(C)<StartBar_C) 
+{ 
+Line0 	= EndValue(Lo); 
+Line100 = EndValue(Hi); 
+Line1 	= Line0 + abs(Line100-Line0)*0.236; 
+Line2 	= Line0 + abs(Line100-Line0)*0.382; 
+Line3 	= Line0 + abs(Line100-Line0)*0.5; 
+Line4 	= Line0 + abs(Line100-Line0)*0.618; 
+Line5 	= Line0 + abs(Line100-Line0)*0.786; 
+
+} 
+else 
+{ 
+Line100 = EndValue(Lo); 
+Line0 	= EndValue(Hi); 
+Line1 	= Line0 - abs(Line100-Line0)*0.236; 
+Line2 	= Line0 - abs(Line100-Line0)*0.382; 
+Line3 	= Line0 - abs(Line100-Line0)*0.5; 
+Line4 	= Line0 - abs(Line100-Line0)*0.618; 
+Line5 	= Line0 - abs(Line100-Line0)*0.786; 
+
+} 
+} 
+
+//////////////////////// CONDITIONS /////////////////////////////////
+
+fib0	= LineArray(StartBar, Line0, EndBar, Line0, 0, 1); 
+fib100 	= LineArray(StartBar, Line100, EndBar, Line100, 0, 1); 
+
+// depth of middle lines 
+n = round((EndBar-StartBar)/2); 
+
+// middle lines 
+fib1= LineArray((EndBar-n), Line1, EndBar, Line1, 0, 1);  
+fib2= LineArray((EndBar-n), Line2, EndBar, Line2, 0, 1); 
+fib3= LineArray((EndBar-n), Line3, EndBar, Line3, 0, 1); 
+fib4= LineArray((EndBar-n), Line4, EndBar, Line4, 0, 1); 
+fib5= LineArray((EndBar-n), Line5, EndBar, Line5, 0, 1);
+
+if(fibs==1)
+{
+Plot(fib0,"", colorWhite,styleNoLabel); 
+Plot(fib1,"", colorGreen,styleNoLabel); 
+Plot(fib2,"", colorBlue,styleNoLabel); 
+Plot(fib3,"", colorGold,styleNoLabel);  
+Plot(fib4,"", colorAqua,styleNoLabel); 
+Plot(fib5,"", colorYellow,styleNoLabel); 
+Plot(fib100,"", colorRed,styleNoLabel);    
+}
+if(text==1)
+{ 
+PlotText(" 0.00%= "+ WriteVal(fib0%10000,1.1),EndBar+2, Line0,colorWhite);
+PlotText(" 23.6%= "+ WriteVal(fib1%10000,1.1),EndBar+2, Line1,colorGreen);
+PlotText(" 38.6%= "+ WriteVal(fib2%10000,1.1),EndBar+2, Line2,colorBlue);
+PlotText(" 50%= "+ WriteVal(fib3%10000,1.1),EndBar+2, Line3,colorGold);
+PlotText(" 61.8%= "+ WriteVal(fib4%10000,1.1),EndBar+2, Line4,colorAqua);
+PlotText(" 78.6%= "+ WriteVal(fib5%10000,1.1),EndBar+2, Line5,colorYellow);
+PlotText(" 100%= "+ WriteVal(fib100%10000,1.1),EndBar+2, Line100,colorRed);
+}
+_SECTION_END();
+
+GraphXSpace=5;
+SetBarsRequired(sbrAll,sbrAll);
+ 
+// BUYING VOLUME AND SELLING VOLUME //
+_SECTION_BEGIN("B_S Volume");
+BV = IIf( (H==L), 0, V*(C-L)/(H-L) );
+SV = IIf( (H==L), 0, V*(H-C)/(H-L) );
+DV = BV - SV; // Effort Volume
+y=-1;
+x=Param("x",11,5,20,1);
+y1 = y+x;
+y2=y1+x;
+PlotText( "BS." + "Vol: " +WriteVal(DV,1.0), BarCount+2 , y2,colorGold);
+PlotText( "back" + "V: " +WriteVal(Ref(DV,-1),1.0), BarCount+2 , y1,colorGold);
+PlotText( "back" + "V: " +WriteVal(Ref(DV,-2),1.0), BarCount+2 , y,colorGold);
+_SECTION_END();
+
+_SECTION_BEGIN("Divergence");
+n=6;
+Buy=Sell=0;
+Var = Zig(RSI(14), n);
+t= Trough(RSI(14), n, 1);
+p= Peak(RSI(14), n, 1);
+x[0] =Var[0];
+price[0] = C[0];
+j=0;
+
+// bearish divergence
+for ( i=0; i<BarCount; i++)
+{
+if(Var[i] == p[i])
+{
+
+j++;
+x[j] =Var[i];
+price[j] =C[i];
+if(x[j] <x[j-1] && price[j-1]< price[j])
+Sell[i] =1;
+}
+}
+
+// bullish divergence
+for ( i=0; i<BarCount; i++)
+{
+if(Var[i] == t[i])
+{
+j++;
+x[j] =Var[i];
+price[j] =C[i];
+if(x[j] >x[j-1] && price[j]<price[j-1])
+Buy[i] =1;
+}
+}
+
+//Plot(Var, "", 39);
+PlotShapes ( IIf(Sell, shapeDigit2, shapeNone), colorYellow);
+PlotShapes( IIf(Buy, shapeDigit2, shapeNone), colorBrightGreen,0,0,10);
+_SECTION_END();

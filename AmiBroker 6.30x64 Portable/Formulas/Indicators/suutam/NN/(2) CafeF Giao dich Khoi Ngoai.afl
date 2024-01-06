@@ -1,0 +1,74 @@
+//Giai phap du lieu CafeF.vn - Chi bao ve Giao dich toan thi truong
+//CafeF Data Solution - Trading History Indicator
+//Ban co the download du lieu hang ngay (EOD) tai http://cafef.vn/du-lieu/download.chn
+//Bo Indicator nay duoc cung cap mien phi, va khong phai la khuyen nghi Mua/Ban. CafeF khong chiu trach nhiem cho bat cu
+//thiet hai nao xay ra khi ban su dung bo Chi bao nay.
+
+barvisible = Status("barvisible");
+Leftbar=ValueWhen(Ref(barvisible,-1)==0 AND barvisible,DateTime() );
+Rightbar=LastValue(DateTime() );
+DateSpan = EndValue(BarIndex()) - BeginValue(BarIndex());
+Range = DateSpan ;
+StartDate = BeginValue(BarIndex());
+EndDate = EndValue(BarIndex());
+
+NN = "NN_" + Name();
+
+KLBan = Foreign(NN,"C",0);
+KLMua = Foreign(NN,"O",0);
+
+GTMua = Prec(Foreign(NN,"V",0),0);
+GTBan = Prec(Foreign(NN,"interest",0),0);
+
+TBGiaMua = IIf(KLMua != 0,GTMua/KLMua,0);
+TBGiaBan = IIf(KLBan != 0,GTBan/KLBan,0);
+TBGiaMuaBan = IIf(TBGiaBan !=0 , TBGiaMua /TBGiaBan *100,0);
+
+
+_SECTION_BEGIN("Title on Chart");
+if( Status("action") == actionIndicator )
+(
+Title= EncodeColor(ColorRGB(133,5,133))+ StrFormat( "{{NAME}} - {{INTERVAL}} - {{DATE}} ")+" -  (Giao dich Khoi Ngoai)"+
+		EncodeColor(ColorRGB(133,5,133))+"\n-------------------------------------"+
+		EncodeColor(colorDarkGreen)+"\nKL NN Mua ="+WriteVal(KLMua,12.0)+
+		EncodeColor(colorRed)+"\nKL NN Ban ="+WriteVal(KLBan,12.0)+
+		EncodeColor(ColorRGB(133,5,133))+"\n-------------------------------------"+
+
+		EncodeColor(colorDarkGreen)+"\nGia tri NN Mua ="+WriteVal(GTMua,12.0)+
+		EncodeColor(colorRed)+"\nGia tri NN Ban ="+WriteVal(GTBan,12.0)+
+		EncodeColor(ColorRGB(133,5,133))+"\n-------------------------------------"+
+
+		EncodeColor(colorDarkGreen)+"\nTB Gia NN Mua = "+WriteVal(TBGiaMua,1.2)+
+		EncodeColor(colorRed)+"\nTB Gia NN Ban = "+WriteVal(TBGiaBan,1.2)
+);
+_SECTION_END();
+
+_SECTION_BEGIN("Name");
+GfxSetOverlayMode(0);
+GfxSelectFont("Verdana", Status("pxheight")/18 );
+GfxSetTextAlign( 6 );// center alignment
+GfxSetTextColor( ColorRGB( 12, 0, 150 ) );
+GfxTextOut( "CafeF Data Solution",Status("pxwidth")/10, Status("pxheight")/1.11); 
+_SECTION_END();
+
+function PlotGradientArea( array, caption, ColorTop, ColorBottom ) 
+{ 
+ bkclr = GetChartBkColor(); 
+
+ HH = HighestVisibleValue( array ); 
+ if( NOT IsNull( hh ) ) SetChartBkGradientFill( ColorTop, ColorBottom, bkclr, Null, HH ); 
+ Plot( array, Caption, ColorBlend( ColorBottom, colorBlack ) ); 
+ PlotOHLC( HH, HH, array, HH, "", bkclr, styleNoLabel | styleNoTitle | styleCloud, Null, Null, 0, -10 ); 
+} 
+
+
+_SECTION_BEGIN("Chart Display");
+P1 = KLBan;
+P2 = KLMua;
+Color = ParamColor("Color", colorLightGrey );
+Style = ParamStyle("Style") | styleNoRescale;;
+Plot( bbt1 = KLBan,"",colorBrown); 
+Plot( bbb1 = 0,"",colorLightGrey);
+PlotOHLC( bbt1, bbt1, bbb1, bbb1, "", ColorBlend( Color, colorWhite, 0.9 ), styleCloud | styleNoRescale, Null, Null, Null, -1 );
+PlotGradientArea( KLMua, "Close", ParamColor("Top", colorGreen), ParamColor("Bottom", colorPaleGreen ) ); 
+_SECTION_END() ;

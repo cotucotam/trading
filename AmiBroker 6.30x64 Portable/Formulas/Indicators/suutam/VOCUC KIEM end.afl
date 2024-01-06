@@ -1,0 +1,90 @@
+// Bo tin hieu mua ban theo duong ZZ duoc viet boi Vocucdn
+// thong tin co ban
+_SECTION_BEGIN("ZZ");
+ _SECTION_BEGIN("Price");
+SetChartOptions(0,chartShowArrows|chartShowDates);
+_N(Title = StrFormat("{{NAME}} - {{INTERVAL}} {{DATE}} {{OHLCX}} Vol %.0f {{VALUES}}", V ));
+Plot( C, "Close", ParamColor("Color", colorDefault ), styleNoTitle | ParamStyle("Style") | GetPriceStyle() ); 
+_SECTION_END();
+_SECTION_BEGIN("Volume");
+Color = ParamColor("Color", ColorRGB( 128, 128, 192 ) );
+Plot( Volume, _DEFAULT_NAME(), ColorBlend( Color, GetChartBkColor(), 0.5  ), styleNoTitle | ParamStyle( "Style", styleHistogram | styleOwnScale | styleThick | styleNoLabel, maskHistogram  ), 2 );
+_SECTION_END();
+// tin hieu duong ZZ
+_SECTION_BEGIN("ZZ");
+ PercentChange = 6;
+ZZ = Zig(C,LastValue(PercentChange)) ; 
+Plot( ZZ, _DEFAULT_NAME(), ParamColor( "Color", colorCycle ), ParamStyle("Style") );
+PivotLow = Ref(IIf(Ref(ROC(ZZ,1),-1) < 0 AND ROC(ZZ,1) > 0, 1, Null),1);
+PivotHigh = Ref(IIf(Ref(ROC(ZZ,1),-1) > 0 AND ROC(ZZ,1) < 0, 1, Null),1);
+Buy= PivotLow;
+Sell = PivotHigh;
+MeanPricebuy = IIf(PivotLow>=1, Prec(ZZ,2),0);
+MeanPricesell = IIf(PivotHigh>=1, Prec(ZZ,2),0);
+BuyPrice = ValueWhen(Buy, MeanPricebuy, 1);
+SellPrice = ValueWhen(Sell,MeanPricesell, 1);
+for( i = 0; i < BarCount; i++ )
+{
+if( Buy[i] ) PlotShapes(IIf(PivotLow>=1,shapeUpArrow , shapeNone), ColorRGB(168,255,0), 0, Low, Offset=-15);
+if( Buy[i] ) PlotText( "Mua@" + BuyPrice[ i ], i, L[ i ]*0.98, colorGreen );
+if( Sell[i] ) PlotText( "Ban@" + SellPrice[ i ], i, H[ i ]*1.02,  colorYellow );
+if( Sell[i] ) PlotShapes(IIf(PivotHigh>=1,shapeDownArrow, shapeNone), colorRed, 0,High, Offset=-30);
+}
+_SECTION_BEGIN("FACEBOOK: VOCUCDN");
+GfxSetBkMode(1);
+X=1000;
+Y=1;
+Font=10;
+GfxSelectFont("Impact",Font*1.5, 550);GfxSetTextColor(colorRed);GfxTextOut(FullName()+" - "+Name(),x,y);
+GfxSelectFont("Impact",Font*1.2, 550);GfxSetTextColor(colorYellow);GfxTextOut("Nganh nghe: "+IndustryID( 1 ),x,Y+25);
+// lay ngay mua
+BuyDate = ValueWhen(Buy , DateTime(), 1);
+chuyenngay = NumToStr( BuyDate, formatDateTime );
+cutngay = StrTrim( chuyenngay, " 00:00:00" );
+demTBuy = BarsSince(Buy);
+Trend = IIf(PivotLow>=1 OR ZZ- Ref(ZZ,-1)>=0 OR PivotHigh>=1,2,-2);// cai nay quan trong
+baongaymua = WriteIf(Trend>=1, "Khuyen nghi mua ngay: "+cutngay + "- T"+demTBuy,"");
+GfxSelectFont("Impact",Font*1.2, 550);GfxSetTextColor(colorBrightGreen);GfxTextOut(baongaymua,x,Y+25+18);
+Giamua = IIf(Trend>=1, BuyPrice,-1);
+Giamuat = WriteIf(Trend>=1, ""+BuyPrice,"");
+tanggiam1= Prec( ( ( C - BuyPrice) / O ) * 100,2);//lam tron so
+tanggiam2 = IIf(Giamua>=0,tanggiam1,0);
+tanggiam3 = WriteIf(Giamua>=0, ""+tanggiam1+"%","");
+plotgia = WriteIf(Trend>=1, "Khuyen nghi mua gia: "+Giamuat + "- Loi nhuan: "+tanggiam3+"    RSI: "+Prec(RSI(14),0)+" //  MFI: "+ Prec(MFI(14),0),"");
+GfxSelectFont("Impact",Font*1.2, 550);GfxSetTextColor(colorBrightGreen);GfxTextOut(plotgia,x,Y+25+18+18);
+_SECTION_END();
+//Bo loc
+SetOption( "Nodefaultcolumns", True ); 
+AddTextColumn( Name(), "Ma CK",1.2,IIf(Close>Ref(Close,-1), colorGreen, IIf(Close<Ref(Close,-1), colorRed, colorDefault))); // Ten
+AddTextColumn( FullName(), "Ten Cty"); //Ful ten
+AddTextColumn( IndustryID( 1 ), "Nganh nghe" );// Nganh nghe
+//AddColumn(Datetime(),"Date",formatDateTime);
+chuyenngay1 = NumToStr( Datetime(), formatDateTime );// chuyen ngay qua chuoi
+cutngay1 = StrTrim( chuyenngay1, " 00:00:00" ); // cut gio phut giay
+AddTextColumn(cutngay1 , "Date",  colorDefault, colorDefault);
+// Cot5. Gia
+AddColumn(Close,"Gia",1.2,IIf(Close>Ref(Close,-1), colorGreen, IIf(Close<Ref(Close,-1), colorRed, colorYellow)));
+// Cot6. Tang Giam
+AddColumn( ( ( C - Ref ( C ,-1 )) / O ) * 100 , " % Change " , 1.2 ,IIf(Close>Ref(Close,-1), colorGreen, IIf(Close<Ref(Close,-1), colorRed, colorYellow)));
+// Cot7. GTGD
+AddColumn(Close*Volume,"GTGD",1);
+SetSortColumns(-7);
+AddColumn(MA(Ref(V,-1),10),"Vol AVG",1);
+AddColumn(RSIa(C,14),"RSI",1.2,IIf(RSIa(C,14)>Ref(RSIa(C,14),-1), colorGreen, IIf(RSIa(C,14)<Ref(RSIa(C,14),-1), colorRed, colorYellow)));// Hien thi RSI
+
+///
+
+Khuyennghi = WriteIf(Trend>=1 AND PivotLow>=1, "Mua",WriteIf(Trend>=1 AND PivotHigh>=1 , "Ban",""));
+khuyennghiColor = IIf(Trend>=1 AND PivotLow>=1, colorGreen, colorRed);
+AddTextColumn(Khuyennghi, "Khuyen nghi", 1.2, khuyennghiColor , colorDefault);
+//
+
+baongaymua2 = WriteIf(Trend>=1,cutngay ,"");
+AddTextColumn(baongaymua2 , "Ngay khuyen nghi mua",  colorDefault, colorDefault);
+demTBuy2 = IIf( Trend>=1,BarsSince(Buy),-2);
+AddColumn(demTBuy2,"T+",1);
+AddTextColumn(Giamuat , "Gia khuyen nghi mua",  colorDefault, colorDefault);
+Giamua2 = IIf(Trend>=1, BuyPrice,0);
+loinhuan = IIf(Trend>=1, (( C - Giamua2) / O ) * 100,0);
+AddColumn( loinhuan , " % Loi nhuan " , 1.2 ,IIf(Close>Giamua2, colorGreen, IIf(Close<Giamua2, colorRed, colorYellow)));
+Filter = MA(Ref(V,-1),10) >= 100000 AND demTBuy2>=0 ;

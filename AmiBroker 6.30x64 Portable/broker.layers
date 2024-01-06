@@ -5,11 +5,11 @@ Default layer
 22
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
 Intraday layer
-1 1 1 1
+0 1 1 1
 22
 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
 Daily layer
-0 1 1 1
+1 1 1 1
 22
 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
 Weekly layer

@@ -1,0 +1,168 @@
+// Downloaded From https://kakata.vn
+_SECTION_BEGIN("Sector Comparing - Kakata.vn");
+Title = GetFnData( "Alias" ) + " - " + StrFormat("KAKATA.VN - Youtube.com/c/KakataChungKhoan, {{FULLNAME}} - {{INTERVAL}}: {{DATE}}, Open %g, Hi %g, Lo %g, Close %g (%.1f%%), Vol(mil) %.2f (%.0f%%) {{VALUES}}", O, H, L, C, SelectedValue( ROC( C, 1 ) ),  V / 1000000, SelectedValue( ROC( V, 1 ) ) ); 
+GfxSetOverlayMode(1);
+GfxSelectFont("Tahoma", Status("pxheight")/32 );
+GfxSetTextAlign(6 );// center alignment
+GfxSetTextColor( ParamColor( "Warna", colorLightGrey ) );
+GfxSetBkMode(0); // transparent
+GfxTextOut( "Youtube: Kakata Chung Khoan", Status("pxwidth")/2, Status("pxheight")/20 );
+
+Cl0=colorLightOrange;
+Cl1=colorPink;
+Cl2=colorOrange;
+Cl3=colorGreen ;
+Cl4=colorTurquoise;
+Cl5=colorLime;
+Cl6=colorBlueGrey;
+Cl7=colorYellow;
+Cl8=colorBrightGreen;
+Cl9=colorRed;
+C20=colorDarkBlue;
+C21=colorTan;
+C22=colorDarkYellow;
+C23=colorViolet ;
+C24=colorBlack;
+C25=colorAqua;
+C26=colorBrown;
+C27=colorDarkTeal;
+C28=colorGold;
+C29=colorSkyblue;
+
+
+//Set Variables
+barvisible = Status("barvisible");
+FVB = barvisible AND NOT Ref( barvisible, -1 );
+CVB = ValueWhen(  FVB,C) ;
+Leftbar=ValueWhen(Ref(barvisible,-1)==0 AND barvisible,DateTime() );
+Rightbar=LastValue(DateTime() );
+DateSpan = EndValue(BarIndex()) - BeginValue(BarIndex());
+Range = DateSpan ;
+StartDate = BeginValue(BarIndex());
+EndDate = EndValue(BarIndex());
+
+//Select Tickers
+Fn0=ParamStr( "Fund0", "HPG");
+Fn1=ParamStr( "Fund1", "HSG");
+Fn2=ParamStr( "Fund2", "NKG");
+Fn3=ParamStr( "Fund3", "SMC");
+Fn4=ParamStr( "Fund4", "TLH");
+Fn5=ParamStr( "Fund5", "POM");
+Fn6=ParamStr( "Fund6", "TVN");
+Fn7=ParamStr( "Fund7", "");
+Fn8=ParamStr( "Fund8", "");
+Fn9=ParamStr( "Fund9", "");
+Fn10=ParamStr( "Fund10", "");
+Fn11=ParamStr( "Fund11", "");
+Fn12=ParamStr( "Fund12", "");
+Fn13=ParamStr( "Fund13", "");
+Fn14=ParamStr( "Fund14", "");
+Fn15=ParamStr( "Fund15", "");
+Fn16=ParamStr( "Fund16", "");
+Fn17=ParamStr( "Fund17", "");
+Fn18=ParamStr( "Fund18", "");
+Fn19=ParamStr( "Fund19", "");
+
+
+//Normalized to left edge
+Fa0=Prec(100*(Foreign(Fn0,"C")/ValueWhen(FVB,Foreign(Fn0,"C"))-1),2.2);
+Fa1=Prec(100*(Foreign(Fn1,"C")/ValueWhen(FVB,Foreign(Fn1,"C"))-1),2.2);
+Fa2=Prec(100*(Foreign(Fn2,"C")/ValueWhen(FVB,Foreign(Fn2,"C"))-1),2.2);
+Fa3=Prec(100*(Foreign(Fn3,"C")/ValueWhen(FVB,Foreign(Fn3,"C"))-1),2.2);
+Fa4=Prec(100*(Foreign(Fn4,"C")/ValueWhen(FVB,Foreign(Fn4,"C"))-1),2.2);
+Fa5=Prec(100*(Foreign(Fn5,"C")/ValueWhen(FVB,Foreign(Fn5,"C"))-1),2.2);
+Fa6=Prec(100*(Foreign(Fn6,"C")/ValueWhen(FVB,Foreign(Fn6,"C"))-1),2.2);
+Fa7=Prec(100*(Foreign(Fn7,"C")/ValueWhen(FVB,Foreign(Fn7,"C"))-1),2.2);
+Fa8=Prec(100*(Foreign(Fn8,"C")/ValueWhen(FVB,Foreign(Fn8,"C"))-1),2.2);
+Fa9=Prec(100*(Foreign(Fn9,"C")/ValueWhen(FVB,Foreign(Fn9,"C"))-1),2.2);
+Fa10=Prec(100*(Foreign(Fn10,"C")/ValueWhen(FVB,Foreign(Fn10,"C"))-1),2.2);
+Fa11=Prec(100*(Foreign(Fn11,"C")/ValueWhen(FVB,Foreign(Fn11,"C"))-1),2.2);
+Fa12=Prec(100*(Foreign(Fn12,"C")/ValueWhen(FVB,Foreign(Fn12,"C"))-1),2.2);
+Fa13=Prec(100*(Foreign(Fn13,"C")/ValueWhen(FVB,Foreign(Fn13,"C"))-1),2.2);
+Fa14=Prec(100*(Foreign(Fn14,"C")/ValueWhen(FVB,Foreign(Fn14,"C"))-1),2.2);
+Fa15=Prec(100*(Foreign(Fn15,"C")/ValueWhen(FVB,Foreign(Fn15,"C"))-1),2.2);
+Fa16=Prec(100*(Foreign(Fn16,"C")/ValueWhen(FVB,Foreign(Fn16,"C"))-1),2.2);
+Fa17=Prec(100*(Foreign(Fn17,"C")/ValueWhen(FVB,Foreign(Fn17,"C"))-1),2.2);
+Fa18=Prec(100*(Foreign(Fn18,"C")/ValueWhen(FVB,Foreign(Fn18,"C"))-1),2.2);
+Fa19=Prec(100*(Foreign(Fn19,"C")/ValueWhen(FVB,Foreign(Fn19,"C"))-1),2.2);
+
+
+//Plot Normalized Graphs
+Plot(Fa0,Fn0,Cl0,4); x = LastValue( BarIndex() ) + 1; y = LastValue( Fa0 );PlotText(Fn0, x, y,colorLightOrange);
+Plot(Fa1,Fn1,Cl1,4); x = LastValue( BarIndex() ) + 1; y = LastValue( Fa1 );PlotText(Fn1, x, y,colorPink);
+Plot(Fa2,Fn2,Cl2,4); x = LastValue( BarIndex() ) + 1; y = LastValue( Fa2 );PlotText(Fn2, x, y,colorOrange);
+Plot(Fa3,Fn3,Cl3,4); x = LastValue( BarIndex() ) + 1; y = LastValue( Fa3 );PlotText(Fn3, x, y,colorGreen);
+Plot(Fa4,Fn4,Cl4,4); x = LastValue( BarIndex() ) + 1; y = LastValue( Fa4 );PlotText(Fn4, x, y,colorTurquoise);
+Plot(Fa5,Fn5,Cl5,4); x = LastValue( BarIndex() ) + 1; y = LastValue( Fa5 );PlotText(Fn5, x, y,colorLime);
+Plot(Fa6,Fn6,Cl6,4); x = LastValue( BarIndex() ) + 1; y = LastValue( Fa6 );PlotText(Fn6, x, y,colorBlueGrey);
+Plot(Fa7,Fn7,Cl7,4); x = LastValue( BarIndex() ) + 1; y = LastValue( Fa7 );PlotText(Fn7, x, y,colorYellow);
+Plot(Fa8,Fn8,Cl8,4); x = LastValue( BarIndex() ) + 1; y = LastValue( Fa8 );PlotText(Fn8, x, y,colorBrightGreen );
+Plot(Fa9,Fn9,Cl9,4); x = LastValue( BarIndex() ) + 1; y = LastValue( Fa9 );PlotText(Fn9, x, y,colorRed );
+Plot(Fa10,Fn10,C20,4); x = LastValue( BarIndex() ) + 1; y = LastValue( Fa10 );PlotText(Fn10, x, y,colorDarkBlue );
+Plot(Fa11,Fn11,C21,4); x = LastValue( BarIndex() ) + 1; y = LastValue( Fa11 );PlotText(Fn11, x, y,colorTan);
+Plot(Fa12,Fn12,C22,4); x = LastValue( BarIndex() ) + 1; y = LastValue( Fa12 );PlotText(Fn12, x, y,colorDarkYellow );
+Plot(Fa13,Fn13,C23,4); x = LastValue( BarIndex() ) + 1; y = LastValue( Fa13 );PlotText(Fn13, x, y,colorViolet );
+Plot(Fa14,Fn14,C24,4); x = LastValue( BarIndex() ) + 1; y = LastValue( Fa14 );PlotText(Fn14, x, y,colorBlack );
+Plot(Fa15,Fn15,C25,4); x = LastValue( BarIndex() ) + 1; y = LastValue( Fa15 );PlotText(Fn15, x, y,colorAqua );
+Plot(Fa16,Fn16,C26,4); x = LastValue( BarIndex() ) + 1; y = LastValue( Fa16 );PlotText(Fn16, x, y,colorBrown );
+Plot(Fa17,Fn17,C27,4); x = LastValue( BarIndex() ) + 1; y = LastValue( Fa17 );PlotText(Fn17, x, y,colorDarkTeal );
+Plot(Fa18,Fn18,C28,4); x = LastValue( BarIndex() ) + 1; y = LastValue( Fa18 );PlotText(Fn18, x, y,colorGold );
+Plot(Fa19,Fn19,C29,4); x = LastValue( BarIndex() ) + 1; y = LastValue( Fa19 );PlotText(Fn19, x, y,colorSkyblue );
+
+Plot(0,"",colorDarkBlue,styleNoLine+styleDots);
+
+//Calculate % Change between markers
+Fv0=IIf(startdate==0,Fa0,100*(EndValue(Foreign(Fn0,"C")-BeginValue(Foreign(Fn0,"C"))))/BeginValue(Foreign(Fn0,"C")));
+Fv9=IIf(startdate==0,Fa9,100*(EndValue(Foreign(Fn9,"C")-BeginValue(Foreign(Fn9,"C"))))/BeginValue(Foreign(Fn9,"C")));
+Fv8=IIf(startdate==0,Fa8,100*(EndValue(Foreign(Fn8,"C")-BeginValue(Foreign(Fn8,"C"))))/BeginValue(Foreign(Fn8,"C")));
+Fv7=IIf(startdate==0,Fa7,100*(EndValue(Foreign(Fn7,"C")-BeginValue(Foreign(Fn7,"C"))))/BeginValue(Foreign(Fn7,"C")));
+Fv6=IIf(startdate==0,Fa6,100*(EndValue(Foreign(Fn6,"C")-BeginValue(Foreign(Fn6,"C"))))/BeginValue(Foreign(Fn6,"C")));
+Fv5=IIf(startdate==0,Fa5,100*(EndValue(Foreign(Fn5,"C")-BeginValue(Foreign(Fn5,"C"))))/BeginValue(Foreign(Fn5,"C")));
+Fv4=IIf(startdate==0,Fa4,100*(EndValue(Foreign(Fn4,"C")-BeginValue(Foreign(Fn4,"C"))))/BeginValue(Foreign(Fn4,"C")));
+Fv3=IIf(startdate==0,Fa3,100*(EndValue(Foreign(Fn3,"C")-BeginValue(Foreign(Fn3,"C"))))/BeginValue(Foreign(Fn3,"C")));
+Fv2=IIf(startdate==0,Fa2,100*(EndValue(Foreign(Fn2,"C")-BeginValue(Foreign(Fn2,"C"))))/BeginValue(Foreign(Fn2,"C")));
+Fv1=IIf(startdate==0,Fa1,100*(EndValue(Foreign(Fn1,"C")-BeginValue(Foreign(Fn1,"C"))))/BeginValue(Foreign(Fn1,"C")));
+Fv10=IIf(startdate==0,Fa10,100*(EndValue(Foreign(Fn10,"C")-BeginValue(Foreign(Fn10,"C"))))/BeginValue(Foreign(Fn10,"C")));
+Fv19=IIf(startdate==0,Fa19,100*(EndValue(Foreign(Fn19,"C")-BeginValue(Foreign(Fn19,"C"))))/BeginValue(Foreign(Fn19,"C")));
+Fv18=IIf(startdate==0,Fa18,100*(EndValue(Foreign(Fn18,"C")-BeginValue(Foreign(Fn18,"C"))))/BeginValue(Foreign(Fn18,"C")));
+Fv17=IIf(startdate==0,Fa17,100*(EndValue(Foreign(Fn17,"C")-BeginValue(Foreign(Fn17,"C"))))/BeginValue(Foreign(Fn17,"C")));
+Fv16=IIf(startdate==0,Fa16,100*(EndValue(Foreign(Fn16,"C")-BeginValue(Foreign(Fn16,"C"))))/BeginValue(Foreign(Fn16,"C")));
+Fv15=IIf(startdate==0,Fa15,100*(EndValue(Foreign(Fn15,"C")-BeginValue(Foreign(Fn15,"C"))))/BeginValue(Foreign(Fn15,"C")));
+Fv14=IIf(startdate==0,Fa14,100*(EndValue(Foreign(Fn14,"C")-BeginValue(Foreign(Fn14,"C"))))/BeginValue(Foreign(Fn14,"C")));
+Fv13=IIf(startdate==0,Fa13,100*(EndValue(Foreign(Fn13,"C")-BeginValue(Foreign(Fn13,"C"))))/BeginValue(Foreign(Fn13,"C")));
+Fv12=IIf(startdate==0,Fa12,100*(EndValue(Foreign(Fn12,"C")-BeginValue(Foreign(Fn12,"C"))))/BeginValue(Foreign(Fn12,"C")));
+Fv11=IIf(startdate==0,Fa11,100*(EndValue(Foreign(Fn11,"C")-BeginValue(Foreign(Fn11,"C"))))/BeginValue(Foreign(Fn11,"C")));
+
+
+
+Title=
+// Left Bar Date
+WriteIf(startdate==0, WriteVal(leftbar,formatDateTime),WriteVal(BeginValue(DateTime()),formatDateTime))+
+//Right Bar Date
+WriteIf(EndValue(DateTime() )==rightbar, "              Kakata.vn                  "+Date(),
+"                       "+WriteVal(Range,1)+" days                       "+WriteVal(EndValue(Month()),1.0) +"/" + WriteVal(EndValue(Day()),1.0) + "/20" + StrRight( WriteVal(EndValue(Year()),1.0),2))
+
+//List of Funds
++" \n"+EncodeColor(Cl0)+Fn0 + WriteIf(IsTrue(fa0),"           ["+WriteVal(fv0,1.2)+"]  ","")
++" \n"+EncodeColor(Cl1)+Fn1 + WriteIf(IsTrue(fa1),"           ["+WriteVal(fv1,1.2)+"]  ","")
++" \n"+EncodeColor(Cl2)+Fn2 + WriteIf(IsTrue(fa2),"           ["+WriteVal(fv2,1.2)+"]  ","")
++" \n"+EncodeColor(Cl3)+fn3 + WriteIf(IsTrue(fa3),"           ["+WriteVal(fv3,1.2)+"]  ","")
++" \n"+EncodeColor(Cl4)+Fn4 + WriteIf(IsTrue(fa4),"           ["+WriteVal(fv4,1.2)+"]  ","")
++" \n"+EncodeColor(Cl5)+Fn5 + WriteIf(IsTrue(fa5),"           ["+WriteVal(fv5,1.2)+"]  ","")
++" \n"+EncodeColor(Cl6)+Fn6 + WriteIf(IsTrue(fa6),"           ["+WriteVal(fv6,1.2)+"]  ","")
++" \n"+EncodeColor(Cl7)+Fn7 + WriteIf(IsTrue(fa7),"           ["+WriteVal(fv7,1.2)+"]  ","")
++" \n"+EncodeColor(Cl8)+Fn8 + WriteIf(IsTrue(fa8),"           ["+WriteVal(fv8,1.2)+"]  ","")
++" \n"+EncodeColor(Cl9)+Fn9 + WriteIf(IsTrue(fa9),"           ["+WriteVal(fv9,1.2)+"]  ","")
++" \n"+EncodeColor(C20)+Fn10 + WriteIf(IsTrue(fa10),"         ["+WriteVal(fv10,1.2)+"]  ","") 
++" \n"+EncodeColor(C21)+Fn11 + WriteIf(IsTrue(fa11),"         ["+WriteVal(fv11,1.2)+"]  ","")
++" \n"+EncodeColor(C22)+Fn12 + WriteIf(IsTrue(fa12),"         ["+WriteVal(fv12,1.2)+"]  ","")
++" \n"+EncodeColor(C23)+fn13 + WriteIf(IsTrue(fa13),"         ["+WriteVal(fv13,1.2)+"]  ","")
++" \n"+EncodeColor(C24)+Fn14 + WriteIf(IsTrue(fa14),"         ["+WriteVal(fv14,1.2)+"]  ","")
++" \n"+EncodeColor(C25)+Fn15 + WriteIf(IsTrue(fa15),"         ["+WriteVal(fv15,1.2)+"]  ","")
++" \n"+EncodeColor(C26)+Fn16 + WriteIf(IsTrue(fa16),"         ["+WriteVal(fv16,1.2)+"]  ","")
++" \n"+EncodeColor(C27)+Fn17 + WriteIf(IsTrue(fa17),"         ["+WriteVal(fv17,1.2)+"]  ","")
++" \n"+EncodeColor(C28)+Fn18 + WriteIf(IsTrue(fa18),"         ["+WriteVal(fv18,1.2)+"]  ","")
++" \n"+EncodeColor(C29)+Fn19 + WriteIf(IsTrue(fa19),"         ["+WriteVal(fv19,1.2)+"]  ","");
+
+
+_SECTION_END();

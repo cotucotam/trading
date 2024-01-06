@@ -1,0 +1,196 @@
+
+// Code: Foreign (NN).afl (AmiBroker - Designed by © MAI DUY KHANH, Edited by @ KHANH BLADE - KAKATA.VN)
+
+// A. Foreign Activity
+
+_SECTION_BEGIN("Foreign Activity For Steel");
+
+function SFormatDate (NumFormatDate)
+{
+S=StrFormat("%0.9g",NumFormatDate);
+
+yyy=StrLeft(S,3);
+mm=StrMid(S,3,2);
+dd=StrRight(S,2);
+
+yyyy=StrToNum(yyy)+1900;
+
+SD= dd + "/" + mm + "/" + NumToStr(yyyy,1,False);
+return SD;
+}
+
+StartDate1 = ParamDate("Ngay bat dau", NumToStr(DateTime(),formatDateTime),0 );
+EndDate1 = ParamDate( "Ngay ket thuc", NumToStr(DateTime(),formatDateTime),0 );
+
+DStart = BarsSince(DateNum()==StartDate1);
+DEnd = BarsSince(DateNum()==EndDate1);
+
+NOfBars=DStart-DEnd+1;
+
+NN = "NN_" + Name();
+
+//C1 = Foreign( "NN_HPG", "C" ) ;
+//C2 = Foreign( "NN_HSG", "C" ) ;
+//C3 = Foreign( "NN_NKG", "C" ) ;
+//C4 = Foreign( "NN_SMC", "C" ) ;
+//C5 = Foreign( "NN_TVN", "C" ) ;
+//C6 = Foreign( "NN_HMC", "C" ) ;
+//C6 = Foreign( "NN_TLH", "C" ) ;
+
+//O1 = Foreign( "NN_HPG", "O" ) ;
+//O2 = Foreign( "NN_HSG", "O" ) ;
+//O3 = Foreign( "NN_NKG", "O" ) ;
+//O4 = Foreign( "NN_SMC", "O" ) ;
+//O5 = Foreign( "NN_TVN", "O" ) ;
+//O6 = Foreign( "NN_HMC", "O" ) ;
+//O6 = Foreign( "NN_TLH", "O" ) ;
+
+//KLBan = C1 + C2 + C3 + C4 + C5 + C6;
+//KLMua = O1 + O2 + O3 + O4 + O5 + O6
+KLBan = IIf(IsEmpty(Foreign(NN,"C",0)),0,Foreign(NN,"C",0));
+KLMua = IIf(IsEmpty(Foreign(NN,"O",0)),0,Foreign(NN,"O",0));
+KLRong = KLMua - KLBan;
+
+SKLRong=Ref(Sum(KLRong,NOfBars),-DEnd);
+SKLMua=Ref(Sum(KLMua,NOfBars),-DEnd);
+SKLBan=Ref(Sum(KLBan,NOfBars),-DEnd);
+
+//I1 = IIf(IsEmpty(Foreign("NN_HPG","interest",0)),0,Foreign("NN_HPG","interest",0));
+//I2 = IIf(IsEmpty(Foreign("NN_HSG","interest",0)),0,Foreign("NN_HSG","interest",0));
+//I3 = IIf(IsEmpty(Foreign("NN_NKG","interest",0)),0,Foreign("NN_NKG","interest",0));
+//I4 = IIf(IsEmpty(Foreign("NN_SMC","interest",0)),0,Foreign("NN_SMC","interest",0));
+//I5 = IIf(IsEmpty(Foreign("NN_TVN","interest",0)),0,Foreign("NN_TVN","interest",0));
+//I6 = IIf(IsEmpty(Foreign("NN_TLH","interest",0)),0,Foreign("NN_TLH","interest",0));
+
+//V1 = IIf(IsEmpty(Foreign("NN_HPG","V",0)),0,Foreign("NN_HPG","V",0));
+//V2 = IIf(IsEmpty(Foreign("NN_HSG","V",0)),0,Foreign("NN_HSG","V",0));
+//V3 = IIf(IsEmpty(Foreign("NN_NKG","V",0)),0,Foreign("NN_NKG","V",0));
+//V4 = IIf(IsEmpty(Foreign("NN_SMC","V",0)),0,Foreign("NN_SMC","V",0));
+//V5 = IIf(IsEmpty(Foreign("NN_TVN","V",0)),0,Foreign("NN_TVN","V",0));
+//V6 = IIf(IsEmpty(Foreign("NN_TLH","V",0)),0,Foreign("NN_TLH","V",0));
+
+//GTBan = I1 + I2 + I3 + I4 + I5 + I6;
+//GTMua = V1 + V2 + V3 + V4 + V5 + V6;
+GTBan = IIf(IsEmpty(Foreign(NN,"interest",0)),0,Foreign(NN,"interest",0));
+GTMua = IIf(IsEmpty(Foreign(NN,"V",0)),0,Foreign(NN,"V",0));
+GTRong = GTMua - GTBan;
+
+SGTRong=Ref(Sum(GTRong,NOfBars),-DEnd);
+SGTMua=Ref(Sum(GTMua,NOfBars),-DEnd);
+SGTBan=Ref(Sum(GTBan,NOfBars),-DEnd);
+
+GiaBQMua = IIf(SKLMua != 0,SGTMua/SKLMua,0);
+GiaBQBan = IIf(SKLBan != 0,SGTBan/SKLBan,0);
+
+RR = "RR_" + Name(); // File RR_: C = I/(I+V);
+
+ptramroom = IIf(IsEmpty(Foreign(RR,"O",0)),0,Foreign(RR,"O",0));
+roombg = Ref(ptramroom,-NOfBars-DEnd);
+roomed = Ref(ptramroom,-DEnd);
+
+SetOption("NoDefaultColumns", True );
+AddTextColumn(Name(),"Ticker");
+AddTextColumn(SFormatDate(StartDate1),"Ngay bat dau");
+AddTextColumn(SFormatDate(EndDate1),"Ngay ket thuc");
+AddColumn(NOfBars,"Tong so phien",1.0);
+AddColumn(roombg,"% SHNN bat dau",1.2);
+AddColumn(roomed,"% SHNN ket thuc",1.2);
+AddColumn(roomed-roombg,"% SHNN (+|-)",1.2);
+AddColumn(SKLMua,"Tong KLNN mua",1.0); 
+AddColumn(SKLBan,"Tong KLNN ban",1.0);
+AddColumn(SKLRong,"Tong KLNN rong",1.0);
+ratioKL = IIf((SKLMua==0)AND(SKLBan==0),0,IIf(SKLRong >= 0,SKLRong/SKLMua,SKLRong/SKLBan));
+AddColumn(ratioKL,"M/B ratio",1.2); 
+AddColumn(SGTMua,"Tong GTNN mua (ng. vnd)",1.0); 
+AddColumn(SGTBan,"Tong GTNN ban (ng. vnd)",1.0);
+AddColumn(SGTRong,"Tong GTNN rong (ng. vnd)",1.0);
+ratioGT = IIf(SGTBan != 0,SGTMua/SGTBan,0);
+AddColumn(ratioGT,"M/B ratio",1.2);  
+AddColumn(GiaBQMua,"Gia mua TB/cp",1.2); 
+AddColumn(GiaBQBan,"Gia ban TB/cp",1.2); 
+AddColumn(C,"Gia hien tai",1.1);
+AddColumn(DateTime(), "Ngay hien tai", formatDateTime );
+SetSortColumns(-11, -8); 
+
+Filter=1;
+
+_SECTION_END();
+
+// B. Chart
+
+_SECTION_BEGIN("Chart");
+
+//SetChartBkGradientFill( ParamColor("Top Color", colorWhite),ParamColor("Bottom Color", colorWhite));
+
+//Set Variables
+barvisible = Status("barvisible");
+FVB = barvisible AND NOT Ref( barvisible, -1 );
+CVB = ValueWhen( FVB,C) ;
+Leftbar=ValueWhen(Ref(barvisible,-1)==0 AND barvisible,DateTime() );
+Rightbar=LastValue(DateTime() );
+DateSpan = EndValue(BarIndex()) - BeginValue(BarIndex());
+Range = DateSpan ;
+StartDate = BeginValue(BarIndex());
+EndDate = EndValue(BarIndex());
+
+KLTLMua = Sum(KLMua,BarIndex());
+//FKLTLMua = KLTLMua - ValueWhen(FVB,KLTLMua);
+FKLTLMua = KLTLMua - ValueWhen(FVB,KLTLMua) + ValueWhen(FVB,KLMua);
+
+KLTLBan = Sum(KLBan,BarIndex());
+//FKLTLBan = KLTLBan - ValueWhen(FVB,KLTLBan);
+FKLTLBan = KLTLBan - ValueWhen(FVB,KLTLBan) + ValueWhen(FVB,KLBan);
+
+KLTLRong = Sum(KLRong,BarIndex());
+//FKLTLRong = KLTLRong - ValueWhen(FVB,KLTLRong);
+FKLTLRong = KLTLRong - ValueWhen(FVB,KLTLRong) + ValueWhen(FVB,KLRong);
+
+GTTLMua = Sum(GTMua,BarIndex())/1000000;
+//FGTTLMua = GTTLMua - ValueWhen(FVB,GTTLMua);
+FGTTLMua = GTTLMua - ValueWhen(FVB,GTTLMua) + ValueWhen(FVB,GTMua)/1000000;
+
+GTTLBan = Sum(GTBan,BarIndex())/1000000;
+//FGTTLBan = GTTLBan - ValueWhen(FVB,GTTLBan);
+FGTTLBan = GTTLBan - ValueWhen(FVB,GTTLBan) + ValueWhen(FVB,GTBan)/1000000;
+
+GTTLRong = Sum(GTRong,BarIndex())/1000000;
+//FGTTLRong = GTTLRong - ValueWhen(FVB,GTTLRong);
+FGTTLRong = GTTLRong - ValueWhen(FVB,GTTLRong) + ValueWhen(FVB,GTRong)/1000000;
+
+ColorKL = IIf(KLRong >0,colorGreen,colorRed);
+ColorGT = IIf(GTRong >0,colorGreen,colorRed);
+
+Title = EncodeColor(colorYellow) + EncodeColor(colorViolet) + " - GIAO DICH NUOC NGOAI " + EncodeColor(colorYellow)
++" [" + WriteIf(startdate==0, WriteVal(leftbar,formatDateTime),WriteVal(BeginValue(DateTime()),formatDateTime))+ " - "+WriteIf(EndValue(DateTime() )==rightbar, Date(),
+"                       "+WriteVal(Range,1)+" days                       "+WriteVal(EndValue(Month()),1.0) +"/" + WriteVal(EndValue(Day()),1.0) + "/20" + StrRight( WriteVal(EndValue(Year()),1.0),2))+"]"
++ EncodeColor(colorYellow) +" - "
++ EncodeColor(colorGreen)+ "KL: "+ EncodeColor(colorYellow) + WriteVal(KLMua,1.0) + " - " + WriteVal(KLBan,1.0)  + " = " +  WriteVal(KLRong,1.0)+ " (cp)"+", " 
++ EncodeColor(colorRed)+ "GT: "+ EncodeColor(colorYellow) + WriteVal(GTMua,1.0) + " - " + WriteVal(GTBan,1.0) + " = " +  WriteVal(GTRong,1.0)+ " (ng. vnd)"
++ "\n"
++ EncodeColor(colorBlue)+ "KL tích luy: "+ EncodeColor(colorYellow) + WriteVal(FKLTLMua,1.0) + " - " + WriteVal(FKLTLBan,1.0) + " = " +  WriteVal(FKLTLRong,1.0)+ " (cp)"
++ "\n"
++ EncodeColor(colorCustom12)+ "GT tích luy: "+ EncodeColor(colorYellow) + WriteVal(FGTTLMua,1.3) + " - " + WriteVal(FGTTLBan,1.3) + " = " +  WriteVal(FGTTLRong,1.3)+ " (ty vnd)";
+
+//Plot(KLRong, "NetVolFgn", ColorKL, ParamStyle( "Style", styleHistogram | styleOwnScale | styleThick, maskHistogram ),0);
+
+barcolor=IIf(GTRong<0, colorRed , IIf(GTRong>0, colorGreen , colorPaleBlue));
+
+Open=IIf(GTRong<0, 0, GTRong);
+Close=IIf(GTRong<0, GTRong, 0);
+High=Low=Open;
+
+Chtl = ParamToggle("Chart tich luy","On|Off",1);
+
+if(Chtl)
+{
+PlotOHLC(O,H,L,C, "GTRong", barcolor, styleCandle|styleThick); 
+Plot(EMA(GTRong,5), "AvgGTRong", colorPlum, styleLine);
+}
+else
+{
+Plot(0,"", colorYellow, styleLine | styleThick | styleDashed | styleNoLabel);
+Plot(FGTTLRong, "FGTTL", colorBlue, styleLine | styleThick | styleNoLabel);
+Plot(GTRong,"GTRong", IIf(GTRong > 0, colorTeal, colorCustom16), styleHistogram | styleThick | styleOwnScale | styleNoLabel);
+}
+
+_SECTION_END();

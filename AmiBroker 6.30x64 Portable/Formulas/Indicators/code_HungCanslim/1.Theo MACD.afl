@@ -1,0 +1,91 @@
+r1 = Param( "Fast avg", 12, 2, 200, 1 );
+
+r2 = Param( "Slow avg", 26, 2, 200, 1 );
+
+r3 = Param( "Signal avg", 9, 2, 200, 1 );
+
+ml=MACD(r1,r2);
+
+sl=Signal(r1,r2,r3);
+
+Plot( ml = MACD(r1, r2), StrFormat(_SECTION_NAME()+"(%g,%g)", r1, r2), ParamColor("MACD color", colorBlue ), ParamStyle("MACD style",styleThick) );
+
+Plot( sl = Signal(r1,r2,r3), "Signal" + _PARAM_VALUES(), ParamColor("Signal color", colorRed), ParamStyle("Signal style", styleThick) );
+
+Plot( ml-sl, "MACD Histogram",IIf( C > O, ParamColor("Up Color", colorGreen ), ParamColor("Down Color", colorRed ) ), styleNoTitle | ParamStyle("Histogram style", styleHistogram | styleNoLabel, maskHistogram ) );
+
+Buy = Cross(ml,sl);
+
+Sell= Cross(sl,ml);
+
+PlotShapes(IIf(Buy>0,shapeUpArrow,shapeNone),colorGreen,0,ml-0.001*ml,-8);
+
+PlotShapes(IIf(Sell>0,shapeDownArrow,shapeNone),colorRed,0,ml+0.001*ml,-8);
+
+Filter = Buy + Sell >0;
+
+AddColumn( IIf( Buy, 66,1 ), "Buy", formatChar, 1, bkcolor =IIf (Buy,colorGreen, colorRed ));
+
+AddColumn( IIf( Sell, 83,1 ), "Sell", formatChar, 1, bkcolor =IIf (Sell,colorRed, colorGreen ));
+
+AddColumn(C,"P");
+
+AddColumn(ml,"MACD()");
+
+AddColumn(sl,"signal");//////// 
+cao=Ref(HHV(C,10),-1);
+thap=Ref(LLV(C,10),-1);
+tl=(cao-thap)/cao*100;
+
+_SECTION_BEGIN("ADX");
+range = Param("Periods", 14, 2, 200, 1 );
+Plot( ADX(range), _DEFAULT_NAME(), ParamColor( "ADX color", colorBlue ), ParamStyle("ADX style", styleThick ) );
+r = ADX(range);
+PlotOHLC( r,r,22,r, "", IIf( r > 22, colorOrange, colorLightBlue ), styleCloud | styleClipMinMax, 22, 45 ); 
+Plot( T =PDI(range), "+DI", ParamColor( "+DI color", colorGreen ), ParamStyle("+DI style") );
+Plot( G = MDI(range), "-DI", ParamColor( "-DI color", colorRed ), ParamStyle("-DI style") );
+//Buy = Cross (T,G) AND ADX(14)>25;
+//Sell = Cross (G,T) AND ADX(14)>25;
+//Sideway = Cross(20,ADX(13);
+//Canhbao = Cross(45;ADX(13);
+//Filter=Buy OR Sell; //OR Sideway OR Canhbao;
+//Buy=ExRem(Buy,Sell); //Sell=ExRem(Sell,Buy); //Sideway = ExRem(Sideway,Canhbao);
+AddColumn(RSI(14),"RSI");
+AddColumn(ADX(14),"ADX",1.2,colorYellow,IIf(ADX(14)>25,colorGreen,colorBrown),90);
+AddColumn(T,"DI+",1.2,colorYellow,IIf(T>G,colorGreen,colorBrown),90);
+AddColumn(G,"DI-",1.2,colorYellow,IIf(G>T,colorGreen,colorBrown),90);
+AddColumn(Ref(C,-2), "Price -2", 1.2);
+AddColumn(Ref(C,-1), "Price -1", 1.2);
+AddColumn(ROC(C,1),"%Tang ", 1.2,colorYellow,IIf(C> Ref(C,-1),colorGreen,colorBrown),50);
+AddColumn(C,"Price",1.2,colorYellow,IIf(C>Ref(C,-1),colorGreen,colorBrown),50);
+AddColumn(MA(C,20), "MA(20)", 1.2);
+AddColumn(tl,"Tích Luy (%)",1.2,IIf(tl<=10,colorDefault,colorBlue),colorDefault,80);
+AddColumn(O," Open ",1.2); 
+AddColumn(H," High ",1.2,colorYellow,colorGreen,50);
+AddColumn(L," Low ",1.2,colorYellow,colorDarkRed,50);
+AddColumn(Ref(V,-2), "Vol-2",1,colorYellow,IIf(V-1>Ref(V,-2),colorGreen,colorBrown),90);
+AddColumn(Ref(V,-1), "Vol-1",1,colorYellow,IIf(V>Ref(V,-1),colorGreen,colorBrown),90);
+AddColumn(V,"Volume",1,colorYellow,IIf(V>Ref(V,-1),colorGreen,colorBrown),90);
+AddColumn(C*V,"Gia tri GD ",1,colorBlack,colorDefault,90);
+AddColumn(((V - MA(V,50))/MA(V,50))*100 ,"% Dot bien KL");
+AddColumn((((C - Ref(C,-20))/Ref(C,-20))*100 +((C - Ref(C,-40))/Ref(C,-40))*100+((C - Ref(C,-60))/Ref(C,-60))*100)/3 ,"BQ tang 3Tg");
+AddColumn(ROC(C,1),"%TG ",1.2,colorBlack,colorDefault,60);
+AddColumn((HHV(C,5)- LLV(C,5))/LLV(C,5),"% biendong 10p");
+AddColumn((HHV(C,60)- LLV(C,60))/LLV(C,60),"% biendong 60p"); 
+AddSummaryRows(16, 1.2,5);
+
+//====
+
+_SECTION_BEGIN("Cross MACD _ eB");
+
+GfxSetOverlayMode(0);
+
+GfxSelectFont("cambria", Status("pxheight")/30 );
+
+GfxSetTextAlign( 16 );// center alignment
+
+GfxSetTextColor( colorGrey50 );
+
+GfxTextOut( "Coppy right Mr.baolinh - eBroker.vn : 0932 439 639",Status("pxwidth")/13.5, Status("pxheight")/1.1); 
+
+_SECTION_END();

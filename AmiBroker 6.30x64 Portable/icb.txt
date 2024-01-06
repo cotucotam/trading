@@ -1,185 +1,185 @@
-0001; Oil & Gas 
-0500; Oil & Gas
-0530; Oil & Gas Producers 
-0533; Exploration & Production
-0537; Integrated Oil & Gas
-0570; Oil Equipment, Services & Distribution
-0573; Oil Equipment & Services
-0577; Pipelines
-0580; Alternative Energy 
-0583; Renewable Energy Equipment
-0587; Alternative Fuels
-1000; Basic Materials
-1300; Chemicals
-1350; Chemicals 
-1353; Commodity Chemicals
-1357; Specialty Chemicals
-1700; Basic Resources
-1730; Forestry & Paper 
-1733; Forestry
-1737; Paper
-1750; Industrial Metals & Mining
-1753; Aluminum
-1755; Nonferrous Metals
-1757; Iron & Steel
-1770; Mining 
-1771; Coal
-1773; Diamonds & Gemstones
-1775; General Mining
-1777; Gold Mining
-1779; Platinum & Precious Metals
-2000; Industrials 
-2300; Construction & Materials
-2350; Construction & Materials
-2353; Building Materials & Fixtures
-2357; Heavy Construction	
-2700; Industrial	Goods &	Services
-2710; Aerospace & Defense
-2713; Aerospace
-2717; Defense
-2720; General Industrials 
-2723; Containers & Packaging
-2727; Diversified Industrials
-2730; Electronic & Electrical Equipment
-2733; Electrical Components & Equipment
-2737; Electronic Equipment
-2750; Industrial Engineering
-2753; Commercial Vehicles & Trucks
-2757; Industrial Machinery
-2770; Industrial Transportation
-2771; Delivery Services
-2773; Marine Transportation
-2775; Railroads
-2777; Transportation Services
-2779; Trucking
-2790; Support Services 
-2791; Business Support Services
-2793; Business Training & Employment Agencies
-2795; Financial Administration
-2797; Industrial Suppliers
-2799; Waste & Disposal Services
-3000; Consumer Goods
-3300; Automobiles & Parts
-3350; Automobiles & Parts
-3353; Automobiles
-3355; Auto Parts 
-3357; Tires
-3500; Food & Beverage
-3530; Beverages 
-3533; Brewers
-3535; Distillers & Vintners
-3537; Soft Drinks
-3570; Food Producers
-3573; Farming & Fishing
-3577; Food Products
-3700; Personal &	Household Goods
-3720; Household Goods & Home Construction
-3722; Durable Household Products
-3724; Nondurable Household Products
-3726; Furnishings
-3728; Home Construction
-3740; Leisure Goods 
-3743; Consumer Electronics
-3745; Recreational Products
-3747; Toys
-3760; Personal Goods
-3763; Clothing & Accessories
-3765; Footwear
-3767; Personal Products
-3780; Tobacco 
-3785; Tobacco
-4000; Health Care 
-4500; Health Care 
-4530; Health Care Equipment & Services
-4533; Health Care Providers
-4535; Medical Equipment
-4537; Medical Supplies
-4570; Pharmaceuticals & Biotechnology
-4573; Biotechnology
-4577; Pharmaceuticals
-5000; Consumer Services
-5300; Retail 
-5330; Food & Drug Retailers
-5333; Drug Retailers
-5337; Food Retailers & Wholesalers
-5370; General Retailers
-5371; Apparel Retailers
-5373; Broadline Retailers
-5375; Home Improvement Retailers
-5377; Specialized Consumer Services
-5379; Specialty Retailers
-5500; Media 
-5550; Media 
-5553; Broadcasting & Entertainment
-5555; Media Agencies
-5557; Publishing
-5700; Travel & Leisure
-5750; Travel & Leisure
-5751; Airlines
-5752; Gambling
-5753; Hotels
-5755; Recreational Services
-5757; Restaurants & Bars
-5759; Travel & Tourism
-6000; Telecommunications
-6500; Telecommunications
-6530; Fixed Line Telecommunications
-6535; Fixed Line Telecommunications
-6570; Mobile Telecommunications
-6575; Mobile Telecommunications
-7000; Utilities 
-7500; Utilities 
-7530; Electricity 
-7535; Conventional Electricity
-7537; Alternative Electricity
-7570; Gas, Water & Multiutilities
-7573; Gas Distribution
-7575; Multiutilities
-7577; Water
-8000; Financials 
-8300; Banks 
-8350; Banks 
-8355; Banks
-8500; Insurance 
-8530; Nonlife Insurance 
-8532; Full Line Insurance
-8534; Insurance Brokers
-8536; Property & Casualty Insurance
-8538; Reinsurance
-8570; Life Insurance 
-8575; Life Insurance
-8600; Real Estate 
-8630; Real Estate Investment & Services
-8633; Real Estate Holding & Development
-8637; Real Estate Services
-8670; Real Estate Investment Trusts 
-8671; Industrial & Office REITs
-8672; Retail REITs
-8673; Residential REITs
-8674; Diversified REITs
-8675; Specialty REITs
-8676; Mortgage REITs
-8677; Hotel & Lodging REITs
-8700; Financial Services
-8770; Financial Services 
-8771; Asset Managers
-8773; Consumer Finance
-8775; Specialty Finance
-8777; Investment Services
-8779; Mortgage Finance
-8900; Investment Instruments
-8980; Equity Investment Instruments 
-8985; Equity Investment Instruments
-8990; Nonequity Investment Instruments
-8995; Nonequity Investment Instruments
-9000; Technology
-9500; Technology 
-9530; Software & Computer Services 
-9533; Computer Services
-9535; Internet
-9537; Software
-9570; Technology Hardware & Equipment
-9572; Computer Hardware
-9574; Electronic Office Equipment
-9576; Semiconductors
-9578; Telecommunications Equipment
+0001; Dau khi
+0500; Dau khi
+0530; San xuat dau khi
+0533; Tham do va san xuat dau khi
+0537; Dau khi tich hop
+0570; Thiet bi, dich vu va phan phoi dau khi
+0573; Thiet bi, dich vu khai thac dau mo
+0577; Ong dan dau khi
+0580; Nang luong thay the
+0583; Thiet bi nang luong tai tao
+0587; Nhien lieu thay the
+1000; Vat lieu co ban
+1300; Hoa chat
+1350; Hoa chat
+1353; Hoa chat co ban - San pham nhua, cao su, hoa chat
+1357; Hoa chat chuyen dung
+1700; Tai nguyen co ban
+1730; Lam nghiep va giay
+1733; Trong rung, khai thac go va kinh doanh lam san
+1737; Giay
+1750; Kim loai cong nghiep
+1753; Nhom
+1755; Kim loai mau
+1757; Thep
+1770; Khai khoang
+1771; Khai thac than
+1773; Kim cuong va Da quy
+1775; Khai khoang chung
+1777; Khai thac vang
+1779; Khai thac bach kim va cac kim loai quy khac
+2000; Cong nghiep
+2300; Xay dung va vat lieu xay dung
+2350; Xay dung va vat lieu xay dung
+2353; Thiet bi, vat lieu xay dung
+2357; Xay dung, xay lap
+2700; Cac san pham va dich vu cong nghiep
+2710; Cong nghiep hang khong vu tru va quoc phong
+2713; Cong nghiep hang khong vu tru
+2717; Cong nghiep quoc phong
+2720; Cong nghiep Da dung
+2723; Thung, hop, bao bi
+2727; Cong nghiep Da nganh
+2730; Thiet bi Dien, Dien tu
+2733; Cac linh kien va thiet bi Dien
+2737; Cac thiet bi Dien tu
+2750; Co khi, che tao may
+2753; Cac phuong tien thuong mai va xe thung
+2757; May cong nghiep
+2770; Van tai, kho bai
+2771; Dich vu buu chinh
+2773; Van tai bien
+2775; Duong sat
+2777; Dich vu van tai
+2779; Xe tai
+2790; Dich vu ho tro, tu van, thiet ke
+2791; Cac dich vu ho tro kinh doanh
+2793; Dao tao nhan su va viec lam
+2795; Dieu hanh, theo doi tai chinh
+2797; Cac nha cung cap cong nghiep
+2799; Dich vu xu ly nuoc thai, rac thai
+3000; Hang tieu dung
+3300; Oto va linh kien oto
+3350; Oto va linh kien oto
+3353; O to
+3355; Linh kien oto
+3357; Lop
+3500; Thuc pham va Do uong
+3530; Do uong
+3533; Bia
+3535; Chung cat va ban ruou
+3537; Nuoc giai khat
+3570; San xuat thuc pham
+3573; Nong san, thuy san, Don Dien
+3577; San pham thuc pham
+3700; Hang tieu dung ca nhan va gia Dinh
+3720; Hang gia dung
+3722; San pham gia dung lau ben
+3724; San pham gia dung khong lau ben
+3726; Noi that
+3728; Xay dung nha o
+3740; Hang tieu khien
+3743; Do Dien tu tieu dung
+3745; San pham tieu khien
+3747; Do choi
+3760; Do dung ca nhan
+3763; Quan ao va Do phu kien
+3765; Da giay
+3767; San pham ca nhan
+3780; Thuoc la
+3785; Thuoc la
+4000; Y te
+4500; Y te
+4530; Thiet bi va dich vu y te
+4533; Cac nha cung cap dich vu y te
+4535; Trang thiet bi y te
+4537; Vat tu y te
+4570; Duoc pham va cong nghe sinh hoc
+4573; Cong nghe sinh hoc
+4577; Duoc pham
+5000; Dich vu tieu dung
+5300; Ban le
+5330; Ban le thuc pham va duoc pham
+5333; Ban le thuoc
+5337; Ban buon ban le thuc pham
+5370; Ban le chung
+5371; Ban le Do may mac
+5373; Ban le tong hop
+5375; Ban le Do noi that
+5377; Dich vu tieu dung Dac chung
+5379; Ban le Dac chung
+5500; Truyen thong
+5550; Truyen thong
+5553; Phat thanh truyen hinh
+5555; Cac cong ty truyen thong
+5557; Xuat ban
+5700; Du lich va giai tri
+5750; Du lich va giai tri
+5751; Hang khong cho khach
+5752; Co bac
+5753; Khach san
+5755; Dich vu giai tri
+5757; Nha hang va bar
+5759; Du lich
+6000; Vien thong
+6500; Vien thong
+6530; Vien thong co Dinh
+6535; Vien thong co Dinh
+6570; Vien thong di Dong
+6575; Vien thong di Dong
+7000; Cac dich vu ha tang
+7500; Cac dich vu ha tang
+7530; Dien
+7535; San xuat va cung cap Dien truyen thong
+7537; San xuat va cung cap Dien bang nang luong thay the
+7570; Ga, nuoc va cac tien ich khac
+7573; Phan phoi khi Dot
+7575; Da tien ich
+7577; Cung cap nuoc sach
+8000; Tai chinh
+8300; Ngan hang
+8350; Ngan hang
+8355; Ngan hang
+8500; Bao hiem
+8530; Bao hiem phi nhan tho
+8532; Cac cong ty bao hiem tong hop
+8534; Moi gioi bao hiem
+8536; Bao hiem tai san va tai nan
+8538; Tai bao hiem
+8570; Bao hiem nhan tho
+8575; Bao hiem nhan tho
+8600; Bat Dong san
+8630; Dau tu bat Dong san va dich vu
+8633; Cac cong ty Dau co va phat trien bat Dong san
+8637; Dich vu bat Dong san
+8670; Dau tu tin thac bat Dong san
+8671; Tin thac Dau tu bat Dong san cong nghiep va van phong
+8672; Tin thac Dau tu bat Dong san ban le
+8673; Tin thac Dau tu bat Dong san nha o
+8674; Tin thac Dau tu bat Dong san Da dang
+8675; Tin thac Dau tu bat Dong san Dac biet
+8676; Tin thac Dau tu bat Dong san the chap
+8677; Tin thac Dau tu bat Dong san khach san va nha nghi
+8700; Dich vu tai chinh
+8770; Tai chinh tong hop
+8771; Quan ly tai san
+8773; Tai chinh ban le
+8775; Tai chinh Dac thu
+8777; Dich vu Dau tu
+8779; Tai chinh the chap
+8900; Dau tu chung khoan/phi chung khoan
+8980; Quy Dong
+8985; Quy Dong
+8990; Quy mo
+8995; Quy mo
+9000; Cong nghe
+9500; Cong nghe
+9530; Phan mem va dich vu Dien toan
+9533; Dich vu Dien toan
+9535; Dich vu internet
+9537; Cong nghe phan mem
+9570; Cong nghe phan cung va thiet bi
+9572; Cong nghe phan cung
+9574; Thiet bi Dien tu van phong
+9576; Thiet bi ban dan
+9578; Thiet bi vien thong

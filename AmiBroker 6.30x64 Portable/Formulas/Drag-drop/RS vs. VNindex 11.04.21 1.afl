@@ -1,0 +1,50 @@
+_SECTION_BEGIN("RS vs. VNindex");	
+ticker=ParamStr("ticker","vnindex");
+
+RSL = C/Foreign(ticker, "C")*1000;
+
+RSLHigh 		= RSL == HHV(RSL, 65);
+rslb			= RSL + C[BarCount-1]/4;
+PlotShapes(IIf(RSLb>=Ref(HHV(rslb,26),-1),shapeCircle, shapeNone), IIf(RSLb>=Ref(HHV(rslb,26),-1) AND RSLb<Ref(HHV(RSLb,65),-1) ,colorGold,IIf(RSLb>=Ref(HHV(RSLb,65),-1) AND RSLb<Ref(HHV(RSLb,130),-1),colorRed,colorAqua)), 0, rslb, 0);
+pd=Param("Period",20,5,50,1);
+Plot(HHV(rslb,26),"H26",colorGold,styleDashed);
+Plot(HHV(rslb,65),"H65",colorRed,styleDashed);
+Plot(HHV(rslb,130),"H130",colorTeal,styleDashed);
+Plot(rslb, "RS Line", colorTeal, styleDashed+styleThick+styleNoLabel);
+
+sig = EMA(rslb, 20);
+Plot(sig, "EMA of Ratio", colorBrown, styleLine | styleThick);
+
+vonhoa= C*GetFnData("SharesOut");
+dkvol = V>100000 AND C*V>3000000 AND vonhoa > 1000000000 ;
+
+Filter= RSLhigh and dkvol;
+
+AddColumn(C, "Close",1.2,IIf(C>=O,colorBlack,colorRed));
+AddColumn( ( ( C - Ref ( C ,-1 )) / O ) * 100 , " % Change " , 1.2 ) ;
+AddColumn(V,"Vol",1.0,colorWhite,IIf(V>MA(V,30),colorBlue,colorGold));
+AddColumn(Sum(RSLhigh,10),"RSL",1.0,colorWhite,IIf(RSLb>=Ref(HHV(rslb,26),-1) AND RSLb<Ref(HHV(RSLb,65),-1),colorgold,IIf(RSLb>=Ref(HHV(rslb,65),-1) AND RSLb<Ref(HHV(RSLb,130),-1),colorRed,colorTeal )));
+AddColumn(RSLhigh,"New RS high",1.0,colorWhite,IIf(rslhigh==1,colorBlue,colorWhite));
+SetSortColumns(-6);
+
+_SECTION_END();
+
+listnum = 5; // we use watchlist 10 for storing results
+
+// erase the watchlist when we process very first symbol
+if ( Status( "stocknum" ) == 0 )
+{
+    // retrieve watchlist members
+    oldlist = CategoryGetSymbols( categoryWatchlist, listnum );
+
+    // iterate through the list and remove tickers
+    for ( i = 0; ( sym = StrExtract( oldlist, i ) ) != ""; i++ )
+    {
+        CategoryRemoveSymbol( sym, categoryWatchlist, listnum );
+    }
+}
+
+// check how many times Filter variable was true in the tested range
+// if non-zero value detected, add current symbol to a watchlist
+if ( LastValue( Cum( Filter AND Status( "barinrange" ) ) )  )
+    CategoryAddSymbol( "", categoryWatchlist, listnum );

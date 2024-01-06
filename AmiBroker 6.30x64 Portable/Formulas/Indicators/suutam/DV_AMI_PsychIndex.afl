@@ -1,0 +1,28 @@
+_SECTION_BEGIN("PsychIndex");
+LookBack= Param("Number of lookback periods",12, 2, 100);
+UThreshold= Param("Upper threshold (%)",75, 0, 100);
+LThreshold= Param("Lower threshold (%)", 25,0, 100);
+UpDay= Close > Ref(Close,-1);
+PsychIndex= 100*Sum(UpDay,LookBack) / LookBack;
+Periods = 10;
+x= MA(PsychIndex,Periods);
+Plot(PsychIndex,_DEFAULT_NAME(),ParamColor("Color",colorCustom11), ParamStyle("Style",styleLine));
+Plot(x,"MA(10)",colorCustom12,styleDashed); 
+Plot(UThreshold,"75",colorRed,styleDashed|styleNoTitle); 
+Plot(LThreshold,"25",colorLime,styleDashed|styleNoTitle);
+
+Buy = Cross(PsychIndex,x);
+Sell = Cross( x , PsychIndex);
+AlertIF( Buy,"SOUND C:WindowsMediaDing.wav", "Audio alert", 2 );
+
+PlotShapes(IIf(Buy,shapeUpArrow,shapeNone),colorGreen, layer= 0, x);
+PlotShapes(IIf(Sell,shapeDownArrow,shapeNone),colorred, layer= 0, x);
+dk_kl= V>= 30000;
+Filter = Buy AND dk_kl OR Sell AND dk_kl;
+
+AddColumn( IIf( Buy, 66 , 83 ), "Buy", formatChar, colorWhite, IIf( Buy , colorGreen, colorWhite ) );
+AddColumn( IIf( Sell, 83 , 66 ), "Sell", formatChar, colorWhite, IIf( Sell , colorRed, colorWhite ) );
+AddColumn(Close,"Entry Price",1.4, colorDefault, IIf( buy, colorGreen, colorRed ));
+AddColumn(Volume,"Volume tang 125% thì màu xanh",1.0, colorDefault, IIf ((Volume > 1.25 * EMA( Volume, 34 )),ColorRGB(0,128,255),colorYellow));
+
+_SECTION_END();

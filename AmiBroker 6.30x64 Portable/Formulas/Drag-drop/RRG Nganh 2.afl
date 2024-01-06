@@ -1,0 +1,1103 @@
+_SECTION_BEGIN( "RRG Chart" );
+
+//==========================
+ 
+_N( base = ParamStr( "Base", "vnindex" ) );
+tbar = Param( "Trailing Bar", 12, 1, 100, 1 );
+ 
+EnableTextOutput( False );
+GfxSetOverlayMode( 2 );
+ 
+pxl = Status( "pxchartleft" );
+pxr = Status( "pxchartright" );
+pxt = Status( "pxcharttop" );
+pxb = Status( "pxchartbottom" );
+pxw = ( pxr - pxl ) / 2;
+pxh = ( pxb - pxt ) / 2;
+xm = pxl + pxw;
+ym = pxt + pxh;
+
+GfxSelectPen(colorGreen); 
+
+// ve mau cho chart
+GfxSelectPen(colorGreen);
+GfxSelectSolidBrush(colorBrightGreen);
+GfxRectangle( pxw, pxt, pxr, pxh );
+
+GfxSelectSolidBrush(ColorRGB(255,250,179));
+GfxRectangle( pxw, pxh, pxr, pxb );
+
+GfxSelectSolidBrush(ColorRGB(235,113,83));
+GfxRectangle( pxl,pxh, pxw, pxb );
+
+GfxSelectSolidBrush(ColorRGB(103,191,127));
+GfxRectangle( pxl,pxt, pxw, pxh );
+
+// Viet chu cac goc phan tu
+CoChu=Status("pxheight")/20;
+XuongHang=Status("pxheight")/12-Status("pxheight")/9;
+QuaCot=Status("pxwidth")/4-Status("pxwidth")/6;
+
+GfxSetBkMode( 1 );
+GfxSelectFont("Tahoma", CoChu );
+GfxSetTextColor( colorViolet);
+GfxTextOut( "DAN DAT +/+", pxr-3*quaCot, pxt-1.2*XuongHang );
+GfxTextOut( "SUY YEU +/-", pxr-3*quaCot, pxb+2.6*XuongHang );
+GfxTextOut( "TUT HAU -/-", pxl+0.2*quaCot, pxb+2.6*XuongHang );
+GfxTextOut( "CAI THIEN -/+", pxl+0.2*quaCot, pxt-1.2*XuongHang );
+
+GfxSetTextColor( colorBlack );
+GfxSelectFont("Tahoma", CoChu/2 );
+
+//tinh gia watchlist
+Sowl=6;
+function TinhCList(Sowl )
+{
+ listNganh = CategoryGetSymbols( categoryWatchlist, Sowl );
+
+
+    for( a = 0; ( MAcp = StrExtract( Listnganh, a ) ) != ""; a++ )
+    {
+        Vol= MA(Foreign( MAcp, "V" ),50);
+        giatri = Foreign( MAcp, "C" )*Vol;
+        if( a == 0 ) {TongVol = 1;
+                TongGtri=0;}
+        else {TongGtri = tongGtri + GiaTri;
+                 TongVol=TongVol+Vol;}
+    }
+    return (TongGtri / TongVol);
+}
+
+//ham tinh chi so RS, giai quyet cho wl
+ 
+function getrs ( sowl, t )
+{
+    
+    bc = Foreign( base, "C" );
+    sbr = tinhCList(sowl) / bc;
+ 
+    rs1 = MA( sbr, 12 );
+    rs2 = MA( sbr, 26 );
+    rs = 100 * ( ( rs1 - rs2 ) / rs2 + 1 );
+ 
+    rm1 = MA( rs, 1 );
+    rm2 = MA( rs, 9 );
+    rm = 100 * ( ( rm1 - rm2 ) / rm2 + 1 );
+ 
+    return IIf( t, rs , rm ) - 100;
+}
+ // ham ve do thi
+function drawpos (sowl, x, y, text )
+{
+    rsl = VarGet( "rsl" );
+    rsh = VarGet( "rsh" );
+    rml = VarGet( "rml" );
+    rmh = VarGet( "rmh" );
+ 
+    xx = pxl + pxw + x * ( pxw / ( Max( rsh, -rsl ) * 1.10 ) );
+    yy = pxb - pxh - y * ( pxh / ( Max( rmh, -rml ) * 1.10 ) );
+     
+    Ten=CategoryGetName( categoryWatchlist, sowl );
+    xp = Nz( VarGet( "xp" + ten ), xx );// neu bien xp+sym ko co thi no = xx
+    yp = Nz( VarGet( "yp" + ten ), yy );
+ 
+    VarSet( "xp" + ten, xx );
+    VarSet( "yp" + ten, yy );
+ 
+    GfxMoveTo( xp, yp );
+    GfxLineTo( xx, yy );
+      GfxSelectSolidBrush(colorRed);
+    GfxCircle( xx, yy, IIf( text == "", 2, 4 ) );//ve nhung cham nho
+ 
+    if ( text != "" ) GfxTextOut( ten, xx + 6 , yy - 3 );// viet chu cuoi dthi
+}
+//=====================================
+function Ve(sowl)
+{
+    rs = getrs( sowl, 1 );
+    rm = getrs( sowl, 0 );
+
+    
+    for ( ii = BarCount - tbar; ii < BarCount; ii++ )
+    {
+        rs_ = rs[ ii ];
+        rm_ = rm[ ii ];
+ 
+        rsh = Nz( VarGet( "rsh" ), rs_ );
+        if ( rs_ >= rsh )
+            VarSet( "rsh", rs_ );
+ 
+        rsl = Nz( VarGet( "rsl" ), rs_ );
+        if ( rs_ <= rsl )
+            VarSet( "rsl", rs_ );
+ 
+        rmh = Nz( VarGet( "rmh" ), rm_ );
+        if ( rm_ >= rmh )
+            VarSet( "rmh", rm_ );
+ 
+        rml = Nz( VarGet( "rml" ), rm_ );
+        if ( rm_ <= rml )
+            VarSet( "rml", rm_ );
+
+        drawpos(sowl, rs[ ii ], rm[ ii ], WriteIf( ii == BarCount - 1, "yes", "" ) );
+    }
+}
+
+VeNganHang=ParamList("Ngan Hang","Hien|An");
+VeBDS=ParamList("BDS","Hien|An");
+VeBdskcn=ParamList("Bds Kcn","Hien|An");
+VeChungKhoan=ParamList("Chung Khoan","Hien|An");
+VeDauKhi=ParamList("Dau Khi","Hien|An");
+VeCongNghe=ParamList("Cong Nghe","Hien|An");
+VeCangBien=ParamList("Cang Bien","Hien|An");
+VePhanBon=ParamList("Phan Bon","Hien|An");
+VeThep=ParamList("Thep","Hien|An");
+VeDetMay=ParamList("Det May","Hien|An");
+VeThuySan=ParamList("Thuy San","Hien|An");
+VeXayDung=ParamList("Xay Dung","Hien|An");
+VeDien=ParamList("NL Dien","Hien|An");
+VeBanLe=ParamList("Ban Le","Hien|An");
+VeHangKo=ParamList("Hang Ko","Hien|An");
+VeMiaDuong=ParamList("Mia Duong","Hien|An");
+VeBaoHiem=ParamList("Bao Hiem","Hien|An");
+VeVLXD=ParamList("Vl Xd","Hien|An");
+VeXiMang=ParamList("Xi Mang","Hien|An");
+
+
+switch(VeNganHang)
+{
+case  "Hien":
+GfxSelectPen(colorRed);
+Ve(68);
+break;
+case "An":
+break;
+}
+
+switch(VeBDS)
+{
+case  "Hien":
+GfxSelectPen(colorDarkYellow);
+Ve(67);
+break;
+case "An":
+break;
+}
+
+switch(VeBDSkcn)
+{
+case  "Hien":
+GfxSelectPen(colorAqua);
+Ve(66);
+break;
+case "An":
+break;
+}
+
+switch(VeChungKhoan)
+{
+case  "Hien":
+GfxSelectPen(colorGreen);
+Ve(65);
+break;
+case "An":
+break;
+}
+
+switch(VeDauKhi)
+{
+case  "Hien":
+GfxSelectPen(colorBrown);
+Ve(64);
+break;
+case "An":
+break;
+}
+
+switch(VeCongNghe)
+{
+case  "Hien":
+GfxSelectPen(colorTan);
+Ve(63);
+break;
+case "An":
+break;
+} 
+
+switch(VeCangBien)
+{
+case  "Hien":
+GfxSelectPen(colorLightBlue);
+Ve(62);
+break;
+case "An":
+break;
+}
+
+switch(VeThep)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(17,162,251));
+Ve(60);
+break;
+case "An":
+break;
+}
+
+switch(VePhanBon)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(231,37,208));
+Ve(61);
+break;
+case "An":
+break;
+}
+
+switch(VeDetMay)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(246,213,18));
+Ve(59);
+break;
+case "An":
+break;
+}
+
+switch(VeThuySan)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(185,89,79));
+Ve(58);
+break;
+case "An":
+break;
+}
+
+switch(VeXayDung)
+{
+case  "Hien":
+GfxSelectPen(colorBlack);
+Ve(57);
+break;
+case "An":
+break;
+}
+
+switch(VeDien)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(137,81,183));
+Ve(56);
+break;
+case "An":
+break;
+}
+
+switch(VeBanLe)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(100,100,100));
+Ve(55);
+break;
+case "An":
+break;
+}
+
+switch(VeHangko)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(67,167,4));
+Ve(54);
+break;
+case "An":
+break;
+}
+
+switch(VeMiaDuong)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(102,255,255));
+Ve(53);
+break;
+case "An":
+break;
+}
+
+switch(VeBaoHiem)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(0,155,155));
+Ve(52);
+break;
+case "An":
+break;
+}
+
+switch(VeVLXD)
+{
+case  "Hien":
+GfxSelectPen(colorBlue);
+Ve(46);
+break;
+case "An":
+break;
+}
+
+switch(VeXiMang)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(102,0,255));
+Ve(45);
+break;
+case "An":
+break;
+}
+
+
+_SECTION_END();
+
+_SECTION_BEGIN( "RRG Chart" );
+
+//==========================
+ 
+_N( base = ParamStr( "Base", "vnindex" ) );
+tbar = Param( "Trailing Bar", 12, 1, 100, 1 );
+ 
+EnableTextOutput( False );
+GfxSetOverlayMode( 2 );
+ 
+pxl = Status( "pxchartleft" );
+pxr = Status( "pxchartright" );
+pxt = Status( "pxcharttop" );
+pxb = Status( "pxchartbottom" );
+pxw = ( pxr - pxl ) / 2;
+pxh = ( pxb - pxt ) / 2;
+xm = pxl + pxw;
+ym = pxt + pxh;
+
+GfxSelectPen(colorGreen); 
+
+// ve mau cho chart
+GfxSelectPen(colorGreen);
+GfxSelectSolidBrush(colorBrightGreen);
+GfxRectangle( pxw, pxt, pxr, pxh );
+
+GfxSelectSolidBrush(ColorRGB(255,250,179));
+GfxRectangle( pxw, pxh, pxr, pxb );
+
+GfxSelectSolidBrush(ColorRGB(235,113,83));
+GfxRectangle( pxl,pxh, pxw, pxb );
+
+GfxSelectSolidBrush(ColorRGB(103,191,127));
+GfxRectangle( pxl,pxt, pxw, pxh );
+
+// Viet chu cac goc phan tu
+CoChu=Status("pxheight")/20;
+XuongHang=Status("pxheight")/12-Status("pxheight")/9;
+QuaCot=Status("pxwidth")/4-Status("pxwidth")/6;
+
+GfxSetBkMode( 1 );
+GfxSelectFont("Tahoma", CoChu );
+GfxSetTextColor( colorViolet);
+GfxTextOut( "DAN DAT +/+", pxr-3*quaCot, pxt-1.2*XuongHang );
+GfxTextOut( "SUY YEU +/-", pxr-3*quaCot, pxb+2.6*XuongHang );
+GfxTextOut( "TUT HAU -/-", pxl+0.2*quaCot, pxb+2.6*XuongHang );
+GfxTextOut( "CAI THIEN -/+", pxl+0.2*quaCot, pxt-1.2*XuongHang );
+
+GfxSetTextColor( colorBlack );
+GfxSelectFont("Tahoma", CoChu/2 );
+
+//tinh gia watchlist
+Sowl=6;
+function TinhCList(Sowl )
+{
+ listNganh = CategoryGetSymbols( categoryWatchlist, Sowl );
+
+
+    for( a = 0; ( MAcp = StrExtract( Listnganh, a ) ) != ""; a++ )
+    {
+        Vol= MA(Foreign( MAcp, "V" ),50);
+        giatri = Foreign( MAcp, "C" )*Vol;
+        if( a == 0 ) {TongVol = 1;
+                TongGtri=0;}
+        else {TongGtri = tongGtri + GiaTri;
+                 TongVol=TongVol+Vol;}
+    }
+    return (TongGtri / TongVol);
+}
+
+//ham tinh chi so RS, giai quyet cho wl
+ 
+function getrs ( sowl, t )
+{
+    
+    bc = Foreign( base, "C" );
+    sbr = tinhCList(sowl) / bc;
+ 
+    rs1 = MA( sbr, 12 );
+    rs2 = MA( sbr, 26 );
+    rs = 100 * ( ( rs1 - rs2 ) / rs2 + 1 );
+ 
+    rm1 = MA( rs, 1 );
+    rm2 = MA( rs, 9 );
+    rm = 100 * ( ( rm1 - rm2 ) / rm2 + 1 );
+ 
+    return IIf( t, rs , rm ) - 100;
+}
+ // ham ve do thi
+function drawpos (sowl, x, y, text )
+{
+    rsl = VarGet( "rsl" );
+    rsh = VarGet( "rsh" );
+    rml = VarGet( "rml" );
+    rmh = VarGet( "rmh" );
+ 
+    xx = pxl + pxw + x * ( pxw / ( Max( rsh, -rsl ) * 1.10 ) );
+    yy = pxb - pxh - y * ( pxh / ( Max( rmh, -rml ) * 1.10 ) );
+     
+    Ten=CategoryGetName( categoryWatchlist, sowl );
+    xp = Nz( VarGet( "xp" + ten ), xx );// neu bien xp+sym ko co thi no = xx
+    yp = Nz( VarGet( "yp" + ten ), yy );
+ 
+    VarSet( "xp" + ten, xx );
+    VarSet( "yp" + ten, yy );
+ 
+    GfxMoveTo( xp, yp );
+    GfxLineTo( xx, yy );
+      GfxSelectSolidBrush(colorRed);
+    GfxCircle( xx, yy, IIf( text == "", 2, 4 ) );//ve nhung cham nho
+ 
+    if ( text != "" ) GfxTextOut( ten, xx + 6 , yy - 3 );// viet chu cuoi dthi
+}
+//=====================================
+function Ve(sowl)
+{
+    rs = getrs( sowl, 1 );
+    rm = getrs( sowl, 0 );
+
+    
+    for ( ii = BarCount - tbar; ii < BarCount; ii++ )
+    {
+        rs_ = rs[ ii ];
+        rm_ = rm[ ii ];
+ 
+        rsh = Nz( VarGet( "rsh" ), rs_ );
+        if ( rs_ >= rsh )
+            VarSet( "rsh", rs_ );
+ 
+        rsl = Nz( VarGet( "rsl" ), rs_ );
+        if ( rs_ <= rsl )
+            VarSet( "rsl", rs_ );
+ 
+        rmh = Nz( VarGet( "rmh" ), rm_ );
+        if ( rm_ >= rmh )
+            VarSet( "rmh", rm_ );
+ 
+        rml = Nz( VarGet( "rml" ), rm_ );
+        if ( rm_ <= rml )
+            VarSet( "rml", rm_ );
+
+        drawpos(sowl, rs[ ii ], rm[ ii ], WriteIf( ii == BarCount - 1, "yes", "" ) );
+    }
+}
+
+VeNganHang=ParamList("Ngan Hang","Hien|An");
+VeBDS=ParamList("BDS","Hien|An");
+VeBdskcn=ParamList("Bds Kcn","Hien|An");
+VeChungKhoan=ParamList("Chung Khoan","Hien|An");
+VeDauKhi=ParamList("Dau Khi","Hien|An");
+VeCongNghe=ParamList("Cong Nghe","Hien|An");
+VeCangBien=ParamList("Cang Bien","Hien|An");
+VePhanBon=ParamList("Phan Bon","Hien|An");
+VeThep=ParamList("Thep","Hien|An");
+VeDetMay=ParamList("Det May","Hien|An");
+VeThuySan=ParamList("Thuy San","Hien|An");
+VeXayDung=ParamList("Xay Dung","Hien|An");
+VeDien=ParamList("NL Dien","Hien|An");
+VeBanLe=ParamList("Ban Le","Hien|An");
+VeHangKo=ParamList("Hang Ko","Hien|An");
+VeMiaDuong=ParamList("Mia Duong","Hien|An");
+VeBaoHiem=ParamList("Bao Hiem","Hien|An");
+VeVLXD=ParamList("Vl Xd","Hien|An");
+VeXiMang=ParamList("Xi Mang","Hien|An");
+
+
+switch(VeNganHang)
+{
+case  "Hien":
+GfxSelectPen(colorRed);
+Ve(68);
+break;
+case "An":
+break;
+}
+
+switch(VeBDS)
+{
+case  "Hien":
+GfxSelectPen(colorDarkYellow);
+Ve(67);
+break;
+case "An":
+break;
+}
+
+switch(VeBDSkcn)
+{
+case  "Hien":
+GfxSelectPen(colorAqua);
+Ve(66);
+break;
+case "An":
+break;
+}
+
+switch(VeChungKhoan)
+{
+case  "Hien":
+GfxSelectPen(colorGreen);
+Ve(65);
+break;
+case "An":
+break;
+}
+
+switch(VeDauKhi)
+{
+case  "Hien":
+GfxSelectPen(colorBrown);
+Ve(64);
+break;
+case "An":
+break;
+}
+
+switch(VeCongNghe)
+{
+case  "Hien":
+GfxSelectPen(colorTan);
+Ve(63);
+break;
+case "An":
+break;
+} 
+
+switch(VeCangBien)
+{
+case  "Hien":
+GfxSelectPen(colorLightBlue);
+Ve(62);
+break;
+case "An":
+break;
+}
+
+switch(VeThep)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(17,162,251));
+Ve(60);
+break;
+case "An":
+break;
+}
+
+switch(VePhanBon)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(231,37,208));
+Ve(61);
+break;
+case "An":
+break;
+}
+
+switch(VeDetMay)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(246,213,18));
+Ve(59);
+break;
+case "An":
+break;
+}
+
+switch(VeThuySan)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(185,89,79));
+Ve(58);
+break;
+case "An":
+break;
+}
+
+switch(VeXayDung)
+{
+case  "Hien":
+GfxSelectPen(colorBlack);
+Ve(57);
+break;
+case "An":
+break;
+}
+
+switch(VeDien)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(137,81,183));
+Ve(56);
+break;
+case "An":
+break;
+}
+
+switch(VeBanLe)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(100,100,100));
+Ve(55);
+break;
+case "An":
+break;
+}
+
+switch(VeHangko)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(67,167,4));
+Ve(54);
+break;
+case "An":
+break;
+}
+
+switch(VeMiaDuong)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(102,255,255));
+Ve(53);
+break;
+case "An":
+break;
+}
+
+switch(VeBaoHiem)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(0,155,155));
+Ve(52);
+break;
+case "An":
+break;
+}
+
+switch(VeVLXD)
+{
+case  "Hien":
+GfxSelectPen(colorBlue);
+Ve(46);
+break;
+case "An":
+break;
+}
+
+switch(VeXiMang)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(102,0,255));
+Ve(45);
+break;
+case "An":
+break;
+}
+
+
+_SECTION_END();
+
+_SECTION_BEGIN( "RRG Chart" );
+
+//==========================
+ 
+_N( base = ParamStr( "Base", "vnindex" ) );
+tbar = Param( "Trailing Bar", 12, 1, 100, 1 );
+ 
+EnableTextOutput( False );
+GfxSetOverlayMode( 2 );
+ 
+pxl = Status( "pxchartleft" );
+pxr = Status( "pxchartright" );
+pxt = Status( "pxcharttop" );
+pxb = Status( "pxchartbottom" );
+pxw = ( pxr - pxl ) / 2;
+pxh = ( pxb - pxt ) / 2;
+xm = pxl + pxw;
+ym = pxt + pxh;
+
+GfxSelectPen(colorGreen); 
+
+// ve mau cho chart
+GfxSelectPen(colorGreen);
+GfxSelectSolidBrush(colorBrightGreen);
+GfxRectangle( pxw, pxt, pxr, pxh );
+
+GfxSelectSolidBrush(ColorRGB(255,250,179));
+GfxRectangle( pxw, pxh, pxr, pxb );
+
+GfxSelectSolidBrush(ColorRGB(235,113,83));
+GfxRectangle( pxl,pxh, pxw, pxb );
+
+GfxSelectSolidBrush(ColorRGB(103,191,127));
+GfxRectangle( pxl,pxt, pxw, pxh );
+
+// Viet chu cac goc phan tu
+CoChu=Status("pxheight")/20;
+XuongHang=Status("pxheight")/12-Status("pxheight")/9;
+QuaCot=Status("pxwidth")/4-Status("pxwidth")/6;
+
+GfxSetBkMode( 1 );
+GfxSelectFont("Tahoma", CoChu );
+GfxSetTextColor( colorViolet);
+GfxTextOut( "DAN DAT +/+", pxr-3*quaCot, pxt-1.2*XuongHang );
+GfxTextOut( "SUY YEU +/-", pxr-3*quaCot, pxb+2.6*XuongHang );
+GfxTextOut( "TUT HAU -/-", pxl+0.2*quaCot, pxb+2.6*XuongHang );
+GfxTextOut( "CAI THIEN -/+", pxl+0.2*quaCot, pxt-1.2*XuongHang );
+
+GfxSetTextColor( colorBlack );
+GfxSelectFont("Tahoma", CoChu/2 );
+
+// danh sach nghanh
+Vnindex=ParamStr("VnIndex","VNINDEX");
+THUCPHAM=ParamStr("THUC PHAM","MSN,TNA,VNM,LSS,QNS,SBT,MCH,VOC,NAF,SCD,SAB,SMB,KDC");
+BAOHIEM=ParamStr("BAO HIEM","VNR,ABI,BIC,BMI,MIG,PGI,PVI,BVH");
+NGANHANG=ParamStr("NGAN HANG","ACB,BID,CTG,HDB,MBB,SSB,SHB,STB,TCB,TPB,VCB,VIB,VPB,ABB,EIB,BVB,KLB,LPB,MSB,NAB,BAB,NVB,OCB,PGB,SGB,VAB,VBB");
+CHUNGKHOAN=ParamStr("CHUNG KHOAN","AGR,ART,BSI,BVS,CTS,FTS,HCM,MBS,SBS,SHS,SSI,TVB,TVS,VCI,VDS,VIX,VND");
+BATDONGSAN=ParamStr("BAT DONG SAN","IJC,LDG,NVT,AMD,C21,CEO,D2D,DIG,DRH,DXG,FLC,HAR,HDC,HDG,HLD,HQC,ITC,KDH,NBB,NDN,NLG,NTL,NVL,PDR,QCG,SCR,SJS,TDH,TIG,VIC,VPH,IDV,ITA,KBC,LHG,VC3,LGL");
+DAUKHI=ParamStr("DAU KHI","PVB,PVC,PVD,PVS,ASP,CNG,GAS,PGC,PGS,PLX,PVG,PVO");
+CANG=ParamStr("CANG","HAH,STG,GMD,PDN,PHP,SGP,VSC");
+XAYDUNG=ParamStr("XAY DUNG","C32,C47,CII,CTD,CTI,FCN,HBC,HC3,HTI,HUT,L14,MCG,LCG,PC1,DPG,PHC,PVX,PXS,SD5,SD6,SD9,TCD,UIC,VCG,VMC,VNE,THG,VPD,TV2");
+THEP=ParamStr("THEP","HPG,HSG,NKG,POM,SHA,TIS,TVN,VGS,HMC,SHI,SMC,TLH");
+NHUA=ParamStr("NHUA","AAA,BMP,DAG,DNP,NTP,RDP");
+THUYSAN=ParamStr("THUYSAN","ANV,ASM,FMC,HVG,IDI,SSN,VHC");
+CAOSU=ParamStr("CAO SU","DPR,DRI,HRC,PHR,TRC,GVR");
+CONGNGHE=ParamStr("CONG NGHE","CMG,SGT,ITD,VEC,FPT,ELC,ABC");
+DUOCPHAM=ParamStr("DUOC PHAM","DCL,DHG,DHT,IMP,TRA,DVN,DBD,JVC");
+HANGKHONG=ParamStr("HANG KHONG","NCT,ACV,HVN,SCS,VJC");
+HOACHAT=ParamStr("HOA CHAT","HAI,LTG,TSC,VFG,BFC,DCM,DDV,DPM,LAS,QBS,SFG,CSM,DRC,SRC,CSV,DGC,PLC,LIX,NET");
+MAYMAC=ParamStr("MAY MAC","ADS,EVE,FTM,GMC,HTG,KMR,STK,TCM,TNG,TVT,VGG,VGT,MSH");
+DIENNUOC=ParamStr("DIEN NUOC","BWE,VCW,DQC,GDT,RAL,CHP,NT2,REE,PPC,SBA,SJD,VSH");
+VANTAI=ParamStr("VAN TAI","PVT,GSP,SWC,VIP,VOS,VTO,SKG,SRT,VNS,SAS");
+BDSKCN=ParamStr("BDS KCN","SZC,SAL,IDC,TIP,NTC,LHG,D2D,KBC,ITA,BCM");
+BANLE=ParamStr("BAN LE","MWG,FPT,FRT,PET,DGW,PIV");
+PHANBON=ParamStr("PHAN BON","DPM,DCM,LAS,BFC,DDV");
+THAN=ParamStr("THAN","TDN,TC6,TVD,THT,NBC");
+VLXD=ParamStr("VLXD","ACC,BCC,BTS,CTI,DC4,DHA,GMX,HOM,HT1,MVC,NNC,QNS,SCJ,VCS,VGC,KSB");
+DAUTUCONG=ParamStr("DAU TU CONG","FCN,KSB,PLC,BCC,HT1,DHA,LCG,C4G,C32");
+//tinh gia watchlist
+Sowl=6;
+function TinhCList(Sowl )
+{
+ // listNganh = CategoryGetSymbols( categoryWatchlist, Sowl );
+	listNganh = ParamStr(Sowl, "");
+
+    for( a = 0; ( MAcp = StrExtract( Listnganh, a ) ) != ""; a++ )
+    {
+        Vol= MA(Foreign( MAcp, "V" ),50);
+        giatri = Foreign( MAcp, "C" )*Vol;
+        if( a == 0 ) {TongVol = 1;
+                TongGtri=0;}
+        else {TongGtri = tongGtri + GiaTri;
+                 TongVol=TongVol+Vol;}
+    }
+    return (TongGtri / TongVol);
+}
+
+//ham tinh chi so RS, giai quyet cho wl
+ 
+function getrs ( sowl, t )
+{
+    
+    bc = Foreign( base, "C" );
+    sbr = tinhCList(sowl) / bc;
+ 
+    rs1 = MA( sbr, 12 );
+    rs2 = MA( sbr, 26 );
+    rs = 100 * ( ( rs1 - rs2 ) / rs2 + 1 );
+ 
+    rm1 = MA( rs, 1 );
+    rm2 = MA( rs, 9 );
+    rm = 100 * ( ( rm1 - rm2 ) / rm2 + 1 );
+ 
+    return IIf( t, rs , rm ) - 100;
+}
+ // ham ve do thi
+function drawpos (sowl, x, y, text )
+{
+    rsl = VarGet( "rsl" );
+    rsh = VarGet( "rsh" );
+    rml = VarGet( "rml" );
+    rmh = VarGet( "rmh" );
+ 
+    xx = pxl + pxw + x * ( pxw / ( Max( rsh, -rsl ) * 1.10 ) );
+    yy = pxb - pxh - y * ( pxh / ( Max( rmh, -rml ) * 1.10 ) );
+     
+    Ten=CategoryGetName( categoryWatchlist, sowl );
+    xp = Nz( VarGet( "xp" + ten ), xx );// neu bien xp+sym ko co thi no = xx
+    yp = Nz( VarGet( "yp" + ten ), yy );
+ 
+    VarSet( "xp" + ten, xx );
+    VarSet( "yp" + ten, yy );
+ 
+    GfxMoveTo( xp, yp );
+    GfxLineTo( xx, yy );
+      GfxSelectSolidBrush(colorRed);
+    GfxCircle( xx, yy, IIf( text == "", 2, 4 ) );//ve nhung cham nho
+ 
+    if ( text != "" ) GfxTextOut( ten, xx + 6 , yy - 3 );// viet chu cuoi dthi
+}
+//=====================================
+function Ve(sowl)
+{
+    rs = getrs( sowl, 1 );
+    rm = getrs( sowl, 0 );
+
+    
+    for ( ii = BarCount - tbar; ii < BarCount; ii++ )
+    {
+        rs_ = rs[ ii ];
+        rm_ = rm[ ii ];
+ 
+        rsh = Nz( VarGet( "rsh" ), rs_ );
+        if ( rs_ >= rsh )
+            VarSet( "rsh", rs_ );
+ 
+        rsl = Nz( VarGet( "rsl" ), rs_ );
+        if ( rs_ <= rsl )
+            VarSet( "rsl", rs_ );
+ 
+        rmh = Nz( VarGet( "rmh" ), rm_ );
+        if ( rm_ >= rmh )
+            VarSet( "rmh", rm_ );
+ 
+        rml = Nz( VarGet( "rml" ), rm_ );
+        if ( rm_ <= rml )
+            VarSet( "rml", rm_ );
+
+        drawpos(sowl, rs[ ii ], rm[ ii ], WriteIf( ii == BarCount - 1, "yes", "" ) );
+    }
+}
+
+VeNganHang=ParamList("Ngan Hang","Hien|An");
+VeBDS=ParamList("BDS","Hien|An");
+VeBdskcn=ParamList("Bds Kcn","Hien|An");
+VeChungKhoan=ParamList("Chung Khoan","Hien|An");
+VeDauKhi=ParamList("Dau Khi","Hien|An");
+VeCongNghe=ParamList("Cong Nghe","Hien|An");
+VeCangBien=ParamList("Cang Bien","Hien|An");
+VePhanBon=ParamList("Phan Bon","Hien|An");
+VeThep=ParamList("Thep","Hien|An");
+VeDetMay=ParamList("Det May","Hien|An");
+VeThuySan=ParamList("Thuy San","Hien|An");
+VeXayDung=ParamList("Xay Dung","Hien|An");
+VeDien=ParamList("NL Dien","Hien|An");
+VeBanLe=ParamList("Ban Le","Hien|An");
+VeHangKo=ParamList("Hang Ko","Hien|An");
+VeMiaDuong=ParamList("Mia Duong","Hien|An");
+VeBaoHiem=ParamList("Bao Hiem","Hien|An");
+VeVLXD=ParamList("Vl Xd","Hien|An");
+VeXiMang=ParamList("Xi Mang","Hien|An");
+
+
+switch(VeNganHang)
+{
+case  "Hien":
+GfxSelectPen(colorRed);
+Ve(68);
+break;
+case "An":
+break;
+}
+
+switch(VeBDS)
+{
+case  "Hien":
+GfxSelectPen(colorDarkYellow);
+Ve(67);
+break;
+case "An":
+break;
+}
+
+switch(VeBDSkcn)
+{
+case  "Hien":
+GfxSelectPen(colorAqua);
+Ve(66);
+break;
+case "An":
+break;
+}
+
+switch(VeChungKhoan)
+{
+case  "Hien":
+GfxSelectPen(colorGreen);
+Ve(65);
+break;
+case "An":
+break;
+}
+
+switch(VeDauKhi)
+{
+case  "Hien":
+GfxSelectPen(colorBrown);
+Ve(64);
+break;
+case "An":
+break;
+}
+
+switch(VeCongNghe)
+{
+case  "Hien":
+GfxSelectPen(colorTan);
+Ve(63);
+break;
+case "An":
+break;
+} 
+
+switch(VeCangBien)
+{
+case  "Hien":
+GfxSelectPen(colorLightBlue);
+Ve(62);
+break;
+case "An":
+break;
+}
+
+switch(VeThep)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(17,162,251));
+Ve(60);
+break;
+case "An":
+break;
+}
+
+switch(VePhanBon)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(231,37,208));
+Ve(61);
+break;
+case "An":
+break;
+}
+
+switch(VeDetMay)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(246,213,18));
+Ve(59);
+break;
+case "An":
+break;
+}
+
+switch(VeThuySan)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(185,89,79));
+Ve(58);
+break;
+case "An":
+break;
+}
+
+switch(VeXayDung)
+{
+case  "Hien":
+GfxSelectPen(colorBlack);
+Ve(57);
+break;
+case "An":
+break;
+}
+
+switch(VeDien)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(137,81,183));
+Ve(56);
+break;
+case "An":
+break;
+}
+
+switch(VeBanLe)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(100,100,100));
+Ve(55);
+break;
+case "An":
+break;
+}
+
+switch(VeHangko)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(67,167,4));
+Ve(54);
+break;
+case "An":
+break;
+}
+
+switch(VeMiaDuong)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(102,255,255));
+Ve(53);
+break;
+case "An":
+break;
+}
+
+switch(VeBaoHiem)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(0,155,155));
+Ve(52);
+break;
+case "An":
+break;
+}
+
+switch(VeVLXD)
+{
+case  "Hien":
+GfxSelectPen(colorBlue);
+Ve(46);
+break;
+case "An":
+break;
+}
+
+switch(VeXiMang)
+{
+case  "Hien":
+GfxSelectPen(ColorRGB(102,0,255));
+Ve(45);
+break;
+case "An":
+break;
+}
+
+
+_SECTION_END();

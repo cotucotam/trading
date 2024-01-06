@@ -1,0 +1,112 @@
+_SECTION_BEGIN("pivots_pocket");
+//Pivot pocket Bar
+//Edited by Hoang Minh Hoan 0986979383 - VN Wyckoff VSA Club
+		mypv_lowest  = LLV ( Ref(Low,-1),10);
+
+		pv_sma50 = ma(close,50);
+		pv_undersma50 = False;
+		pv_oversma50 = False;
+
+		pv_dieukien1_2 = False;
+		debug_3 = Name();
+
+		// Trung sideway (tich luy)
+				pv_dieukien1_1 = False;
+				for( i = 1; i <= 10; i++ )
+				{
+					  // body of the loop
+					  pv_dieukien1_1 = pv_dieukien1_1 OR (Ref(Low,0-i) == mypv_lowest and ref(Low,0-i) < Ref(pv_sma50,0-i));
+					  pv_undersma50 = iif (pv_dieukien1_1,True,False);
+				}
+				pv_dieukien1_2 = (close > ma(close,50) and close > ma(close,10));
+
+//------------------//////// xu huong tang ///////
+				pv_dieukien2_1 = true;
+				pv_dieukien2_2 = False;
+				pv_dieukien2_3 = False;
+				count = 0;
+				//10 nen truoc dó nam trên MA50, 
+				for( x = 1; x <= 10; x++ ){
+					pv_dieukien2_1 = pv_dieukien2_1 AND (ref(Low,0-x) > Ref(pv_sma50,0-x));
+				}
+				pv_dieukien2_2 = low < 1.01* ma(close,10) or Ref(Low,-1) < 1.01* ma(Ref(Close,-1),10); //good
+				pv_dieukien2_3 = close > ma(close,50) and close >ma(close,10);  //good
+
+		/// ------------------------------
+		//-	Vùng tích luy chat truoc diem pivot: (và - dieu kien chung)
+		//+ Ðo dao dong hep: 10 nen truoc do ko giao dong qua 15% MA10 cua nen truoc pivot
+		pv_DKChung_1 = Max(HHV(Ref(O,-1),10),HHV(Ref(C,-1),10)) - Min(HHV(Ref(O,-1),10),HHV(Ref(C,-1),10)) < 0.15 * ma(Ref(Close,-1),10); //good
+
+		///10 nen truoc không có nen nào tang giam quá 5%
+				pv_DKChung_2 = True;
+				for( x = 1; x <= 10; x++ ){
+					pv_DKChung_2 = pv_DKChung_2 AND ((ref(Close,0-x) - Ref(Close,-1-x))/Ref(Close,-1-x)) < 0.05  ;
+				}
+
+		pv_DKChung_5 =  Ref(Volume,-1) < 1.5* MA(Ref(Volume,-1),20);  
+
+		//-	Nen Pivot: 
+		BarRange = (High - Low);
+		pv_DKChung_6 = Close > 1.025 * ref(Close,-1) and 
+						 (close-low) > BarRange* 0.7 and
+						Volume > 1.3* ref(Volume,-1) 
+						and Volume > 1 * HHV(Ref(Volume,-1),10)
+						and Volume > 1.25* MA(Ref(Volume,-1),20);
+
+		//BarSpread
+		BarSpread = abs(Open-Close);
+
+		//+ Loai tru tao dáy chu V: 4 nen truoc nó, ko nen nào có biên do than nen giao dong quá 6%
+		pv_DKChung_8 =Ref(BarSpread,-1) < 0.06 * Ref(Close,-1)
+					and Ref(BarSpread,-2) < 0.06 * Ref(Close,-2) and Ref(BarSpread,-3) < 0.06 * Ref(Close,-3) 
+					and Ref(BarSpread,-4) < 0.06 * Ref(Close,-4) and 
+					Ref(Close,-1) < 1.06* Ref(Open,-2);// TOI DAY
+					
+		pv_DKChung_9 =	((ma(Ref(Close,-1),20) > 0.9* ma(Ref(Close,-20),20) and ma(Ref(Close,-1),50) > 0.95* ma(Ref(Close,-20),50))			
+					or (ma(Ref(close,-1),20) > 1.03* ma(Ref(Close,-15),20) and ma(Ref(Close,-1),50) > 0.9* ma(Ref(Close,-20),50)));
+					
+					
+		pv_tichluy = ((pv_dieukien1_1 AND pv_dieukien1_2 ) or  (pv_dieukien2_1 AND pv_dieukien2_2 AND pv_dieukien2_3));
+		
+		dk_thu_2 = 	(pv_DKChung_1 AND pv_DKChung_2 AND pv_DKChung_5 AND pv_DKChung_6
+						AND pv_DKChung_8 AND pv_DKChung_9);
+		dk_thu_3 = pv_DKChung_9;
+
+
+		pivot_cond_buy =pv_tichluy and dk_thu_2 and dk_thu_3;
+	//pos: 10
+	//if (SelectedValue(pivot_cond_buy)){
+	//	GfxTextOut("5. Pivot Pocket. Entry Point", my_vpa_x+15, my_vpa_y+8 + my_tmp*12  );				
+	//}
+	//PlotShapes(IIf(pivot_cond_buy ,shapeUpArrow,shapeNone),colorLightBlue,0,Low,Offset=-10);
+nowStr= DateTimeFormat("%d/%m/%Y", selectedvalue(DateTime()));
+MinVol=100000;
+Filter = pivot_cond_buy;
+Buy=pivot_cond_buy AND V>MinVol AND StrLeft(Name(),1)!="^" AND StrLen(Name()) <=3;
+
+AddColumn(Buy,"Buy",1,colorWhite,IIf(Buy,colorGreen,colorWhite));
+AddColumn(ValueWhen(Buy, C, n = 1), "Buy Price" , 1.2);
+AddColumn(MA(V,20),"Vol MA(V,20)",1,IIf(MA(V,20)>MA(Ref(V,-1),20),colorGreen,colorRed));
+AddColumn(V,"Vol",1,IIf(V>Ref(V,-1),colorGreen,colorRed));
+AddColumn((100*(C - Ref(C,-1)))/(Ref(C,-1)), "% Price Change" , 1.2);
+AddColumn(100*(V - MA(V,20))/MA(V,20), "% Vol Change" ,1);
+AddColumn(StaticVarGet(nowStr+Name()+GetChartID()+"buyAlertBar"), "Alert?", 1);
+Filter = Buy AND StrLen(Name()) <=3;
+PlotShapes(IIf(Buy, shapeHollowSquare + shapePositionAbove ,shapeNone),colorGold,0,L,28); 
+_SECTION_END();
+_SECTION_BEGIN("Telegram Alerts");
+//Thong bao qua telegram
+TeleAPI_ID = ParamStr("Bot API","5885333873:AAHx13DSTRo-KbtEF-QSseIgMBirUUK7HpI");
+TeleCHAT_ID = ParamStr("Group chat ID","-1976667671");
+
+Date_time =  now();
+
+Message =  "Ngay " + Date_time+ " : "+ Name() +" (" + WriteVal(C,format=1.2)+") - pivots_pocket" ;
+
+if (SelectedValue(pivot_cond_buy))
+
+{
+TeleLink = InternetOpenURL("https://api.telegram.org/bot"+TeleAPI_ID+"/sendMessage?chat_id="+TeleCHAT_ID+"&text="+Message );
+InternetClose(TeleLink);
+}
+_SECTION_END();

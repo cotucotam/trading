@@ -1,0 +1,7 @@
+_SECTION_BEGIN("Volume");
+Plot( Volume, _DEFAULT_NAME(), IIf( C > O, ParamColor("Up Color", colorGreen ), ParamColor("Down Color", colorRed ) ), ParamStyle( "Style", styleHistogram | styleThick, maskHistogram ) );
+_SECTION_BEGIN("Average Volume");
+P = ParamField("volume fields",-1);
+Periods = Param("Periods", 15, 2, 300, 1, 10 );
+Plot( MA( V, Periods ), _DEFAULT_NAME(), ParamColor( "Color", colorCycle ), ParamStyle("Style") );
+_SECTION_END();

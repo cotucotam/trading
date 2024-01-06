@@ -1,0 +1,268 @@
+<HTML><HEAD>
+<TITLE>Bat Quai Lenh - Backtest Report</TITLE><STYLE>
+<!--
+BODY { font-family:"Tahoma,Arial,Helvetica,Sans Serif"; font-size:8pt; }
+TD {  font-size:8pt; text-align: right; white-space: nowrap; }
+TH {  font-size:8pt; text-align: left; font-weight: normal; }
+.CH { text-align: right; font-weight:bold; }
+.CHL { text-align: left; font-weight:bold; }
+.BIG { font-size:10pt; font-weight:bold; text-align: center; }
+.TAB { font-size:10pt;  text-align: center; text-color:#CCCCCC; }
+.SELTAB { font-size:10pt; font-weight:bold; text-align: center; text-color:#000000; }
+.good { color:#006600; }
+.bad { color:#880000; }
+.neut { color:#000088; }
+a:active { background-color:#DDDDFF; }
+-->
+</STYLE>
+<SCRIPT>
+var curPart = 0;
+function showPart( i )
+{
+	 document.getElementById("part" + curPart ).style.display = "none";
+	 document.getElementById("part" + i ).style.display = "";
+	 curPart = i;
+}
+</SCRIPT>
+</HEAD>
+<BODY>
+<DIV ALIGN=CENTER><FONT class='TAB'><a href='stats.html'>Statistics</a> | <a href='charts.html'>Charts</a> | <a href='trades.html'>Trades</a> | <a href='formula.html'><FONT class='SELTAB'>Formula</FONT></a> | <a href='settings.html'>Settings</a> | <a href='symbols.html'>Symbols</a> | <a href='montecarlo.html'>Monte Carlo</a></FONT></DIV><br>
+<TABLE CELLSPACING=0 CELLPADDING=2 WIDTH=100%>
+<TR bgcolor="#DDDDDD"><TH COLSPAN=5 CLASS="BIG" >Formula</TH></TR>
+</TABLE><PRE>// Write buy Nguyen Xuan Lam // 0911222537 
+// Donate : 2000206083140 Agribank 
+// Luu y: Bo code nay viet tren data cua Fialda, 1 so don vi cung cap data co dinh dang khac fialda thi edit lai cac chi so : VNINDEX, HNXINDEX, UPINDEX, HSX, HNX, UPCOM la ok nhe. 
+_SECTION_BEGIN("GBKTA"); 
+SetChartBkColor(ParamColor("Outer panel color ",colorPaleBlue)); // color of outer border 
+SetChartBkGradientFill( ParamColor("Inner panel color upper half", colorBlack),ParamColor("Inner panel color lower half", colorBlack)); // color of inner panel 
+function ZeroLagTEMA( array, period ) 
+{ 
+TMA1 = TEMA( array, period ); 
+TMA2 = TEMA( TMA1, period ); 
+Diff = TMA1 - TMA2; 
+return TMA1 + Diff ; 
+} 
+HaClose = (O+H+L+C)/4; 
+HaOpen = AMA( Ref( HaClose, -1 ), 0.5 ); 
+HaHigh = Max( H, Max( HaClose, HaOpen ) ); 
+HaLow = Min( L, Min( HaClose, HaOpen ) ); 
+// Velvoort is using not original, but modified Heikin-Ashi close 
+HaClose = ( HaClose + HaOpen + HaHigh + HaLow )/4; 
+// you can switch between Heikin-Ashi chart and regular candlestick chart 
+if( ParamToggle("Plot Heikin-Ashi", "No,Yes", 1 ) ) 
+barColor = IIf(HaClose &gt; HaOpen AND HaHigh &gt; HaClose AND HaLow &lt; HaOpen, ParamColor("Up with both wick, Color",colorBlue), 
+IIf(HaClose &lt; HaOpen AND HaLow &lt; HaClose AND HaHigh &gt; HaOpen, ParamColor("Down with both wick, Color",colorViolet), 
+IIf(HaClose &lt; HaOpen AND HaLow &lt; HaClose, ParamColor("Down Color",colorRed), 
+IIf(HaClose &gt; HaOpen AND HaHigh &gt; HaClose , ParamColor("Up Color",colorGreen), colorWhite)))); 
+PlotOHLC( HaOpen, HaHigh, HaLow, HaClose, "Modified " + Name(), barColor, styleCandle | styleNoLabel ); 
+PlotOHLC( HaOpen, HaHigh, HaLow, HaClose, "Heikin Ashi " + Name(), colorBlack, styleCandle | styleNoLabel); 
+period = 10; 
+//period = Param("Avg. TEMA period", 13, 1, 100 ); 
+ZLHa = ZeroLagTEMA( HaClose, period ); 
+ZLTyp = ZeroLagTEMA( Avg, period ); 
+//Buy = Cross( ZLTyp, ZLHa ); 
+//Sell = Cross( ZLHa, ZLTyp ); 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
+//Doan code lay time gio phut hien ta (nghi mai moi ra kho thiet) 
+RealtimeClock = Now(4); 
+LayGio = IIf(RealtimeClock &lt;=5959,0,IIf(RealtimeClock &lt;=15959 AND RealtimeClock &gt; 5959,1,IIf(RealtimeClock &lt;=25959 AND RealtimeClock &gt; 15959,2,IIf(RealtimeClock &lt;=35959 AND RealtimeClock &gt; 25959,3,IIf(RealtimeClock &lt;=45959 AND RealtimeClock &gt; 35959,4, 
+		IIf(RealtimeClock &lt;=55959 AND RealtimeClock &gt; 45959,5,IIf(RealtimeClock &lt;=65959 AND RealtimeClock &gt; 55959,6,IIf(RealtimeClock &lt;=75959 AND RealtimeClock &gt; 65959,7,IIf(RealtimeClock &lt;=85959 AND RealtimeClock &gt; 75959,8,IIf(RealtimeClock &lt;=95959 AND RealtimeClock &gt; 85959,9, 
+		IIf(RealtimeClock &lt;=105959 AND RealtimeClock &gt; 95959,10,IIf(RealtimeClock &lt;=115959 AND RealtimeClock &gt; 105959,11,IIf(RealtimeClock &lt;=125959 AND RealtimeClock &gt; 115959,12,IIf(RealtimeClock &lt;=135959 AND RealtimeClock &gt;125959,13, 
+		IIf(RealtimeClock &lt;=145959 AND RealtimeClock &gt; 135959,14,IIf(RealtimeClock &lt;=155959 AND RealtimeClock &gt; 145959,15,IIf(RealtimeClock &lt;=165959 AND RealtimeClock &gt; 155959,16,IIf(RealtimeClock &lt;=175959 AND RealtimeClock &gt;165959,17,IIf(RealtimeClock &lt;=185959 AND RealtimeClock &gt; 175959,18, 
+		IIf(RealtimeClock &lt;=195959 AND RealtimeClock &gt; 185959,19,IIf(RealtimeClock &lt;=205959 AND RealtimeClock &gt; 195959,20,IIf(RealtimeClock &lt;=215959 AND RealtimeClock &gt; 205959,21,IIf(RealtimeClock &lt;=225959 AND RealtimeClock &gt; 215959,22,23))))))))))))))))))))))); 
+LayPhut = IIf(RealtimeClock &lt;=5959 , Prec(RealtimeClock/100,0),Prec((RealtimeClock - LayGio*10000)/100,0)); 
+Realtime = LayGio*60 + LayPhut ; 
+// Het doan lay time 
+SetForeign("VNINDEX");//Ham Lam viec truc tiep voi 1 ma nhat dinh, o day la Vnindex 
+startTimeVni1 = 9*60; // Th?i gian b?t d?u giao d?ch (9:00 AM) 
+endTimeVni1 = 11*60 +30; // Th?i gian k?t thúc giao d?ch (11:30 PM) 
+startTimeVni2 = 13*60; // Th?i gian b?t d?u giao d?ch (13:00 PM) 
+endTimeVni2 = 14*60+45; // Th?i gian k?t thúc giao d?ch (14:45 PM) 
+PhienSangVni = (endTimeVni1 - startTimeVni1); 
+PhienChieuVni = (endTimeVni2 - startTimeVni2); 
+FulltimeVni = (endTimeVni1 - startTimeVni1) + (endTimeVni2 - startTimeVni2); 
+InTimeVni  = IIf(V&gt;0 AND  Realtime&gt;= startTimeVni1 AND Realtime &lt;= endTimeVni1,Realtime -startTimeVni1, 
+				IIf(V&gt;0 AND Realtime &gt; endTimeVni1 AND Realtime &lt; startTimeVni2,PhienSangVni, 
+				IIf(V&gt;0 AND Realtime &gt;= startTimeVni2 AND Realtime&lt;= endTimeVni2,PhienSangVni + (Realtime - startTimeVni2),FulltimeVni)));			 
+RestorePriceArrays();//tra lai lam viec chung cho toan thi truong  
+SetForeign("HNXINDEX"); 
+startTimeHNX1 = 9*60;  
+endTimeHNX1 = 11*60 +30; 
+startTimeHNX2 = 13*60;  
+endTimeHNX2 = 15*60; 
+PhienSangHNX = (endTimeHNX1 - startTimeHNX1); 
+PhienChieuHNX = (endTimeHNX2 - startTimeHNX2); 
+FulltimeHNX = (endTimeHNX1 - startTimeHNX1) + (endTimeHNX2 - startTimeHNX2); 
+InTimeHNX  = IIf(V&gt;0 AND  Realtime&gt;= startTimeHNX1 AND Realtime &lt;= endTimeHNX1,Realtime -startTimeHNX1, 
+				IIf(V&gt;0 AND Realtime &gt; endTimeHNX1 AND Realtime &lt; startTimeHNX2,PhienSangHNX, 
+				IIf(V&gt;0 AND Realtime &gt;= startTimeHNX2 AND Realtime&lt;= endTimeHNX2,PhienSangHNX + (Realtime - startTimeHNX2),FulltimeHNX)));			 
+RestorePriceArrays();//tra lai lam viec chung cho toan thi truong  
+SetForeign("UPINDEX"); 
+startTimeUpcom1 = 9*60;  
+endTimeUpcom1 = 11*60 +30; 
+startTimeUpcom2 = 13*60;  
+endTimeUpcom2 = 15*60; 
+PhienSangUpcom = (endTimeUpcom1 - startTimeUpcom1); 
+PhienChieuUpcom = (endTimeUpcom2 - startTimeUpcom2); 
+FulltimeUpcom = (endTimeUpcom1 - startTimeUpcom1) + (endTimeUpcom2 - startTimeUpcom2); 
+InTimeUpcom  = IIf(V&gt;0 AND  Realtime&gt;= startTimeUpcom1 AND Realtime &lt;= endTimeUpcom1,Realtime -startTimeUpcom1, 
+				IIf(V&gt;0 AND Realtime &gt; endTimeUpcom1 AND Realtime &lt; startTimeUpcom2,PhienSangUpcom, 
+				IIf(V&gt;0 AND Realtime &gt;= startTimeUpcom2 AND Realtime&lt;= endTimeUpcom2,PhienSangUpcom + (Realtime - startTimeUpcom2),FulltimeUpcom)));			 
+RestorePriceArrays();//tra lai lam viec chung cho toan thi truong  
+////////////Lay time cua ma tren san GD hien tai  
+LaySGD = MarketID( 1 ); 
+SanHNX = "HNXINDEX"; 
+SanUpcom = "UPINDEX"; 
+SanHSX = "VNINDEX"; 
+testSan1 = WriteIf(LaySGD == "HSX","VNINDEX",""); 
+testSan2 = WriteIf(LaySGD == "HNX","HNXINDEX",""); 
+testSan3 = WriteIf(LaySGD == "UPCOM","UPINDEX",""); 
+testSan = testSan1 + testSan2 + testSan3; 
+InTime =  IIf(LaySGD == "HSX",InTimeVni, IIf(LaySGD == "HNX",InTimeHNX,InTimeUpcom)); 
+OutTime = IIf(LaySGD == "HSX",FulltimeVni, IIf(LaySGD == "HNX",FulltimeHNX,FulltimeUpcom)); 
+MorningTime = IIf(LaySGD == "HSX",PhienSangVni, IIf(LaySGD == "HNX",PhienSangHNX,PhienSangUpcom)); 
+//////////////////////////////////////////////////////////////////////// 
+////Lop nen 
+Buy0 = Cross( ZLTyp, ZLHa ); 
+Sell0 = Cross( ZLHa, ZLTyp ); 
+demTUp0 = BarsSince(Buy0); 
+demTDow0 = BarsSince(Sell0); 
+Trend0 = IIf(demTUp0 &lt; demTDow0 OR (demTDow0 &gt;=0 AND demTDow0 &lt;=0),demTUp0,demTDow0*-1);  
+testTime2023ngay =ValueWhen(V&gt;0 , LastValue(Day())); 
+testTime2023thang =ValueWhen(V&gt;0 , LastValue(Month())); 
+testTime2023nam =ValueWhen(V&gt;0 , LastValue(Year())); 
+////Lop 1 
+T=2;// Luat mua ban T = 2.5 
+demTmua = IIf(demTUp0 ==0 AND Ref(demTUp0,-1*T)==0,T-demTUp0,demTUp0); 
+Buy = demTmua==0; 
+demTUp1 = BarsSince(Buy); 
+Sell1 = Sell0 AND demTmua&gt;=T ; 
+Sell2 = demTmua==T  AND   demTDow0 &lt; demTUp0; 
+SellTotal = Sell1 OR Sell2; 
+testTimengay =ValueWhen(SellTotal , Day()); 
+testTimethang =ValueWhen(SellTotal , Month()); 
+testTimenam =ValueWhen(SellTotal , Year()); 
+ALotime = IIf(testTimengay &lt; testTime2023ngay OR testTimethang &lt; testTime2023thang OR testTimenam &lt; testTime2023nam ,2, 
+			IIf( testTimengay == testTime2023ngay AND testTimethang == testTime2023thang AND testTimenam == testTime2023nam AND InTime &gt;= MorningTime,2,-2)); 
+//Sell = Sell1 OR Sell2; 
+Sell = SellTotal AND ALotime&gt;=2 ; 
+demTDow1 = BarsSince(Sell); 
+BuyPrice = ValueWhen(Buy , Prec((L+C+H)/3,2)); 
+SellPrice=ValueWhen(Sell,Prec((L +C + H)/3,2)); 
+Trend1 = IIf(demTUp1 &lt; demTDow1 OR (demTDow1 &gt;=0 AND demTDow1 &lt;=0),demTUp1,demTDow1*-1);  
+tanggiam11= Prec( ( ( C - BuyPrice) / BuyPrice ) * 100,2);//lam tron so  
+tanggiam99= Prec( ( ( SellPrice - BuyPrice) / BuyPrice ) * 100,2);//lam tron so  
+tanggiam9999 =IIf(demTDow1==0,tanggiam99,tanggiam11); 
+hienthiban = WriteIf(Sell AND SellPrice&gt;=BuyPrice,"Sell","CutLoss"); 
+SellA = Sell AND SellPrice&gt;=BuyPrice; 
+SellB = Sell AND SellPrice&lt;BuyPrice; 
+laytexthienthi =WriteIf(LastValue(Trend1)&gt;=0,"T"+LastValue(Trend1)+" // " +LastValue(tanggiam11)+"%",""); 
+dist = 0.5 * ATR( 15 ); 
+for ( i=BarCount-1; i &gt; 0; i-- ) 
+{ 
+    if ( Buy[i] ) 
+        PlotText("Buy: " + BuyPrice[ i ], i, L[ i ] - dist[i], colorRose); 
+     if ( SellA[i] ) 
+        PlotText( "Sell: " + SellPrice[ i ]+"\n"+"    // "+"T"+Trend1[ i ]+"// "+tanggiam99[ i ]+"%", i, H[ i ] + dist[i],colorBrightGreen); 
+    if ( SellB[i] ) 
+        PlotText( "Cutloss: " + SellPrice[ i ]+"\n"+"    // "+"T"+Trend1[ i ]+"// "+tanggiam99[ i ]+"%", i, H[ i ] + dist[i],colorRed); 
+         
+} 
+PlotShapes( shapeUpArrow * Buy, colorYellow, 0, HaLow ); 
+PlotShapes( shapeDownArrow * Sell, colorPink, 0, HaHigh ); 
+cline=ParamToggle("Gia Nen", "Show|Hide",0); 
+PriceLineColor=ParamColor("PriceLineColor",colorRed|styleNoLabel); 
+PriceLevel = LastValue( Prec(Close,2)); 
+Daysback    = Param("Bars Back",100,10,500,1);  
+FirstBar    = BarCount - DaysBack;  
+YY          = IIf(BarIndex() &gt;= Firstbar,EndValue(PriceLevel),Null);  
+side = Param("side",1,0,1000,1); 
+dist = 0;  
+if(cline==0) 
+{ 
+for( i = 0; i &lt; BarCount; i++ )  
+{ 
+ if(i+side== BarCount) PlotText( "........."+"=&gt;   " + PriceLevel[ i ]+" // " +WriteVal(LastValue((C/Ref(C,-1)-1)*100),1.2)+"% ", i, YY[ i ]-dist[i], colorYellow ); 
+ if(i+side== BarCount) PlotText( "\n                "+laytexthienthi+"", i, YY[ i ]-dist[i], colorWhite );  
+} 
+} 
+Title = "Bat Quai Lenh" + " - "  +  EncodeColor(colorYellow)+ Name()+" - Date : "+Date() + " - " +" O = "+WriteVal(O)+", H = "+WriteVal(H)+", L = "+WriteVal(L)+", C = "+WriteVal(C)+" Volume : "+WriteVal(V); 
+_SECTION_BEGIN("Name"); 
+GfxSetTextAlign( 6 );// center alignment 
+GfxSetTextColor( ColorRGB( 255, 255, 0 ) ); 
+GfxSetBkMode(0); // transparent 
+GfxSelectFont("UVN But Long 1", Status("pxheight")/26 ); 
+GfxSelectFont("UVN But Long 1", Status("pxheight")/36 ); 
+_SECTION_END(); 
+_SECTION_BEGIN("Bat Quai Lenh"); 
+GfxSetBkMode(1); 
+X=750; 
+Y=1; 
+Font=10; 
+//GfxSelectFont("Impact",Font*2.2, 550);GfxSetTextColor(colorBlue);GfxTextOut("Fialda ++",x,y+10); 
+GfxSelectFont("Impact",Font*2.2, 550);GfxSetTextColor(colorBlue);GfxTextOut(Name() + ": " +  FullName() ,x+120,Y+10); 
+GfxSelectFont("Impact",Font*2.2, 550);GfxSetTextColor(colorGreen);GfxTextOut("Nganh nghe: "+ IndustryID( 1 ),x+120,Y+10+30); 
+_SECTION_END(); 
+////////////////////////////////////////////////////////////////////// 
+SetOption( "Nodefaultcolumns", True );  
+AddTextColumn( Name(), "Ma CK",1.2,IIf(Close&gt;Ref(Close,-1), colorGreen, IIf(Close&lt;Ref(Close,-1), colorRed, colorDefault))); // Ten 
+AddTextColumn( FullName(), "Ten Cty"); //Ful ten 
+AddTextColumn( MarketID( 1 ), "San GD"); 
+AddTextColumn( IndustryID( 1 ), "Nganh nghe" );// Nganh nghe 
+chuyenngay1 = NumToStr( Datetime(), formatDateTime );// chuyen ngay qua chuoi 
+cutngay1 = StrTrim( chuyenngay1, " 00:00:00" ); // cut gio phut giay 
+AddTextColumn(cutngay1 , "Date",  colorDefault, colorDefault); 
+AddColumn(Close,"Gia",1.2,IIf(Close&gt;Ref(Close,-1), colorGreen, IIf(Close&lt;Ref(Close,-1), colorRed, colorDefault))); 
+AddColumn( ( ( C - Ref ( C ,-1 )) / Ref ( C ,-1 ) ) * 100 , " % Change " , 1.2 ,IIf(Close&gt;Ref(Close,-1), colorGreen, IIf(Close&lt;Ref(Close,-1), colorRed, colorDefault))); 
+AddColumn(Volume,"Volume",1,IIf(Volume&gt;Ref(Volume,-1), colorGreen, IIf(Volume&lt;Ref(Volume,-1), colorRed, colorDefault))); 
+AddColumn(Volume*C,"GTGD",1,IIf(Volume*C&gt;Ref(Volume*C,-1), colorGreen, IIf(Volume*C&lt;Ref(Volume*C,-1), colorRed, colorDefault))); 
+AddColumn(RSI(14),"RSI14",1.2,IIf(RSI(14)&gt;Ref(RSI(14),-1), colorGreen, IIf(RSI(14)&lt;Ref(RSI(14),-1), colorRed, colorDefault))); 
+SetSortColumns(-9); 
+textBuy = WriteIf(Buy,"Buy&lt;= "+BuyPrice,""); 
+textSell = WriteIf(Sell AND SellPrice&gt;=BuyPrice,"Sell&gt;= "+SellPrice,""); 
+textSell1 = WriteIf(Sell AND SellPrice &lt; BuyPrice,"CutLoss&gt;= "+SellPrice,""); 
+textBuySell = textBuy + textSell +textSell1 ; 
+textBuySellCo = IIf(Buy,colorGreen,IIf(Sell, colorRed , colorDefault)); 
+AddTextColumn(textBuySell , "Tin Hieu Total", 1.2,textBuySellCo , colorDefault); 
+BuyDate = ValueWhen(Buy , DateTime(), 1); 
+chuyenngay = NumToStr( BuyDate, formatDateTime ); 
+cutngay = StrTrim( chuyenngay, " 00:00:00" ); 
+cutngay2 = WriteIf(Trend1&gt;=0,cutngay,""); 
+AddTextColumn(cutngay2 , "Ngay mua", 1.2, colorDefault , colorDefault); 
+AddColumn(Trend1,"T+/-",1,IIf(Trend1&gt;=0,colorGreen,colorRed) ); 
+textgiamua = WriteIf(Trend1&gt;=0,""+BuyPrice,""); 
+AddTextColumn(textgiamua , "Gia Mua", 1.2, colorDefault , colorDefault); 
+laytexthienthi =WriteIf(LastValue(Trend1)&gt;=0,"T"+LastValue(Trend1)+" // " +LastValue(tanggiam9999)+"%",""); 
+loinhuan = WriteIf(Trend1 &gt;=0, ""+tanggiam9999+"%",""); 
+AddTextColumn(loinhuan, "Loi nhuan %", 1.2, IIf( tanggiam9999&gt;0 ,colorGreen,IIf( tanggiam9999&lt;0, colorRed,colorDefault))); 
+dieukienbb = IIf(Ref(MA(V,20),-1)&gt;=200000 AND Ref(MA(C,20),-1) &gt;=5 AND  Ref(LLV(V,20),-1) &gt;=  Ref(MA(V,20),-1)/4 AND Ref(LLV(V,20),-1)&gt;= 100000,2,-2); 
+dieukienbbCo =IIf(dieukienbb&gt;=2 , colorGreen, colorDefault); 
+Dieukientext = WriteIf(dieukienbb&gt;=2,"Ok",""); 
+AddTextColumn(Dieukientext, "Test Vol va Gia", 1.2, dieukienbbCo); 
+Filter = C &gt;=1    ;  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+
+</PRE></BODY></HTML>

@@ -1,0 +1,31 @@
+Filter =   
+ C<8
+AND C>1
+AND C*V>=5000000
+AND LLV(V,30)>100000
+;
+
+AddColumn(C>=HHV(C,60),"Dinh gia 60p");
+cao=Ref(HHV(C,10),-1);
+thap=Ref(LLV(C,10),-1);
+tl=(cao-thap)/cao*100;
+AddColumn(Ref(C,-2), "Price -2", 1.2);
+AddColumn(Ref(C,-1), "Price -1", 1.2);
+AddColumn(ROC(C,1),"%Tang ", 1.2,colorYellow,IIf(C> Ref(C,-1),colorGreen,colorBrown),50);
+AddColumn(C,"Price",1.2,colorYellow,IIf(C>Ref(C,-1),colorGreen,colorBrown),50);
+AddColumn(tl,"Tích Luy (%)",1.2,IIf(tl<=10,colorDefault,colorBlue),colorDefault,80);
+
+AddColumn(O," Open ",1.2); 
+AddColumn(H," High ",1.2,colorYellow,colorGreen,50);
+AddColumn(L," Low ",1.2,colorYellow,colorDarkRed,50);
+AddColumn(RSI(14),"RSI");
+AddColumn(Ref(V,-2), "Vol-2",1,colorYellow,IIf(V-1>Ref(V,-2),colorGreen,colorBrown),90);
+AddColumn(Ref(V,-1), "Vol-1",1,colorYellow,IIf(V>Ref(V,-1),colorGreen,colorBrown),90);
+AddColumn(V,"Volume",1,colorYellow,IIf(V>Ref(V,-1),colorGreen,colorBrown),90);
+AddColumn(C*V,"Gia tri GD ",1,colorBlack,colorDefault,90);
+AddColumn(((V - MA(V,50))/MA(V,50))*100 ,"% Dot bien KL");
+AddColumn((((C - Ref(C,-20))/Ref(C,-20))*100 +((C - Ref(C,-40))/Ref(C,-40))*100+((C - Ref(C,-60))/Ref(C,-60))*100)/3 ,"BQ tang 3Tg");
+
+
+AddSummaryRows(16, 1.2,5);
+SetSortColumns( -4 ) ;

@@ -1,0 +1,755 @@
+
+Vnindex=ParamStr("VnIndex","VNINDEX");
+THUCPHAM=ParamStr("THUC PHAM","MSN,TNA,VNM,LSS,QNS,SBT,MCH,VOC,NAF,SCD,SAB,SMB,KDC");
+BAOHIEM=ParamStr("BAO HIEM","VNR,ABI,BIC,BMI,MIG,PGI,PVI,BVH");
+NGANHANG=ParamStr("NGAN HANG","ACB,BID,CTG,HDB,MBB,SHB,STB,TCB,TPB,VCB,VIB,VPB,ABB,EIB,BVB,KLB,LPB,BAB,NVB,OCB,PGB,SGB,VAB,VBB");
+CHUNGKHOAN=ParamStr("CHUNG KHOAN","AGR,ART,BSI,BVS,CTS,FTS,HCM,MBS,SBS,SHS,SSI,TVB,TVS,VCI,VDS,VIX,VND");
+BATDONGSAN=ParamStr("BAT DONG SAN","IJC,LDG,NVT,AMD,C21,CEO,D2D,DIG,DRH,DXG,FLC,HAR,HDC,HDG,HLD,HQC,ITC,KDH,NBB,NDN,NLG,NTL,NVL,PDR,QCG,SCR,SJS,TDH,TIG,VIC,VPH,IDV,ITA,KBC,LHG,VC3,LGL");
+DAUKHI=ParamStr("DAU KHI","PVB,PVC,PVD,PVS,ASP,CNG,GAS,PGC,PGS,PLX,PVG,PVO");
+CANG=ParamStr("CANG","HAH,STG,GMD,PDN,PHP,SGP,VSC");
+XAYDUNG=ParamStr("XAY DUNG","C32,C47,CII,CTD,CTI,FCN,HBC,HC3,HTI,HUT,L14,MCG,LCG,PC1,DPG,PHC,PVX,PXS,SD5,SD6,SD9,TCD,UIC,VCG,VMC,VNE,THG,VPD,TV2");
+THEP=ParamStr("THEP","HPG,HSG,NKG,POM,SHA,TIS,TVN,VGS,HMC,SHI,SMC,TLH");
+NHUA=ParamStr("NHUA","AAA,BMP,DAG,DNP,NTP,RDP");
+THUYSAN=ParamStr("THUYSAN","ANV,ASM,FMC,HVG,IDI,SSN,VHC");
+CAOSU=ParamStr("CAO SU","DPR,DRI,HRC,PHR,TRC,GVR");
+CONGNGHE=ParamStr("CONG NGHE","CMG,SGT,ITD,VEC,FPT,ELC,ABC");
+DUOCPHAM=ParamStr("DUOC PHAM","DCL,DHG,DHT,IMP,TRA,DVN,DBD,JVC");
+HANGKHONG=ParamStr("HANG KHONG","NCT,ACV,HVN,SCS,VJC");
+HOACHAT=ParamStr("HOA CHAT","HAI,LTG,TSC,VFG,BFC,DCM,DDV,DPM,LAS,QBS,SFG,CSM,DRC,SRC,CSV,DGC,PLC,LIX,NET");
+MAYMAC=ParamStr("MAY MAC","ADS,EVE,FTM,GMC,HTG,KMR,STK,TCM,TNG,TVT,VGG,VGT,MSH");
+DIENNUOC=ParamStr("DIEN NUOC","BWE,VCW,DQC,GDT,RAL,CHP,NT2,REE,PPC,SBA,SJD,VSH");
+VANTAI=ParamStr("VAN TAI","PVT,GSP,SWC,VIP,VOS,VTO,SKG,SRT,VNS,SAS");
+BDSKCN=ParamStr("BDS KCN","SZC,SAL,IDC,TIP,NTC,LHG,D2D,KBC,ITA,BCM");
+BANLE=ParamStr("BAN LE","MWG,FPT,FRT,PET,DGW,PIV");
+PHANBON=ParamStr("PHAN BON","DPM,DCM,LAS,BFC,DDV");
+THAN=ParamStr("THAN","TDN,TC6,TVD,THT,NBC");
+VLXD=ParamStr("VLXD","ACC,BCC,BTS,CTI,DC4,DHA,GMX,HOM,HT1,MVC,NNC,QNS,SCJ,VCS,VGC,KSB");
+DAUTUCONG=ParamStr("DAU TU CONG","FCN,KSB,PLC,BCC,HT1,DHA,LCG,C4G,C32");
+
+
+//===================== * SECTOR VN- Vnindex * ===============================
+
+_SECTION_BEGIN("VN- Vnindex ");
+
+No=0;
+iclose1=0;
+ichange1=0;
+for( i = 0; ( sym1 = StrExtract(Vnindex,i ) ) != ""; i++ )
+{
+iclose1+=Foreign(sym1,"Close");
+num1=1+StrCount(Vnindex,",");
+tb1=iclose1/num1;
+ichange1+=ROC(Foreign(sym1,"Close"),1)/num1;
+No++;
+};
+
+
+
+_SECTION_END();
+
+//===================== * SECTOR VN- THUCPHAM * ==============================
+
+_SECTION_BEGIN("THUCPHAM ");
+No=0;
+iclose2=0;
+ichange2=0;
+for( i = 0; ( sym2 = StrExtract(THUCPHAM,i ) ) != ""; i++ )
+{
+iclose2+=Foreign(sym2,"Close");
+num2=1+StrCount(THUCPHAM,",");
+tb2=iclose2/num2;
+ichange2+=ROC(Foreign(sym2,"Close"),1)/num2;
+No++;
+}
+_SECTION_END();
+
+
+//===================== * SECTOR VN- BAO.HIEM * ==============================
+
+_SECTION_BEGIN("VN- BAOHIEM ");
+No=0;
+iclose3=0;
+ichange3=0;
+for( i = 0; ( sym3 = StrExtract(BAOHIEM,i ) ) != ""; i++ )
+{
+iclose3+=Foreign(sym3,"Close");
+num3=1+StrCount(BAOHIEM,",");
+tb3=iclose3/num3;
+ichange3+=ROC(Foreign(sym3,"Close"),1)/num3;
+No++;
+}
+_SECTION_END();
+
+//===================== * SECTOR NGANHANG * ==============================
+
+_SECTION_BEGIN("NGANHANG");
+No=0;
+iclose4=0;
+ichange4=0;
+for( i = 0; ( sym4 = StrExtract( NGANHANG, i ) ) != ""; i++ )
+{
+iclose4+=Foreign(sym4,"Close");
+num4=1+StrCount(NGANHANG,",");
+tb4=iclose4/num4;
+ichange4+=ROC(Foreign(sym4,"Close"),1)/num4;
+No++;
+}
+_SECTION_END();
+
+
+
+//===================== * SECTOR VN- CHUNGKHOAN * ==============================
+
+_SECTION_BEGIN("CHUNGKHOAN ");
+No=0;
+iclose5=0;
+ichange5=0;
+for( i = 0; ( sym5 = StrExtract(CHUNGKHOAN, i ) ) != ""; i++ )
+{
+iclose5+=Foreign(sym5,"Close");
+num5=1+StrCount(CHUNGKHOAN,",");
+tb5=iclose5/num5;
+ichange5+=ROC(Foreign(sym5,"Close"),1)/num5;
+No++;
+}
+_SECTION_END();
+
+
+
+
+//===================== * SECTOR VN-BATDONGSAN* ==============================
+_SECTION_BEGIN("VN-BATDONGSAN");
+No=0;
+iclose6=0;
+ichange6=0;
+for( i = 0; ( sym6 = StrExtract(BATDONGSAN, i ) ) != ""; i++ )
+{
+iclose6+=Foreign(sym6,"Close");
+num6=1+StrCount(BATDONGSAN,",");
+tb6=iclose6/num6;
+ichange6+=ROC(Foreign(sym6,"Close"),1)/num6;
+No++;
+}
+_SECTION_END();
+
+
+
+
+//===================== * SECTOR VN- DAUKHI * ==============================
+
+_SECTION_BEGIN("DAUKHI ");
+No=0;
+iclose7=0;
+ichange7=0;
+for( i = 0; ( sym7 = StrExtract(DAUKHI, i ) ) != ""; i++ )
+{
+iclose7+=Foreign(sym7,"Close");
+num7=1+StrCount(DAUKHI,",");
+tb7=iclose7/num7;
+ichange7+=ROC(Foreign(sym7,"Close"),1)/num7;
+No++;
+}
+_SECTION_END();
+
+
+
+//===================== * SECTOR VN- CANG * ==============================
+
+_SECTION_BEGIN("VN- CANG ");
+No=0;
+iclose8=0;
+ichange8=0;
+for( i = 0; ( sym8 = StrExtract(CANG, i ) ) != ""; i++ )
+{
+iclose8+=Foreign(sym8,"Close");
+num8=1+StrCount(CANG,",");
+tb8=iclose8/num8;
+ichange8+=ROC(Foreign(sym8,"Close"),1)/num8;
+No++;
+}
+_SECTION_END();
+
+
+//===================== * SECTOR VN- XAY DUNG * ==============================
+
+_SECTION_BEGIN("VN- XAYDUNG ");
+No=0;
+iclose9=0;
+ichange9=0;
+for( i = 0; ( sym9 = StrExtract(XAYDUNG, i ) ) != ""; i++ )
+{
+iclose9+=Foreign(sym9,"Close");
+num9=1+StrCount(XAYDUNG,",");
+tb9=iclose9/num9;
+ichange9+=ROC(Foreign(sym9,"Close"),1)/num9;
+No++;
+}
+_SECTION_END();
+
+
+
+//===================== * SECTOR VN- THEP * ==============================
+
+_SECTION_BEGIN("VN-THEP");
+No=0;
+iclose10=0;
+ichange10=0;
+for( i = 0; ( sym10 = StrExtract(THEP, i ) ) != ""; i++ )
+{
+iclose10+=Foreign(sym10,"Close");
+num10=1+StrCount(THEP,",");
+tb10=iclose10/num10;
+ichange10+=ROC(Foreign(sym10,"Close"),1)/num10;
+No++;
+}
+_SECTION_END();
+
+
+
+//===================== * SECTOR VN- NHUA * ==============================
+
+_SECTION_BEGIN("VN-NHUA");
+No=0;
+iclose11=0;
+ichange11=0;
+for( i = 0; ( sym11 = StrExtract(NHUA, i ) ) != ""; i++ )
+{
+iclose11+=Foreign(sym11,"Close");
+num11=1+StrCount(NHUA,",");
+tb11=iclose11/num11;
+ichange11+=ROC(Foreign(sym11,"Close"),1)/num11;
+No++;
+}
+_SECTION_END();
+
+
+
+
+//===================== * SECTOR VN-VATLIEUXAYDUNG * ==============================
+
+_SECTION_BEGIN("VN- THUYSAN ");
+No=0;
+iclose12=0;
+ichange12=0;
+for( i = 0; ( sym12 = StrExtract(THUYSAN, i ) ) != ""; i++ )
+{
+iclose12+=Foreign(sym12,"Close");
+num12=1+StrCount(THUYSAN,",");
+tb12=iclose12/num12;
+ichange12+=ROC(Foreign(sym12,"Close"),1)/num12;
+No++;
+}
+_SECTION_END();
+
+
+
+//===================== * SECTOR VN-CAOSU * ==============================
+
+_SECTION_BEGIN("VN-CAOSU");
+No=0;
+iclose13=0;
+ichange13=0;
+for( i = 0; ( sym13 = StrExtract( CAOSU, i ) ) != ""; i++ )
+{
+iclose13+=Foreign(sym13,"Close");
+num13=1+StrCount(CAOSU,",");
+tb13=iclose13/num13;
+ichange13+=ROC(Foreign(sym13,"Close"),1)/num13;
+No++;
+}
+_SECTION_END();
+
+
+//===================== * SECTOR VN-CONGNGHE * ==============================
+
+_SECTION_BEGIN("VN-CONGNGHE");
+No=0;
+iclose14=0;
+ichange14=0;
+for( i = 0; ( sym14 = StrExtract( CONGNGHE, i ) ) != ""; i++ )
+{
+iclose14+=Foreign(sym14,"Close");
+num14=1+StrCount(CONGNGHE,",");
+tb14=iclose14/num14;
+ichange14+=ROC(Foreign(sym14,"Close"),1)/num14;
+No++;
+}
+_SECTION_END();
+
+
+//===================== * SECTOR VN-DUOCPHAM * ==============================
+
+_SECTION_BEGIN("VN-DUOCPHAM");
+No=0;
+iclose15=0;
+ichange15=0;
+for( i = 0; ( sym15 = StrExtract( DUOCPHAM, i ) ) != ""; i++ )
+{
+iclose15+=Foreign(sym15,"Close");
+num15=1+StrCount(DUOCPHAM,",");
+tb15=iclose15/num15;
+ichange15+=ROC(Foreign(sym15,"Close"),1)/num15;
+No++;
+}
+_SECTION_END();
+
+
+//===================== * SECTOR VN-HANGKHONG * ==============================
+
+_SECTION_BEGIN("VN-HANGKHONG");
+No=0;
+iclose16=0;
+ichange16=0;
+for( i = 0; ( sym16 = StrExtract( HANGKHONG, i ) ) != ""; i++ )
+{
+iclose16+=Foreign(sym16,"Close");
+num16=1+StrCount(HANGKHONG,",");
+tb16=iclose16/num16;
+ichange16+=ROC(Foreign(sym16,"Close"),1)/num16;
+No++;
+}
+_SECTION_END();
+
+
+//===================== * SECTOR VN-HOACHAT* ==============================
+
+_SECTION_BEGIN("VN-HOACHAT");
+No=0;
+iclose17=0;
+ichange17=0;
+for( i = 0; ( sym17 = StrExtract( HOACHAT, i ) ) != ""; i++ )
+{
+iclose17+=Foreign(sym17,"Close");
+num17=1+StrCount(HOACHAT,",");
+tb17=iclose17/num17;
+ichange17+=ROC(Foreign(sym17,"Close"),1)/num17;
+No++;
+}
+_SECTION_END();
+
+//===================== * SECTOR VN-MAYMAC * ==============================
+
+_SECTION_BEGIN("VN-MAYMAC");
+No=0;
+iclose18=0;
+ichange18=0;
+for( i = 0; ( sym18 = StrExtract( MAYMAC, i ) ) != ""; i++ )
+{
+iclose18+=Foreign(sym18,"Close");
+num18=1+StrCount(MAYMAC,",");
+tb18=iclose18/num18;
+ichange18+=ROC(Foreign(sym18,"Close"),1)/num18;
+No++;
+}
+_SECTION_END();
+
+
+//===================== * SECTOR VN-DIENNUOC * ==============================
+
+_SECTION_BEGIN("VN-DIENNUOC");
+No=0;
+iclose19=0;
+ichange19=0;
+for( i = 0; ( sym19 = StrExtract( DIENNUOC, i ) ) != ""; i++ )
+{
+iclose19+=Foreign(sym19,"Close");
+num19=1+StrCount(DIENNUOC,",");
+tb19=iclose19/num19;
+ichange19+=ROC(Foreign(sym19,"Close"),1)/num19;
+No++;
+}
+_SECTION_END();
+
+
+
+//===================== * SECTOR VN-VANTAI * ==============================
+
+_SECTION_BEGIN("VN-VANTAI");
+No=0;
+iclose20=0;
+ichange20=0;
+for( i = 0; ( sym20 = StrExtract( VANTAI, i ) ) != ""; i++ )
+{
+iclose20+=Foreign(sym20,"Close");
+num20=1+StrCount(VANTAI,",");
+tb20=iclose20/num20;
+ichange20+=ROC(Foreign(sym20,"Close"),1)/num20;
+No++;
+}
+_SECTION_END();
+
+
+
+//===================== * SECTOR BDS KCN * ==============================
+
+_SECTION_BEGIN("BDS KCN");
+No=0;
+iclose21=0;
+ichange21=0;
+for( i = 0; ( sym21 = StrExtract( BDSKCN, i ) ) != ""; i++ )
+{
+iclose21+=Foreign(sym21,"Close");
+num21=1+StrCount(BDSKCN,",");
+tb21=iclose21/num21;
+ichange21+=ROC(Foreign(sym21,"Close"),1)/num21;
+No++;
+}
+_SECTION_END();
+
+
+//===================== * SECTOR BAN LE * ==============================
+
+_SECTION_BEGIN("BAN LE");
+No=0;
+iclose22=0;
+ichange22=0;
+for( i = 0; ( sym22 = StrExtract( BANLE, i ) ) != ""; i++ )
+{
+iclose22+=Foreign(sym22,"Close");
+num22=1+StrCount(BANLE,",");
+tb22=iclose22/num22;
+ichange22+=ROC(Foreign(sym22,"Close"),1)/num22;
+No++;
+}
+_SECTION_END();
+
+
+//===================== * SECTOR PHAN BON * ==============================
+
+_SECTION_BEGIN("PHAN BON");
+No=0;
+iclose23=0;
+ichange23=0;
+for( i = 0; ( sym23 = StrExtract( PHANBON, i ) ) != ""; i++ )
+{
+iclose23+=Foreign(sym23,"Close");
+num23=1+StrCount(PHANBON,",");
+tb23=iclose23/num23;
+ichange23+=ROC(Foreign(sym23,"Close"),1)/num23;
+No++;
+}
+_SECTION_END();
+
+
+//===================== * SECTOR THAN * ==============================
+
+_SECTION_BEGIN("THAN");
+No=0;
+iclose24=0;
+ichange24=0;
+for( i = 0; ( sym24 = StrExtract( THAN, i ) ) != ""; i++ )
+{
+iclose24+=Foreign(sym24,"Close");
+num24=1+StrCount(THAN,",");
+tb24=iclose24/num24;
+ichange24+=ROC(Foreign(sym24,"Close"),1)/num23;
+No++;
+}
+_SECTION_END();
+
+
+//===================== * SECTOR VLXD * ==============================
+
+_SECTION_BEGIN("VLXD");
+No=0;
+iclose25=0;
+ichange25=0;
+for( i = 0; ( sym25 = StrExtract( VLXD, i ) ) != ""; i++ )
+{
+iclose25+=Foreign(sym25,"Close");
+num25=1+StrCount(VLXD,",");
+tb25=iclose25/num25;
+ichange25+=ROC(Foreign(sym25,"Close"),1)/num24;
+No++;
+}
+_SECTION_END();
+
+
+//===================== * SECTOR DAU TU CONG * ==============================
+
+_SECTION_BEGIN("DAUTUCONG");
+No=0;
+iclose26=0;
+ichange26=0;
+for( i = 0; ( sym26 = StrExtract( DAUTUCONG, i ) ) != ""; i++ )
+{
+iclose26+=Foreign(sym26,"Close");
+num26=1+StrCount(DAUTUCONG,",");
+tb26=iclose26/num26;
+ichange26+=ROC(Foreign(sym26,"Close"),1)/num24;
+No++;
+}
+_SECTION_END();
+
+
+
+_SECTION_END();
+
+Color1=Param("colortext1:",colorDarkBlue);
+Color2=Param("colortext2:",colorDarkGreen);
+Color3 = ParamColor("Color3", colorBrown );
+Color4 = ParamColor("Color4", colorPink );
+Color5 = ParamColor("Color5", colorCustom1 );
+Color6 = ParamColor("Color6", colorCustom9 );
+Color7 = ParamColor("Color7", colorOrange );
+Color8 = ParamColor("Color8", colorGold );
+Color9 = ParamColor("Color9", colorTan );
+Color10 = ParamColor("Color10", colorCustom11 );
+Color11 = ParamColor("Color11", colorTeal );
+Color12 = ParamColor("Color12", colorCustom5 );
+Color13 = ParamColor("Color13", colorCustom13 );
+Color14 = ParamColor("Color14", colorPaleGreen );
+Color15 = ParamColor("Color15", colorCustom4 );
+Color16 = ParamColor("Color16", colorCustom12 );
+Color17 = ParamColor("Color17", colorBlue );
+Color18 = ParamColor("Color18", colorDarkRed );
+Color19 = ParamColor("Color19", colorIndigo );
+Color20 = ParamColor("Color20", colorViolet );
+Color21 = ParamColor("Color21", colorDarkGrey );
+Color22 = ParamColor("Color22", colorLightOrange );
+Color23 = ParamColor("Color23", colorWhite );
+Color24 = ParamColor("Color24", colorSkyblue );
+Color25 = ParamColor("Color25", colorAqua );
+Color26 = ParamColor("Color26", colorTurquoise );
+Color27 = ParamColor("Color27", colorLime );
+Color28 = ParamColor("Color28", colorRose );
+
+
+
+    //Set Variables
+    barvisible = Status("barvisible");
+    FVB = barvisible AND NOT Ref( barvisible, -1 );
+    CVB = ValueWhen( FVB,C) ;
+    Leftbar=ValueWhen(Ref(barvisible,-1)==0 AND barvisible,DateTime() );
+    Rightbar=LastValue(DateTime() );
+    DateSpan = EndValue(BarIndex()) - BeginValue(BarIndex());
+    Range = DateSpan ;
+    StartDate = BeginValue(BarIndex());
+    EndDate = EndValue(BarIndex());
+
+t1=100*(tb1-ValueWhen(fvb,tb1))/ValueWhen(fvb,tb1);
+t2=100*(tb2-ValueWhen(fvb,tb2))/ValueWhen(fvb,tb2);
+t3=100*(tb3-ValueWhen(fvb,tb3))/ValueWhen(fvb,tb3);
+t4=100*(tb4-ValueWhen(fvb,tb4))/ValueWhen(fvb,tb4);
+t5=100*(tb5-ValueWhen(fvb,tb5))/ValueWhen(fvb,tb5);
+t6=100*(tb6-ValueWhen(fvb,tb6))/ValueWhen(fvb,tb6);
+t7=100*(tb7-ValueWhen(fvb,tb7))/ValueWhen(fvb,tb7);
+t8=100*(tb8-ValueWhen(fvb,tb8))/ValueWhen(fvb,tb8);
+t9=100*(tb9-ValueWhen(fvb,tb9))/ValueWhen(fvb,tb9);
+t10=100*(tb10-ValueWhen(fvb,tb10))/ValueWhen(fvb,tb10);
+t11=100*(tb11-ValueWhen(fvb,tb11))/ValueWhen(fvb,tb11);
+t12=100*(tb12-ValueWhen(fvb,tb12))/ValueWhen(fvb,tb12);
+t13=100*(tb13-ValueWhen(fvb,tb13))/ValueWhen(fvb,tb13);
+t14=100*(tb14-ValueWhen(fvb,tb14))/ValueWhen(fvb,tb14);
+t15=100*(tb15-ValueWhen(fvb,tb15))/ValueWhen(fvb,tb15);
+t16=100*(tb16-ValueWhen(fvb,tb16))/ValueWhen(fvb,tb16);
+t17=100*(tb17-ValueWhen(fvb,tb17))/ValueWhen(fvb,tb17);
+t18=100*(tb18-ValueWhen(fvb,tb18))/ValueWhen(fvb,tb18);
+t19=100*(tb19-ValueWhen(fvb,tb19))/ValueWhen(fvb,tb19);
+t20=100*(tb20-ValueWhen(fvb,tb20))/ValueWhen(fvb,tb20);
+t21=100*(tb21-ValueWhen(fvb,tb21))/ValueWhen(fvb,tb21);
+t22=100*(tb22-ValueWhen(fvb,tb22))/ValueWhen(fvb,tb22);
+t23=100*(tb23-ValueWhen(fvb,tb23))/ValueWhen(fvb,tb23);
+t24=100*(tb24-ValueWhen(fvb,tb24))/ValueWhen(fvb,tb24);
+t25=100*(tb25-ValueWhen(fvb,tb25))/ValueWhen(fvb,tb25);
+t26=100*(tb26-ValueWhen(fvb,tb26))/ValueWhen(fvb,tb26);
+
+
+
+
+//----------Ve chart------------------//
+//Plot(t1,"VnIndex",color3,ParamStyle("Style3",styleLine));
+_SECTION_BEGIN("Hien thi Index");
+
+if (ParamToggle( "VNIndex",  "OFF|ON", 1 ))
+{
+Plot(t1,"VnIndex",color3,ParamStyle("Style3",styleLine|styleThick));
+y = LastValue( t1 );
+PlotText( "VNIndex", BarCount+ 1 , y,color3);
+}
+if (ParamToggle( "Thuc Pham",  "OFF|ON", 0 ))
+{
+Plot(t2,"THUC PHAM",color4,ParamStyle("Style4",styleLine|styleThick));
+y = LastValue( t2 );
+PlotText( "thuc pham", BarCount+ 1 , y,color4);
+}
+if (ParamToggle( "Bao Hiem",  "OFF|ON", 1 ))
+{
+Plot(t3,"BAO HIEM",color5,ParamStyle("Style5",styleLine|styleThick));
+y = LastValue( t3 );
+PlotText( "bao hiem", BarCount+ 1 , y,color5);
+}
+if (ParamToggle( "Ngan Hang",  "OFF|ON", 1 ))
+{
+Plot(t4,"NGAN HANG",color6,ParamStyle("Style6",styleLine|styleThick));
+y = LastValue( t4 );
+PlotText( "ngan hang", BarCount+ 1 , y,color6);
+}
+if (ParamToggle( "Chung Khoan",  "OFF|ON", 1 ))
+{
+Plot(t5,"CHUNG KHOAN",color7,ParamStyle("Style7",styleLine|styleThick));
+y = LastValue( t5 );
+PlotText( "chung khoan", BarCount+ 1 , y,color7);
+}
+if (ParamToggle( "BDS",  "OFF|ON", 1 ))
+{
+Plot(t6,"BAT DONG SAN",color8,ParamStyle("Style8",styleLine|styleThick));
+y = LastValue( t6 );
+PlotText( "bat dong san", BarCount+ 1 , y,color8);
+}
+if (ParamToggle( "Dau Khi",  "OFF|ON", 1 ))
+{
+Plot(t7,"DAU KHI",color9,ParamStyle("Style9",styleLine|styleThick));
+y = LastValue( t7 );
+PlotText( "dau khi", BarCount+ 1 , y,color9);
+}
+if (ParamToggle( "Cang",  "OFF|ON", 0 ))
+{
+Plot(t8,"CANG",color10,ParamStyle("Style10",styleLine|styleThick));
+y = LastValue( t8 );
+PlotText( "cang", BarCount+ 1 , y,color10);
+}
+if (ParamToggle( "Xay Dung",  "OFF|ON", 0 ))
+{
+Plot(t9,"XAY DUNG",color11,ParamStyle("Style11",styleLine|styleThick));
+y = LastValue( t9 );
+PlotText( "xay dung", BarCount+ 1 , y,color11);
+}
+if (ParamToggle( "Thep",  "OFF|ON", 1 ))
+{
+Plot(t10,"THEP",color12,ParamStyle("Style12",styleLine|styleThick));
+y = LastValue( t10 );
+PlotText( "thep", BarCount+ 1 , y,color12);
+}
+if (ParamToggle( "Nhua",  "OFF|ON", 0 ))
+{
+Plot(t11,"NHUA",color13,ParamStyle("Style13",styleLine|styleThick));
+y = LastValue( t11 );
+PlotText( "nhua", BarCount+ 1 , y,color13);
+}
+if (ParamToggle( "Thuy San",  "OFF|ON", 0 ))
+{
+Plot(t12,"THUY SAN",color14,ParamStyle("Style14",styleLine|styleThick));
+y = LastValue( t12 );
+PlotText( "thuy san", BarCount+ 1 , y,color14);
+}
+if (ParamToggle( "Cao Su",  "OFF|ON", 0 ))
+{
+Plot(t13,"CAO SU",color15,ParamStyle("Style15",styleLine|styleThick));
+y = LastValue( t13 );
+PlotText( "cao su", BarCount+ 1 , y,color15);
+}
+if (ParamToggle( "Cong Nghe",  "OFF|ON", 0 ))
+{
+Plot(t14,"CONG NGHE",color16,ParamStyle("Style16",styleLine|styleThick));
+y = LastValue( t14 );
+PlotText( "cong nghe", BarCount+ 1 , y,color16);
+}
+if (ParamToggle( "Duoc Pham",  "OFF|ON", 0 ))
+{
+Plot(t15,"DUOC PHAM",color17,ParamStyle("Style17",styleLine|styleThick));
+y = LastValue( t15 );
+PlotText( "duoc pham", BarCount+ 1 , y,color17);
+}
+if (ParamToggle( "Hang Khong",  "OFF|ON", 0 ))
+{
+Plot(t16,"HANG KHONG",color18,ParamStyle("Style18",styleLine|styleThick));
+y = LastValue( t16 );
+PlotText( "hang khong", BarCount+ 1 , y,color18);
+}
+if (ParamToggle( "Hoa Chat",  "OFF|ON", 1 ))
+{
+Plot(t17,"HOA CHAT",color19,ParamStyle("Style19",styleLine|styleThick));
+y = LastValue( t17 );
+PlotText( "hoa chat", BarCount+ 1 , y,color19);
+}
+if (ParamToggle( "May Mac",  "OFF|ON", 0 ))
+{
+Plot(t18,"MAY MAC",color20,ParamStyle("Style20",styleLine|styleThick));
+y = LastValue( t18 );
+PlotText( "may mac", BarCount+ 1 , y,color20);
+}
+if (ParamToggle( "Dien Nuoc",  "OFF|ON", 1 ))
+{
+Plot(t19,"DIEN NUOC",color21,ParamStyle("Style21",styleLine|styleThick));
+y = LastValue( t19 );
+PlotText( "dien nuoc", BarCount+ 1 , y,color21);
+}
+if (ParamToggle( "Van Tai",  "OFF|ON", 0 ))
+{
+Plot(t20,"VAN TAI",color22,ParamStyle("Style22",styleLine|styleThick));
+y = LastValue( t20 );
+PlotText( "van tai", BarCount+ 1 , y,color22);
+}
+if (ParamToggle( "BDS KCN",  "OFF|ON", 0 ))
+{
+Plot(t21,"BDS KCN",color23,ParamStyle("Style23",styleLine|styleThick));
+y = LastValue( t21 );
+PlotText( "bds kcn", BarCount+ 1 , y,color23);
+}
+if (ParamToggle( "Ban Le",  "OFF|ON", 1 ))
+{
+Plot(t22,"BAN LE",color24,ParamStyle("Style24",styleLine|styleThick));
+y = LastValue( t22 );
+PlotText( "ban le", BarCount+ 1 , y,color24);
+}
+if (ParamToggle( "Phan Bon",  "OFF|ON", 1 ))
+{
+Plot(t23,"PHAN BON",color25,ParamStyle("Style25",styleLine|styleThick));
+y = LastValue( t23 );
+PlotText( "phan bon", BarCount+ 1 , y,color25);
+}
+if (ParamToggle( "Than",  "OFF|ON", 0 ))
+{
+Plot(t24,"THAN",color26,ParamStyle("Style26",styleLine|styleThick));
+y = LastValue( t24 );
+PlotText( "than", BarCount+ 1 , y,color26);
+}
+if (ParamToggle( "VLXD",  "OFF|ON", 0 ))
+{
+Plot(t25,"VLXD",color27,ParamStyle("Style27",styleLine|styleThick));
+y = LastValue( t25 );
+PlotText( "vlxd", BarCount+ 1 , y,color27);
+}
+if (ParamToggle( "Dau Tu Cong",  "OFF|ON", 0 ))
+{
+Plot(t26,"DAU TU CONG",color28,ParamStyle("Style28",styleLine|styleThick));
+y = LastValue( t26 );
+PlotText( "dau tu cong", BarCount+ 1 , y,color28);
+}
+_SECTION_END();
+
+
+Title="     VNINDEX:                  " +WriteIf(t1<0,EncodeColor(colorRed)+" [",EncodeColor(colorGreen)+" [+")+WriteVal(t1,1.1)+"%]   "+" "+WriteIf(ichange1<0,EncodeColor(colorRed),EncodeColor(colorGreen)+"+")+WriteVal(ichange1,1.1)+"%"+ 
+"\n"+ EncodeColor(color4)+"  [1] THUC PHAM :          " +WriteIf(t2<0,EncodeColor(colorRed)+" [",EncodeColor(colorGreen)+" [+")+WriteVal(t2,1.1)+"%]   "+" "+WriteIf(ichange2<0,EncodeColor(colorRed),EncodeColor(colorGreen)+"+")+WriteVal(ichange2,1.1)+"%"+
+"\n"+ EncodeColor(color5)+"  [2] BAO HIEM :              " +WriteIf(t3<0,EncodeColor(colorRed)+" [",EncodeColor(colorGreen)+" [+")+WriteVal(t3,1.1)+"%]   "+" "+WriteIf(ichange3<0,EncodeColor(colorRed),EncodeColor(colorGreen)+"+")+WriteVal(ichange3,1.1)+"%"+
+"\n"+ EncodeColor(color6)+"  [3] NGAN HANG :          "+WriteIf(t4<0,EncodeColor(colorRed)+" [",EncodeColor(colorGreen)+" [+")+WriteVal(t4,1.1)+"%]   "+" "+WriteIf(ichange6<0,EncodeColor(colorRed),EncodeColor(colorGreen)+"+")+WriteVal(ichange4,1.1)+"%"+
+"\n"+ EncodeColor(color7)+"  [4] CHUNG KHOAN :    "+WriteIf(t5<0,EncodeColor(colorRed)+" [",EncodeColor(colorGreen)+" [+")+WriteVal(t5,1.1)+"%]   "+" "+WriteIf(ichange5<0,EncodeColor(colorRed),EncodeColor(colorGreen)+"+")+WriteVal(ichange5,1.1)+"%"+
+"\n"+ EncodeColor(color8)+"  [5] BAT DONG SAN :   "+WriteIf(t6<0,EncodeColor(colorRed)+" [",EncodeColor(colorGreen)+" [+")+WriteVal(t6,1.1)+"%]   "+" "+WriteIf(ichange6<0,EncodeColor(colorRed),EncodeColor(colorGreen)+"+")+WriteVal(ichange6,1.1)+"%"+
+"\n"+ EncodeColor(color9)+"  [6] DAU KHI :                "+WriteIf(t7<0,EncodeColor(colorRed)+" [",EncodeColor(colorGreen)+" [+")+WriteVal(t7,1.1)+"%]   "+" "+WriteIf(ichange7<0,EncodeColor(colorRed),EncodeColor(colorGreen)+"+")+WriteVal(ichange7,1.1)+"%"+
+"\n"+EncodeColor(color10)+"  [7] CANG :                    "+WriteIf(t8<0,EncodeColor(colorRed)+" [",EncodeColor(colorGreen)+" [+")+WriteVal(t8,1.1)+"%]   "+" "+WriteIf(ichange8<0,EncodeColor(colorRed),EncodeColor(colorGreen)+"+")+WriteVal(ichange8,1.1)+"%"+
+"\n"+EncodeColor(color11)+"  [8] XAYDUNG :             "+WriteIf(t9<0,EncodeColor(colorRed)+" [",EncodeColor(colorGreen)+" [+")+WriteVal(t9,1.1)+"%]   "+" "+WriteIf(ichange9<0,EncodeColor(colorRed),EncodeColor(colorGreen)+"+")+WriteVal(ichange9,1.1)+"%"+
+"\n"+EncodeColor(color12)+"  [9] THEP :                    "+WriteIf(t1<0,EncodeColor(colorRed)+" [",EncodeColor(colorGreen)+" [+")+WriteVal(t10,1.1)+"%]   "+" "+WriteIf(ichange10<0,EncodeColor(colorRed),EncodeColor(colorGreen)+"+")+WriteVal(ichange10,1.1)+"%"+
+"\n"+EncodeColor(color13)+"[10] NHUA :                    "+WriteIf(t11<0,EncodeColor(colorRed)+" [",EncodeColor(colorGreen)+" [+")+WriteVal(t11,1.1)+"%]   "+" "+WriteIf(ichange11<0,EncodeColor(colorRed),EncodeColor(colorGreen)+"+")+WriteVal(ichange11,1.1)+"%"+
+"\n"+EncodeColor(color14)+"[11] THUY SAN :            "+WriteIf(t12<0,EncodeColor(colorRed)+" [",EncodeColor(colorGreen)+" [+")+WriteVal(t12,1.1)+"%]   "+" "+WriteIf(ichange12<0,EncodeColor(colorRed),EncodeColor(colorGreen)+"+")+WriteVal(ichange12,1.1)+"%"+
+"\n"+EncodeColor(color15)+"[12] CAO SU :               "+WriteIf(t13<0,EncodeColor(colorRed)+" [",EncodeColor(colorGreen)+" [+")+WriteVal(t13,1.1)+"%]   "+" "+WriteIf(ichange13<0,EncodeColor(colorRed),EncodeColor(colorGreen)+"+")+WriteVal(ichange13,1.1)+"%"+
+"\n"+EncodeColor(color16)+"[13] CONG NGHE :       "+WriteIf(t14<0,EncodeColor(colorRed)+" [",EncodeColor(colorGreen)+" [+")+WriteVal(t14,1.1)+"%]   "+" "+WriteIf(ichange14<0,EncodeColor(colorRed),EncodeColor(colorGreen)+"+")+WriteVal(ichange14,1.1)+"%"+
+"\n"+EncodeColor(color17)+"[14] DUOC PHAM :       "+WriteIf(t15<0,EncodeColor(colorRed)+" [",EncodeColor(colorGreen)+" [+")+WriteVal(t15,1.1)+"%]   "+" "+WriteIf(ichange15<0,EncodeColor(colorRed),EncodeColor(colorGreen)+"+")+WriteVal(ichange15,1.1)+"%"+
+"\n"+EncodeColor(color18)+"[15] HANG KHONG :   "+WriteIf(t16<0,EncodeColor(colorRed)+" [",EncodeColor(colorGreen)+" [+")+WriteVal(t16,1.1)+"%]   "+" "+WriteIf(ichange16<0,EncodeColor(colorRed),EncodeColor(colorGreen)+"+")+WriteVal(ichange16,1.1)+"%"+
+"\n"+EncodeColor(color19)+"[16] HOA CHAT :          "+WriteIf(t17<0,EncodeColor(colorRed)+" [",EncodeColor(colorGreen)+" [+")+WriteVal(t17,1.1)+"%]   "+" "+WriteIf(ichange17<0,EncodeColor(colorRed),EncodeColor(colorGreen)+"+")+WriteVal(ichange17,1.1)+"%"+
+"\n"+EncodeColor(color20)+"[17] MAY MAC :            "+WriteIf(t18<0,EncodeColor(colorRed)+" [",EncodeColor(colorGreen)+" [+")+WriteVal(t18,1.1)+"%]   "+" "+WriteIf(ichange18<0,EncodeColor(colorRed),EncodeColor(colorGreen)+"+")+WriteVal(ichange18,1.1)+"%"+
+"\n"+EncodeColor(color21)+"[18] DIEN NUOC :        "+WriteIf(t19<0,EncodeColor(colorRed)+" [",EncodeColor(colorGreen)+" [+")+WriteVal(t19,1.1)+"%]   "+" "+WriteIf(ichange19<0,EncodeColor(colorRed),EncodeColor(colorGreen)+"+")+WriteVal(ichange19,1.1)+"%"+
+"\n"+EncodeColor(color22)+"[19] VAN TAI  :              "+WriteIf(t20<0,EncodeColor(colorRed)+" [",EncodeColor(colorGreen)+" [+")+WriteVal(t20,1.1)+"%]   "+" "+WriteIf(ichange20<0,EncodeColor(colorRed),EncodeColor(colorGreen)+"+")+WriteVal(ichange20,1.1)+"%"+
+"\n"+EncodeColor(color23)+"[20] BDS KCN  :              "+WriteIf(t21<0,EncodeColor(colorRed)+" [",EncodeColor(colorGreen)+" [+")+WriteVal(t21,1.1)+"%]   "+" "+WriteIf(ichange21<0,EncodeColor(colorRed),EncodeColor(colorGreen)+"+")+WriteVal(ichange21,1.1)+"%"+
+"\n"+EncodeColor(color24)+"[21] BAN LE  :              "+WriteIf(t22<0,EncodeColor(colorRed)+" [",EncodeColor(colorGreen)+" [+")+WriteVal(t22,1.1)+"%]   "+" "+WriteIf(ichange22<0,EncodeColor(colorRed),EncodeColor(colorGreen)+"+")+WriteVal(ichange22,1.1)+"%"+
+"\n"+EncodeColor(color25)+"[22] PHAN BON  :              "+WriteIf(t23<0,EncodeColor(colorRed)+" [",EncodeColor(colorGreen)+" [+")+WriteVal(t23,1.1)+"%]   "+" "+WriteIf(ichange23<0,EncodeColor(colorRed),EncodeColor(colorGreen)+"+")+WriteVal(ichange23,1.1)+"%"+
+"\n"+EncodeColor(color26)+"[23] THAN  :              "+WriteIf(t24<0,EncodeColor(colorRed)+" [",EncodeColor(colorGreen)+" [+")+WriteVal(t24,1.1)+"%]   "+" "+WriteIf(ichange24<0,EncodeColor(colorRed),EncodeColor(colorGreen)+"+")+WriteVal(ichange24,1.1)+"%"+
+"\n"+EncodeColor(color27)+"[24] VLXD  :              "+WriteIf(t25<0,EncodeColor(colorRed)+" [",EncodeColor(colorGreen)+" [+")+WriteVal(t25,1.1)+"%]   "+" "+WriteIf(ichange25<0,EncodeColor(colorRed),EncodeColor(colorGreen)+"+")+WriteVal(ichange25,1.1)+"%"+
+"\n"+EncodeColor(color28)+"[25] DAU TU CONG  :              "+WriteIf(t26<0,EncodeColor(colorRed)+" [",EncodeColor(colorGreen)+" [+")+WriteVal(t26,1.1)+"%]   "+" "+WriteIf(ichange26<0,EncodeColor(colorRed),EncodeColor(colorGreen)+"+")+WriteVal(ichange26,1.1)+"%";
+
+
+
+_SECTION_BEGIN("Graphics");
+GrpPrm=Param("Graphic Space",5,-20,20);
+GraphXSpace=GrpPrm;
+_SECTION_END();

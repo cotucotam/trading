@@ -1,0 +1,312 @@
+_SECTION_BEGIN("Tong Hop Nganh");
+//This code edited by HuyTuan: 0937798534
+//amibrokercodevn: https://t.me/amibrokercodevn
+//https://t.me/huytuanvt
+//Moi ung ho xin gui vao stk: 0081001154112 - Le Xuan Tuan - Ngan Hang VCB Vung Tau
+pxwidth = Status( "pxwidth" );
+pxheight = Status( "pxheight" );
+Contrast1 = Param( "Contrast 1", 0.5, 0.01, 1, 0.01 );
+Contrast2 = Param( "Contrast 2", 0.8, 0.01, 1, 0.01 );
+GfxSetOverlayMode( 2 );
+GfxSetBkMode( 0 ); // transparent
+GfxSelectSolidBrush( colorWhite );
+GfxSelectPen( colorWhite, 1 );
+GfxGradientRect( 0, 0, pxwidth, pxheight, colorBlack, colorBlack );
+////////////////
+cellheight = 23/870*pxheight;
+grid1_col1_cellwidth = 130/1880*pxwidth;
+grid1_col2_cellwidth = 170/1880*pxwidth;
+grid1_col3_cellwidth = 190/1880*pxwidth;
+
+//etc..
+no_of_cols = 3;
+no_of_rows = 13;
+pxr = Status( "pxchartright" );
+pxb = Status( "pxchartbottom" );
+start_x = pxr-445/1880*pxwidth;
+start_y = pxb-300/870*pxheight;
+
+GfxSelectPen( colorGrey50 );
+for (i=1; i<=no_of_rows; i++) {
+	x1 = start_x;
+	for (j=1; j<=no_of_cols; j++)
+		x1 += Nz(VarGet("grid1_col"+j+"_cellwidth"));		 
+	//
+	y = start_y + i * cellheight;	
+	GfxMoveTo( start_x, y ); 
+	GfxLineTo( x1, y );
+}
+
+cellwidth = 0;
+for (j=0; j<=no_of_cols; j++) {
+	cellwidth += Nz(VarGet("grid1_col"+j+"_cellwidth"));
+	x2 = start_x+cellwidth;
+	GfxMoveTo( x2, start_y+cellheight ); 
+	GfxLineTo( x2, start_y+cellheight*no_of_rows);	
+}
+//STT
+GfxSelectFont("Verdana",9/870*pxheight, 500);
+GfxSetBkColor(colorWhite);
+GfxSetTextColor( colorWhite);
+GfxTextOut("VN30", start_x+10/1880*pxwidth, start_y+3/870*pxheight+cellheight*2);
+GfxTextOut("BDS", start_x+10/1880*pxwidth, start_y+3/870*pxheight+cellheight*3);
+GfxTextOut("XD-VLXD", start_x+10/1880*pxwidth, start_y+3/870*pxheight+cellheight*4);
+GfxTextOut("CHUNG KHOAN", start_x+10/1880*pxwidth, start_y+3/870*pxheight+cellheight*5);
+GfxTextOut("NGAN HANG", start_x+10/1880*pxwidth, start_y+3/870*pxheight+cellheight*6);
+GfxTextOut("THEP", start_x+10/1880*pxwidth, start_y+3/870*pxheight+cellheight*7);
+GfxTextOut("DAU KHI", start_x+10/1880*pxwidth, start_y+3/870*pxheight+cellheight*8);
+///////
+GfxTextOut("CANG-VAN TAI", start_x+10/1880*pxwidth+grid1_col1_cellwidth, start_y+3/870*pxheight+cellheight*2);
+GfxTextOut("TP-XUAT KHAU", start_x+10/1880*pxwidth+grid1_col1_cellwidth, start_y+3/870*pxheight+cellheight*3);
+GfxTextOut("DAU TU CONG", start_x+10/1880*pxwidth+grid1_col1_cellwidth, start_y+3/870*pxheight+cellheight*4);
+GfxTextOut("BDS KCN", start_x+10/1880*pxwidth+grid1_col1_cellwidth, start_y+3/870*pxheight+cellheight*5);
+GfxTextOut("B/LE-CONG NGHE", start_x+10/1880*pxwidth+grid1_col1_cellwidth, start_y+3/870*pxheight+cellheight*6);
+GfxTextOut("THAN-KHOANG SAN", start_x+10/1880*pxwidth+grid1_col1_cellwidth, start_y+3/870*pxheight+cellheight*7);
+GfxTextOut("DIEN-NANG LUONG", start_x+10/1880*pxwidth+grid1_col1_cellwidth, start_y+3/870*pxheight+cellheight*8);
+///////
+GfxTextOut("BAO HIEM", start_x+10/1880*pxwidth+grid1_col2_cellwidth+grid1_col1_cellwidth, start_y+3/870*pxheight+cellheight*2);
+GfxTextOut("NUOC-NHUA", start_x+10/1880*pxwidth+grid1_col2_cellwidth+grid1_col1_cellwidth, start_y+3/870*pxheight+cellheight*3);
+GfxTextOut("DET MAY", start_x+10/1880*pxwidth+grid1_col2_cellwidth+grid1_col1_cellwidth, start_y+3/870*pxheight+cellheight*4);
+GfxTextOut("HANG KHONG-DU LICH", start_x+10/1880*pxwidth+grid1_col2_cellwidth+grid1_col1_cellwidth, start_y+3/870*pxheight+cellheight*5);
+GfxTextOut("YTE-DUOC", start_x+10/1880*pxwidth+grid1_col2_cellwidth+grid1_col1_cellwidth, start_y+3/870*pxheight+cellheight*6);
+GfxTextOut("THUY SAN", start_x+10/1880*pxwidth+grid1_col2_cellwidth+grid1_col1_cellwidth, start_y+3/870*pxheight+cellheight*7);
+GfxTextOut("P/BON-HOA CHAT", start_x+10/1880*pxwidth+grid1_col2_cellwidth+grid1_col1_cellwidth, start_y+3/870*pxheight+cellheight*8);
+GfxTextOut("CAO SU", start_x+10/1880*pxwidth+grid1_col2_cellwidth+grid1_col1_cellwidth, start_y+3/870*pxheight+cellheight*9);
+GfxTextOut("SXKD - DTPT", start_x+10/1880*pxwidth+grid1_col2_cellwidth+grid1_col1_cellwidth, start_y+3/870*pxheight+cellheight*10);
+GfxTextOut("DICH VU", start_x+10/1880*pxwidth+grid1_col2_cellwidth+grid1_col1_cellwidth, start_y+3/870*pxheight+cellheight*11);
+GfxTextOut("DUONG-GO", start_x+10/1880*pxwidth+grid1_col2_cellwidth+grid1_col1_cellwidth, start_y+3/870*pxheight+cellheight*12);
+/////////////
+GfxSelectFont( "Arial", 11/870*pxheight, 500 );
+GfxSetTextColor( colorBlue );
+GfxSelectSolidBrush(ColorBlend( colorLightGrey, colorWhite, Contrast2 ));
+GfxRoundRect( start_x, start_y+cellheight*9, start_x+grid1_col2_cellwidth+grid1_col1_cellwidth, start_y+cellheight*13,10,10 );
+GfxTextOut( "TSI - T\u1ED4NG H\u1EE2P NG\u00C0NH",start_x+30/1880*pxwidth, start_y+cellheight*9+4);
+GfxSelectFont( "Arial", 10/870*pxheight, 500 );
+GfxSetTextColor( colorDarkTeal );
+GfxTextOut( "EDIT BY : aaaaaa",start_x+30/1880*pxwidth, start_y+cellheight*10+2);
+GfxTextOut( "Tong Quan Thi Truong",start_x+30/1880*pxwidth, start_y+cellheight*11+2);
+GfxSelectFont( "Arial", 9.0/870*pxheight, 500 );
+GfxSetTextColor( colorRed );
+GfxTextOut( "Ch\u1ECDn Trang \u0110\u1EC3 Xem Ng\u00E0nh T\u01B0\u01A1ng \u1EE8ng",start_x+15/1880*pxwidth, start_y+cellheight*12);
+////////////////////
+
+Trang = ParamList("Chon Trang", "Trang1|Trang2|Trang3",0);
+procedure SetOrigin(x0, y0) {
+	global _x0, _y0;
+	_x0 = x0; _y0 = y0;
+}
+_cursorMouseButtons = GetCursorMouseButtons();
+DT_CENTER = 1; DT_VCENTER = 4 | 32; 
+function GfxGetState(id) {
+	return Nz(StaticVarGet("GfxState"+id+GetChartID()), 0);
+}
+function PointInside(x0, y0, x, y, width, height) {
+    global _x0, _y0;
+	x = x+_x0; y = y+_y0;
+    x0 = x0+_x0; y0 = y0+_y0;
+	return ((x0 >= x) && (y0 >= y) && (x0 <= (x+width)) && (y0 <= (y+height)));
+}
+function LeftClickInside(x, y, width, height) {
+	global _cursorMouseButtons, _x0, _y0;
+	local px, py, res;
+		//x = x+_x0; y = y+_y0;
+	res = False;
+	if (_cursorMouseButtons & 8) { // click
+		px = GetCursorXPosition(1); 
+		py = GetCursorYPosition(1); 
+		res = PointInside(px, py, x, y, width, height);
+	}
+	return res;
+}
+procedure GfxSetState(id, val) {
+	StaticVarSet("GfxState"+id+GetChartID(), val);
+}
+GfxSelectFont("Tahoma",10, 500);
+function GfxHTabs(id, headers, headheight, x, y, width, height, colorfg, colorbg) {
+	global _x0, _y0;
+	local px,choice,na,i,n,header,w, wi, prevwi;
+	
+	x = x+_x0; y = y+_y0; choice = GfxGetState(id);
+	for(n = 0; (header = StrExtract(headers,n)) != ""; ++n) {};
+	w = width/n; wi = x; prevwi = x;
+	if (LeftClickInside(x,y,width,headheight)) {
+		px = GetCursorXPosition( 1 );
+		//choice = floor((px - x)/w);
+		// wi = x; prevwi = x;
+		for(i = 0; (header = StrExtract(headers,i)) != ""; ++i) {
+			wi = wi + 2.93*GfxGetTextWidth(header);
+			if ((px > prevwi) && (px < wi))  { choice = i; break; }
+		}
+		GfxSetState(id, choice); // StaticVarSet(na, choice);
+	}
+	GfxSetBkMode(1);
+	// Draw Zone & Tabs
+	wi = x; prevwi = x;
+	for(i = 0; (header = StrExtract(headers,i)) != ""; ++i) {
+		wi = wi + 2.93*GfxGetTextWidth(header);
+
+		 GfxSelectSolidBrush(colorPaleGreen); 
+		GfxRoundRect(prevwi,y,wi,y+headheight+5,5,5); 
+		GfxSelectSolidBrush( colorbg );
+		if (i != choice) {
+			GfxSelectHatchBrush(colorbg,7); 
+			GfxRoundRect(prevwi,y,wi,y+headheight+5,5,5); 
+			GfxSelectSolidBrush( colorbg );
+		} else {
+			wic = wi; prevwic = prevwi;
+		}
+		GfxDrawText(header, prevwi, y, wi, y+headheight+5, 1|4|32);
+	prevwi = wi;
+	}
+	return choice;
+}
+
+procedure GfxTSI(x,y) {
+	SetOrigin(x,y);
+	//n = GfxHTabs("HTab1", "Trang 1,Trang 2,Trang 3", 20, 900, 100, 400, 500, colorBlack, colorLavender); 	
+	n = GfxHTabs("HTab1", "Trang 1,Trang 2,Trang 3", 20, 0, 100, 400, 500, colorBlack, colorLavender); 	
+	switch(n) {
+		case 0: 
+Trang = ParamList("Chon Trang", "Trang1",0);
+		break;
+		case 1:   
+Trang = ParamList("Chon Trang", "Trang2",0);
+        break;
+		case 2: 
+Trang = ParamList("Chon Trang", "Trang3",0);
+        break;
+	}
+	
+	
+}
+xx1 = Param("x_origin", 300, 0, 1980, 20);
+yy1 =Param("y_origin", 488, 0, 1980, 20);
+//pxb = Status( "pxchartbottom" )-378;
+//x = xx1/1880*pxwidth;
+x = start_x+30/1880*pxwidth+(xx1-300)/1880*pxwidth;
+y = yy1/870*pxheight;
+
+GfxTSI(x,y);
+
+
+switch (Trang)
+{
+case "Trang1":
+Listnganh = "VN30,BDS,XD-VLXD,CHUNG KHOAN,NGAN HANG,THEP,DAU KHI";
+break;
+case "Trang2":
+Listnganh = "CANG BIEN-VAN TAI,THUC PHAM-XUAT KHAU,DAU TU CONG,BDS KCN,BAN LE-CONG NGHE,THAN-KHOANG SAN,DIEN-NANG LUONG";
+break;
+case "Trang3":
+Listnganh = "BAO HIEM,NUOC-NHUA,DET MAY,HANG KHONG-DU LICH,YTE-DUOC,THUY SAN,PHAN BON-HOA CHAT,CAO SU,SXKD,DTPT,DICH VU,DUONG-GO";
+break;
+}
+GfxSelectPen( colorWhite, 1 );
+xht1=Param("VTRI-XHT",8,0,2000,1);
+yht1=Param("VTRI-YHT",37,0,1200,1);
+xht=xht1/1880*pxwidth;
+yht=yht1/870*pxheight;
+btnWidth_ht = Param( "Cell Width CPTUAN", 260, 5, 1000, 1 );
+btnHeight_ht = Param( "Cell Height CPTUAN ", 32, 5, 200, 1 );
+btnWidth=btnWidth_ht/1880*pxwidth;
+btnHeight=btnHeight_ht/870*pxheight;
+/////
+NGANHANG1=ParamStr("NGAN HANG","ABB,ACB,BAB,BID,BVB,CTG,EIB,HDB,KLB,LPB,MBB,MSB,NAB,NVB,OCB,PGB,SGB,SHB,STB,TCB,TPB,VBB,VCB,VIB,VPB,SSB,VAB,EVF");
+CHUNGKHOAN1=ParamStr("CHUNG KHOAN","AAS,AGR,APG,BSI,BVS,CTS,EVS,FTS,HCM,MBS,SBS,SHS,SSI,VCI,VDS,VIX,VND,APS,HBS,IVS,ORS,TVB,TVS,VIG,WSS,BMS,TCI,VFS,PSI,TVC");
+THEP1=ParamStr("THEP","BVG,HMC,HPG,HSG,NKG,POM,SHA,SHI,SMC,TLH,TVN,VGS,TNS,VCA,KVC,NSH,ITQ");
+DAUKHI1=ParamStr("DAU KHI","BSR,CNG,GAS,OIL,PLX,PSH,PVB,PVC,PVD,PVS,PVT,PVX,PXS,PGC,PLC");
+BAOHIEM1=ParamStr("BAO HIEM","BVH,BMI,MIG,PVI,BIC,ABI,VNR");
+BATDONGSAN1=ParamStr("BAT DONG SAN","AGG,L14,BII,TDC,LDG,CCL,QCG,CEO,DIG,NLG,DLG,DPG,DRH,DTD,DXG,HAR,HDC,HDG,HLD,HQC,IJC,KDH,LGL,NBB,NDN,NTL,NVL,PDR,SCR,TCH,TDH,VHM,VIC,VPH,VRE,HTN,VHG,CRE,DTA,IDJ,IDV,ITC,NHA,OGC,SGR,AAV,API,DXS,FIR,HPX,KHG,NRC,PWA,TEG,VPI,VRC,PTL");
+BDSKCN1=ParamStr("BDS-KCN","D2D,GVR,IDC,ITA,KBC,LHG,NTC,PHR,SIP,SJS,SZC,SZL,TIG,TIP,VGC");
+XD_VLXD1=ParamStr("XD_VLXD","VCG,PTC,VC7,HU4,MST,VC3,ACC,QNC,SCL,BCE,CSC,HTI,TTB,APC,C69,CDO,CRC,HID,HVH,LIG,PAS,S99,SCG,SCI,SDP,MCG,TLD,UDJ,EVG,CTD,PHC,CKG,HBC,L18,HUT");
+DAUTUCONG1=ParamStr("DAU TU CONG","BCC,TCD,BTS,C32,C47,C4G,CII,CTI,DHA,FCN,G36,HOM,HT1,KSB,LCG,SD5,SD6,SD9,THG,TV2,HHV");
+CAOSU1=ParamStr("CAO SU","DPR,DRC,DRI,GVR,PHR");
+DETMAY1=ParamStr("DET MAY","ADS,EVE,FTM,GIL,KMR,MSH,STK,TCM,TNG,VGT");
+THANKHOANGSAN1=ParamStr("THAN - KHOANG SAN","CLX,MDC,NBC,NNC,TDN,THT,TVD,VEF,CST,BMC,DHM,KHB,KSQ,MSR,TC6,TNT");
+THUYSAN1=ParamStr("THUYSAN","ACL,ANV,ASM,CMX,FMC,IDI,MPC,VHC");
+THUCPHAMXK1=ParamStr("THUC PHAM-XK","AFX,DBC,DHC,KDC,MHC,MSN,NAF,TNA,VCS,VLC,VNM,VOC,APF,BNA,KDF,MCM,MLS,TAR,VHE,HAG,PAN,HNG");
+HOACHATPHANBON1=ParamStr("HOA CHAT - PHAN BON","BFC,CSV,DCM,DDV,DGC,DPM,LAS,LIX,QBS,TSC,PMB,SBV,HCD,ABS,LTG");
+BLECONGNGHE1=ParamStr("CONG NGHE - BAN LE","CMG,DGW,ELC,FOX,FPT,FRT,ITD,MWG,PET,PNJ,SAB,SGT,SAM,SRA,TTN,CTR,VGI,VNZ,YEG,HAX");
+CANGVANTAI1=ParamStr("CANG - VAN TAI","DVP,DXP,GMD,HAH,PHP,PVP,PVT,SGP,SKG,SWC,TCL,TCW,VIP,VOS,VSC,VTO,STG,GSP,HHG,TCO,TMS,VNA,ILB,PVP");
+DICHVU1=ParamStr("DICH VU","VTP");
+DIEN_NANGLUONG1=ParamStr("DIEN_NANGLUONG","KHP,PPC,PVG,QTP,VSH,TTA,GEG,SJD,NT2,REE,PC1,HND,GEX,VNE,POW");
+DTPT1=ParamStr("DTPT","EID,FID,FIT,HHS,SJF,VCR,BCG");
+DUONGGO1=ParamStr("DUONG - GO","GDT,LSS,QNS,SBT,TTF,PTB");
+HANGKHONGDULICH1=ParamStr("HANG KHONG-DU LICH","ACV,AST,HVN,SAS,VJC,VTD,NCT,DAH,RIC,TCT,VNG");
+NUOCNHUA1=ParamStr("NUOC NHUA","AAA,APH,BMP,BWE,DAG,NTP,TDM,VNP,HII,NHH,PGN,PLP");
+SXKD1=ParamStr("SXKD","DQC,HAP,NAG,PAC,RAL,SAV,TLG,MBG");
+YTEDUOC1=ParamStr("YTEDUOC","AMV,DBD,DCL,DHG,DMC,DVN,JVC,TNH");
+VN301=ParamStr("VN30","ACB,BID,BVH,CTG,FPT,GAS,GVR,HDB,HPG,KDH,MBB,MSN,MWG,NVL,PDR,PLX,PNJ,POW,SAB,SSI,STB,TCB,TPB,VCB,VHM,VIC,VJC,VNM,VPB,VRE");
+///////////
+for ( e = 0; e <= 11; e++ ) 
+{
+WatchlistName=StrExtract(Listnganh, e );
+xtru=IIf(WatchlistName=="CAO SU" ,(xht+btnWidth)*e,IIf(WatchlistName=="SXKD" ,(xht+btnWidth)*(e-1),IIf(WatchlistName=="DTPT" ,(xht+btnWidth)*(e-2),IIf(WatchlistName=="DICH VU" ,(xht+btnWidth)*(e-3),IIf(WatchlistName=="DUONG-GO",(xht+btnWidth)*(e-4),0)))));
+ytru=IIf(WatchlistName=="CAO SU" OR WatchlistName=="SXKD" OR WatchlistName=="DTPT" OR WatchlistName=="DICH VU" OR WatchlistName=="DUONG-GO",btnHeight*16,0);
+x=xht+(xht+btnWidth)*e-xtru;
+y=yht+ytru;
+add=IIf(WatchlistName=="XD-VLXD",0.5,IIf(WatchlistName=="CHUNG KHOAN",1.3,IIf(WatchlistName=="NGAN HANG",1.3,
+IIf(WatchlistName=="THEP",0.1,IIf(WatchlistName=="DAU KHI",0.2,IIf(WatchlistName=="CANG BIEN-VAN TAI",4.5,
+IIf(WatchlistName=="THUC PHAM-XUAT KHAU",12,IIf(WatchlistName=="DAU TU CONG",1.5,IIf(WatchlistName=="BDS KCN",0.5,
+IIf(WatchlistName=="BAN LE-CONG NGHE",4,
+IIf(WatchlistName=="THAN-KHOANG SAN",5,
+IIf(WatchlistName=="PHAN BON-HOA CHAT",5,
+IIf(WatchlistName=="DIEN-NANG LUONG",4,IIf(WatchlistName=="NUOC-NHUA",1,IIf(WatchlistName=="DET MAY",0.5,
+IIf(WatchlistName=="HANG KHONG-DU LICH",8,IIf(WatchlistName=="YTE-DUOC",1,IIf(WatchlistName=="THUY SAN",0.7,IIf(WatchlistName=="BAO HIEM",0.5,
+IIf(WatchlistName=="CAO SU",0.2,IIf(WatchlistName=="DICH VU",0.5,IIf(WatchlistName=="DUONG-GO",1,0))))))))))))))))))))));
+			GfxSelectFont( "Arial", 12/870*pxheight, 500 );
+			GfxSetTextColor( colorWhite );
+			GfxSelectSolidBrush(colorBlack);
+			GfxRoundRect( x,y-2, x+btnWidth, y-btnHeight-2, 15, 15 );
+			GfxTextOut( WatchlistName,x+btnWidth/(2.5+add), y-btnHeight/1.2 );
+Listnganh1 = WriteIf(WatchlistName=="NGAN HANG",NGANHANG1,WriteIf(WatchlistName=="CHUNG KHOAN",CHUNGKHOAN1,WriteIf(WatchlistName=="THEP",THEP1,
+			WriteIf(WatchlistName=="BDS KCN",BDSKCN1,WriteIf(WatchlistName=="DAU KHI",DAUKHI1,WriteIf(WatchlistName=="BAO HIEM",BAOHIEM1,
+			WriteIf(WatchlistName=="BDS",BATDONGSAN1,WriteIf(WatchlistName=="DAU TU CONG",DAUTUCONG1,WriteIf(WatchlistName=="XD-VLXD",XD_VLXD1,
+			WriteIf(WatchlistName=="CAO SU",CAOSU1,WriteIf(WatchlistName=="DET MAY",DETMAY1,
+			WriteIf(WatchlistName=="BAN LE-CONG NGHE",BLECONGNGHE1,			
+			WriteIf(WatchlistName=="THUY SAN",THUYSAN1,WriteIf(WatchlistName=="THUC PHAM-XUAT KHAU",THUCPHAMXK1,WriteIf(WatchlistName=="PHAN BON-HOA CHAT",HOACHATPHANBON1,
+			WriteIf(WatchlistName=="THAN-KHOANG SAN",THANKHOANGSAN1,
+			WriteIf(WatchlistName=="CANG BIEN-VAN TAI",CANGVANTAI1,WriteIf(WatchlistName=="DICH VU",DICHVU1,
+			WriteIf(WatchlistName=="DIEN-NANG LUONG",DIEN_NANGLUONG1,WriteIf(WatchlistName=="DTPT",DTPT1,WriteIf(WatchlistName=="DUONG-GO",DUONGGO1,
+			WriteIf(WatchlistName=="HANG KHONG-DU LICH",HANGKHONGDULICH1,WriteIf(WatchlistName=="NUOC-NHUA",NUOCNHUA1,WriteIf(WatchlistName=="SXKD",SXKD1,
+			WriteIf(WatchlistName=="YTE-DUOC",YTEDUOC1,VN301)))))))))))))))))))))))));
+tickerlist =Listnganh1;
+bi = BarIndex();
+fbr = Status("firstbarinrange");
+explore = Status("action") == actionExplore;
+fvb = IIf(explore, LastValue(ValueWhen(fbr,bi)), Status("firstvisiblebar"));
+sym_num = StrCount(tickerlist, ",")+1;
+mat = Matrix(sym_num, 2);
+rownum = MxGetSize(mat, 0);
+last_bar = BarCount-1;
+	for ( i = 0; ( symbol = StrExtract(TickerList, i ) ) != ""; i++ ) {
+		fc = Foreign( symbol, "C" ); 
+		idx = Max(Min(NullCount(fc),last_bar), fvb);
+		if (! IsNull(fc[ idx ])) {
+			relP = ROC(fc,1); 		
+			mat[i][0] = LastValue( relP ); 
+			mat[i][1] = i; 		
+		}
+	}
+	mat = MxSortRows(mat, False, 0);
+	for ( i = 0; i < rownum; i++ ) {
+		val = mat[i][0];	n = mat[i][1];
+		if (! IsNull(val)) {	
+			symbol = StrExtract(tickerlist, n);
+			fcC = Foreign( symbol, "C" );
+			fc1 = LastValue(Foreign( symbol, "C" ));
+			fv1 = LastValue(Foreign( symbol, "V" )/MA(Foreign( symbol, "V" ),20));
+			KL1 = LastValue(Foreign( symbol, "V" ));
+			RSI1 = RSIa(fcC,14);
+			textht=symbol+"   "+WriteIf(fc1<10,"0"+WriteVal(fc1,1.1),WriteVal(fc1,1.1))+StrFormat( "%s  %.1f%%", "  ",val)+"  RSI:"+
+			WriteVal(RSI1,1.0)+ "  KL:"+WriteVal(KL1/1000000,1.1)+"T";	
+			Color = IIf(val >= 6.5, ColorRGB(204,51,255),IIf(val >= 3 AND val < 6.5, ColorRGB(0,153,0),IIf(val >= 1 AND val < 3, ColorRGB(0,103,50),IIf(val >=-1 AND val < 1, ColorRGB(75,75,75),
+			IIf(val < -1 AND val>=-3, ColorRGB(190,62,62),IIf(val < -3 AND val>=-6.5, ColorRGB(255,72,72), ColorRGB(0,153,153)))))));
+			GfxSelectFont( "Arial", 9/870*pxheight, 500 );
+			GfxSelectSolidBrush(Color);
+			GfxFillSolidRect( x,(i * btnHeight)+y, x+btnWidth, btnHeight * (i+1)+y-1, Color );
+			GfxDrawText(textht, x , btnHeight/4+(i * btnHeight)+y, x+btnWidth, btnHeight * (i+1)+y, 1);
+		}
+	}		
+}
+_SECTION_END();

@@ -1,0 +1,1043 @@
+_SECTION_BEGIN("MA");
+P = ParamField("Price field",-1);
+Periods = Param("Periods", 30, 2, 300, 1, 10 );
+Plot( MA( P, Periods ), _DEFAULT_NAME(), ParamColor( "Color", colorCycle ), ParamStyle("Style") ); 
+_SECTION_END();
+
+_SECTION_BEGIN("Price");
+SetChartOptions(0,chartShowArrows|chartShowDates);
+_N(Title = StrFormat("{{NAME}} - {{INTERVAL}} {{DATE}} Open %g, Hi %g, Lo %g, Close %g (%.1f%%) {{VALUES}}", O, H, L, C, SelectedValue( ROC( C, 1 ) ) ));
+Plot( C, "Close", ParamColor("Color", colorBlack ), styleDots | ParamStyle("Style") | GetPriceStyle() ); 
+_SECTION_END();
+
+mua =  (C >= Ref(C,-1)
+AND C >= Ref(C,-2)
+AND C >= Ref(C,-3)
+AND C >= Ref(C,-4) 
+AND C>=MA(C,30)
+AND C>1.01*Ref(C,-1)
+AND HHV(C,5) >= HHV(C,15)
+AND Ref(C,-1)<1.04*Ref(C,-2));
+ 
+ban = C <= Ref(L,-1)
+AND C <= Ref(L,-2)
+AND C <= Ref(L,-3)
+AND C <= Ref(L,-4)
+AND C <= Ref(L,-5)
+AND C <= Ref(L,-6)
+AND C <= Ref(L,-7)
+AND C <= Ref(L,-8)
+ ;
+
+Buy = ExRem(mua, ban);
+Sell = ExRem(ban, mua);
+PlotShapes(IIf(Buy,shapeUpArrow,shapeNone),colorBlue,0,Low,Offset=-10);
+PlotShapes(IIf(Sell,shapeDownArrow,shapeNone),colorRed,0,High,Offset=-10);
+;
+ban1= C <= Ref(L,-1)
+AND C <= Ref(L,-2)
+AND C <= Ref(L,-3)
+AND C <= Ref(L,-4);
+Short = ExRem(ban1, mua);
+  Cover= C > 1.02*Ref(H,-1) 
+AND C>=Ref(H,-2)
+AND (V >= 1.3*MA(V,50) OR V >= 1.3*MA(V,15))  
+AND C >= (H + L)/ 2 
+AND C > O
+AND C*V>=1000000
+AND Ref(C,-1)<=1.04*Ref(C,-2)
+AND Ref(C,-2)<=1.04*Ref(C,-3)
+AND C>=5
+AND C>MA(C,30)
+AND C >= Ref(C,-2)
+AND C >= Ref(C,-3)
+AND C >= Ref(C,-4) 
+AND C >= Ref(C,-5)
+AND C <1.15*LLV(C,10)
+;
+
+PlotShapes(IIf(Short,shapeDownArrow,shapeNone),colorRed,0,High,Offset=-10);
+PlotShapes(IIf(Cover, shapeUpArrow,shapeNone),colorCustom12,0,Low,Offset=-10);    
+//batday
+Filter = (C*V>=5000000
+AND C>=5
+AND (C-L)/L >=0.02
+AND C<MA(C,30)
+AND MA(V,15) >=100000
+AND C*V<1000000000
+AND HHV(H,20) >1.2*C
+AND Ref(RSI(14),-1) <=35
+AND LLV(V,50) >50000    //tanggia
+AND C <1.15*LLV(C,10)) OR (C*V>=3000000
+AND C>=5
+AND C> 1.01*Ref(C,-1)
+AND Ref(C,-1) < 1.04*Ref(C,-2)
+AND Ref(C,-2) < 1.04*Ref(C,-1)
+AND LLV(V,50) >50000
+AND C*V<5000000000
+AND C>= (H+L)/2
+AND C <1.15*LLV(C,10));
+Buy = (  C > Ref(H,-1) 
+AND C > Ref(H,-2) 
+AND C > Ref(H,-3) 
+AND C > Ref(H,-4)
+AND C>=5
+AND C>=O
+AND C*V>=3000000
+AND C*V<500000000
+AND Ref(C,-1)<=1.04*Ref(C,-2)
+AND Ref(C,-2)<=1.04*Ref(C,-3)
+AND C <1.15*LLV(C,10)) OR (C > Ref(H,-1) 
+AND C > Ref(H,-2) 
+AND C > Ref(H,-3) 
+AND C > Ref(H,-4)
+AND Ref(C,-1)<=1.04*Ref(C,-2)
+AND Ref(C,-2)<=1.04*Ref(C,-3)
+AND C>=5
+AND C>=O
+AND C>=1.02*Ref(C,-1)
+AND C>=Ref(C,-2)
+AND V>=Ref(V,-1)
+AND V >= 1.3*MA(V,15) 
+AND C*V>=3000000
+AND C*V<500000000
+AND Ref(V,-5)>=50000
+AND Ref(V,-10)>=50000
+AND Ref(V,-15)>=50000
+AND Ref(V,-20)>=50000
+AND Ref(C,-1)<=1.04*Ref(C,-2)
+AND Ref(C,-2)<=1.06*Ref(C,-3)
+AND Ref(C,-3)<=1.06*Ref(C,-4)
+AND Ref(V,-1)>=100000
+AND C>=5
+AND C>1.3*LLV(L,50)
+AND C <1.15*LLV(C,10)) OR (C > 1.02*Ref(C,-1) 
+AND C>=Ref(C,-2)
+AND C*V<500000000
+AND V >= 1.3*MA(V,15)  
+AND MA(V,15)>= 100000 
+AND MA(V,50)>= 100000 
+AND C> MA(C,15) 
+AND V>Ref(V,-1)
+AND C >= (H + L)/ 2 
+AND C > O
+AND C>=5
+AND C*V>=3000000
+AND C>1.3*LLV(L,50)
+AND Ref(C,-1)<=1.04*Ref(C,-2)
+AND Ref(C,-2)<=1.04*Ref(C,-3)
+AND Ref(C,-3)<=1.04*Ref(C,-4)
+AND Ref(V,-1)>=30000
+AND Ref(V,-5)>=50000
+AND Ref(V,-10)>=50000
+AND Ref(V,-15)>=50000
+AND Ref(V,-20)>=50000
+AND C>= 0.8*HHV(C,60)
+AND C> 1.2*LLV(L,60)
+AND C <1.15*LLV(C,10)) OR (C > Ref(H,-1) 
+AND Ref(C,-1)<=1.04*Ref(C,-2)
+AND Ref(C,-2)<=1.04*Ref(C,-3)
+AND C > Ref(H,-2) 
+AND C > Ref(H,-3) 
+AND C > Ref(H,-4)
+AND C>MA(C,15)
+AND Ref(C,-1)>MA(C,15)
+AND C>=O
+AND C>=5
+AND C>=1.02*Ref(C,-1)
+AND C*V>=3000000
+AND C*V<500000000
+AND C>1.3*LLV(L,50)
+AND V >= 1.3*MA(V,15)
+AND V>=Ref(V,-1)
+AND Ref(V,-5)>=50000
+AND Ref(V,-10)>=50000
+AND Ref(V,-15)>=50000
+AND Ref(V,-20)>=50000
+AND Ref(C,-1)<=1.04*Ref(C,-2)
+AND C <1.15*LLV(C,10)) OR (C > 1.02*Ref(C,-1) 
+AND Ref(C,-1)<=1.04*Ref(C,-2)
+AND Ref(C,-2)<=1.04*Ref(C,-3)
+AND C>=Ref(C,-2)
+AND V >= 1.3*MA(V,15)
+AND V>=0.8*Ref(V,-1)
+AND MA(V,15)>= 50000 
+AND MA(V,50)>= 50000 
+AND C> MA(C,15) 
+AND C >= (H + L)/ 2 
+AND C > O
+AND C>=5
+AND C*V>=3000000
+AND C*V<500000000
+AND C>1.3*LLV(L,50)
+AND Ref(C,-1)<=1.05*Ref(C,-2)
+AND Ref(V,-5)>=50000
+AND Ref(V,-10)>=50000
+AND Ref(V,-15)>=50000
+AND Ref(V,-20)>=50000
+AND C>= 0.8*HHV(C,60)
+AND C> 1.2*LLV(L,60)
+AND Ref(C,-1)<=1.04*Ref(C,-2)
+AND C <1.15*LLV(C,10)) OR ( C > Ref(H,-1) 
+AND Ref(C,-1)<=1.04*Ref(C,-2)
+AND Ref(C,-2)<=1.04*Ref(C,-3)
+AND C > Ref(H,-2) 
+AND C > Ref(H,-3) 
+AND C > Ref(H,-4)
+AND C>MA(C,15)
+AND Ref(C,-1)>MA(C,15)
+AND C>=O
+AND C>=1.02*Ref(C,-1)
+AND V>=Ref(V,-1)
+AND C>5
+AND C*V>=3000000
+AND V >= 1.3*MA(V,15)
+AND C <1.15*LLV(C,10)) OR (C > 1.02*Ref(H,-1) 
+AND C>=Ref(H,-2)
+AND (V >= 1.3*MA(V,50) OR V >= 1.3*MA(V,15))  
+AND C >= (H + L)/ 2 
+AND C > O
+AND C*V>=1000000
+AND Ref(C,-1)<=1.04*Ref(C,-2)
+AND Ref(C,-2)<=1.04*Ref(C,-3)
+AND C>=5
+AND C>MA(C,30)
+AND C >= Ref(C,-2)
+AND C >= Ref(C,-3)
+AND C >= Ref(C,-4) 
+AND C >= Ref(C,-5)
+AND Ref(V,-1) >=30000
+AND C <1.15*LLV(C,10));
+Cover= C > 1.02*Ref(H,-1) 
+AND C>=Ref(H,-2)
+AND (V >= 1.3*MA(V,50) OR V >= 1.3*MA(V,15))  
+AND C >= (H + L)/ 2 
+AND C > O
+AND C*V>=1000000
+AND Ref(C,-1)<=1.04*Ref(C,-2)
+AND Ref(C,-2)<=1.04*Ref(C,-3)
+AND C>=5
+AND C>MA(C,30)
+AND C >= Ref(C,-2)
+AND C >= Ref(C,-3)
+AND C >= Ref(C,-4) 
+AND C >= Ref(C,-5)
+AND C <1.15*LLV(C,10);
+
+batday= (C*V>=5000000
+AND C>=3
+AND (C-L)/L >=0.02
+AND C<MA(C,30)
+AND MA(V,15) >=100000
+AND Ref(V,-5)>=50000
+AND Ref(V,-10)>=50000
+AND Ref(V,-15)>=50000
+AND Ref(V,-20)>=50000
+AND C*V<1000000000
+AND HHV(H,20) >1.2*C
+AND Ref(RSI(14),-1) <=35
+AND Ref(C,-1)<=1.04*Ref(C,-2)
+AND Ref(C,-2)<=1.04*Ref(C,-3));
+
+AddColumn( IIf( batday, 68,1 ), "Day", formatChar, 1, bkcolor =IIf (batday,colorRed, colorGreen ));
+AddColumn( IIf( Buy, 84,1 ), "T4", formatChar, 1, bkcolor =IIf (Buy,colorGreen, colorRed ));
+AddColumn( IIf( Cover, 66,1 ), "Break", formatChar, 1, bkcolor =IIf (Cover,colorCustom12, colorGreen ));
+
+
+AddColumn(((C - Ref(C,-1))/Ref(C,-1))*100 ,"% Tang gia ");
+AddColumn(RSI(14),"RSI");
+AddColumn(C,"Gia today");
+AddColumn(C*V,"Gia tri GD ");
+
+AddColumn(((V - MA(V,50))/MA(V,50))*100 ,"% Dot bien KL");
+AddColumn((((C - Ref(C,-20))/Ref(C,-20))*100 +((C - Ref(C,-40))/Ref(C,-40))*100+((C - Ref(C,-60))/Ref(C,-60))*100)/3 ,"BQ tang gia 3 thang");
+AddSummaryRows(16, 1.2,5);
+SetSortColumns( -4 ) ;
+
+_SECTION_END();
+
+x = MA(C,5);
+y = MA (C,30);
+
+PlotOHLC( x, x, y, y, "", IIf(x > y,colorPaleGreen, colorPink),styleNoLabel|styleCloud );
+_SECTION_BEGIN("MA5-MA30 Crossover");
+
+_SECTION_BEGIN("SupportResistance");
+// START SCRIPT UNTUK SUPPORT / RESISTANT
+ 
+ 
+WarnaResistant = ParamColor("Warna Garis Resistant",colorRed);
+WarnaSupport = ParamColor("Warna Garis Support",colorGreen);
+R1_show = 0;
+S1_show = 0;
+ 
+SRStyle = ParamStyle("S/R Style",styleThick);
+ 
+if (ParamToggle("Garis Support&Resistance", "Tidak|Ya", 1 ))
+{
+	// RESISTANT
+	LastHighestValue = LastVisibleValue(Ref(C,-1));
+	if (LastVisibleValue(C) == C[LastValue(BarIndex())])
+		LastHighestValue = LastVisibleValue(C);
+ 
+	i = 1;
+	
+	if (LastHighestValue < HighestVisibleValue(C))
+	{
+			while (LastVisibleValue(ValueWhen(C <= Ref(C,-1) AND Ref(C,-2) <= Ref(C, -1),Ref(C, -1), i)) < LastHighestValue)
+				i++;
+ 
+	    	R1 = LastVisibleValue(ValueWhen(C <= Ref(C,-1) AND Ref(C,-2) <= Ref(C, -1),Ref(C, -1), i));
+ 
+			R1x = LastVisibleValue(ValueWhen(C <= Ref(C,-1) AND Ref(C,-2) <= Ref(C, -1),Ref(BarIndex(), -1), i));
+			Plot(IIf(BarIndex() >= R1x,LastValue(R1),Null),"",WarnaResistant ,SRStyle);
+			PlotText(" : " + R1, BarCount + 1, LastValue(R1), WarnaResistant);
+			R1_show = 1;
+ 
+			i++;
+ 
+			if (HighestVisibleValue( C ) > R1)
+			{
+				while (LastVisibleValue(ValueWhen(C <= Ref(C,-1) AND Ref(C,-2) <= Ref(C, -1), Ref(C,-1), i)) <= R1)
+					i++;
+ 
+				R2 = LastVisibleValue(ValueWhen(C <= Ref(C,-1) AND Ref(C,-2) <= Ref(C, -1), Ref(C,-1), i));
+				R2x = LastVisibleValue(ValueWhen(C <= Ref(C,-1) AND Ref(C,-2) <= Ref(C, -1),Ref(BarIndex(), -1), i));
+	
+				Plot(IIf(BarIndex() >= R2x,LastValue(R2),Null),"",WarnaResistant ,SRStyle);
+				PlotText(" : " + R2, BarCount + 11, LastValue(R2), WarnaResistant);
+				i++;
+				if (HighestVisibleValue( C )> R2)
+				{ 		
+					while (LastVisibleValue(ValueWhen(C <= Ref(C,-1) AND Ref(C,-2) <= Ref(C, -1), Ref(C,-1), i)) <= R2)
+						i++;
+					R3 = LastVisibleValue(ValueWhen(C <= Ref(C,-1) AND Ref(C,-2) <= Ref(C, -1), Ref(C,-1), i));
+					R3x = LastVisibleValue(ValueWhen(C <= Ref(C,-1) AND Ref(C,-2) <= Ref(C, -1),Ref(BarIndex(), -1), i));	
+ 
+					Plot(IIf(BarIndex() >= R3x,LastValue(R3),Null),"",WarnaResistant ,SRStyle);
+					PlotText(" : " + R3, BarCount + 21, LastValue(R3), WarnaResistant);
+				}
+			}
+	}
+	else if (LastHighestValue == HighestVisibleValue(H))
+	{
+	   	R1 = LastVisibleValue(ValueWhen(C <= Ref(C,-1) AND Ref(C,-2) <= Ref(C, -1),Ref(C, -1), i));
+		R1x = LastVisibleValue(ValueWhen(C <= Ref(C,-1) AND Ref(C,-2) <= Ref(C, -1),Ref(BarIndex(), -1), i));
+		if (R1 == LastHighestValue)
+		{
+			Plot(IIf(BarIndex() >= R1x,LastValue(R1),Null),"",WarnaResistant ,SRStyle);
+			PlotText(" : " + R1, BarCount + 1, LastValue(R1), WarnaResistant);
+			R1_show = 1;
+		}
+	}
+ 
+	// SUPPORT
+	LastLowestValue = LastVisibleValue(Ref(C,-1));
+	if (LastVisibleValue(C) == C[LastValue(BarIndex())])
+		LastLowestValue = LastVisibleValue(C);
+ 
+	i = 1;
+ 
+	if (LastLowestValue > LowestVisibleValue(C))
+	{	
+			while (LastVisibleValue(ValueWhen(C >= Ref(C,-1) AND Ref(C,-2) >= Ref(C, -1),Ref(C, -1), i)) > LastLowestValue)
+				i++;
+ 
+			S1 = LastVisibleValue(ValueWhen(C >= Ref(C,-1) AND Ref(C,-2) >= Ref(C, -1),Ref(C, -1), i));
+			S1x = LastVisibleValue(ValueWhen(C >= Ref(C,-1) AND Ref(C,-2) >= Ref(C, -1),Ref(BarIndex(), -1), i));
+			Plot(IIf(BarIndex() >= S1x,LastValue(S1),Null),"",WarnaSupport ,SRStyle);
+			PlotText(" : " + S1, BarCount + 1, LastValue(S1), WarnaSupport);
+			S1_show = 1;
+			i++;
+ 
+			if (LowestVisibleValue( C ) < S1)
+			{
+				while (LastVisibleValue(ValueWhen(C >= Ref(C,-1) AND Ref(C,-2) >= Ref(C, -1), Ref(C,-1), i)) >= S1)
+					i++;
+ 
+				S2 = LastVisibleValue(ValueWhen(C >= Ref(C,-1) AND Ref(C,-2) >= Ref(C, -1), Ref(C,-1), i));
+				S2x = LastVisibleValue(ValueWhen(C >= Ref(C,-1) AND Ref(C,-2) >= Ref(C, -1), Ref(BarIndex(),-1), i));	
+ 
+				Plot(IIf(BarIndex() >= S2x,LastValue(S2),Null),"",WarnaSupport ,SRStyle);
+				PlotText(" : " + S2, BarCount + 11, LastValue(S2), WarnaSupport);
+				i++;
+				if (LowestVisibleValue( C )< S2)
+				{ 		
+					while (LastVisibleValue(ValueWhen(C >= Ref(C,-1) AND Ref(C,-2) >= Ref(C, -1), Ref(C,-1), i)) >= S2)
+						i++;
+					S3 = LastVisibleValue(ValueWhen(C >= Ref(C,-1) AND Ref(C,-2) >= Ref(C, -1), Ref(C,-1), i));
+					S3x = LastVisibleValue(ValueWhen(C >= Ref(C,-1) AND Ref(C,-2) >= Ref(C, -1), Ref(BarIndex(),-1), i));
+					Plot(IIf(BarIndex() >= S3x,LastValue(S3),Null),"",WarnaSupport ,SRStyle);
+					PlotText(" : " + S3, BarCount + 21, LastValue(S3), WarnaSupport);
+				}
+			}
+	}
+	else if (LastLowestValue == LowestVisibleValue(C))
+	{
+	   	S1 = LastVisibleValue(ValueWhen(C >= Ref(C,-1) AND Ref(C,-2) >= Ref(C, -1),Ref(C, -1), i));
+		S1x = LastVisibleValue(ValueWhen(C >= Ref(C,-1) AND Ref(C,-2) >= Ref(C, -1),Ref(BarIndex(), -1), i));
+		if (S1 == LastLowestValue)
+		{
+			Plot(IIf(BarIndex() >= S1x,LastValue(S1),Null),"",WarnaSupport ,SRStyle);
+			PlotText(" : " + S1, BarCount + 1, LastValue(S1), WarnaSupport);
+			S1_show = 1;
+		}
+	}
+ 
+	if (S1_show AND R1_show)
+	{
+		SR = Prec((1-(S1/R1))*100,2);
+	}
+}
+ 
+// END SCRIPT UNTUK SUPPORT / RESISTANT
+_SECTION_END();
+
+//PIVOTS
+///////////
+
+pivbuy=  Ref(L,-1)<Ref(L,-2) AND L>Ref(L,-1) AND Ref(H,-1)<Ref(H,-2) AND H>Ref(H,-1) AND C>Ref(C,-2) ;
+pivsell= Ref(H,-1)>Ref(H,-2) AND H<Ref(H,-1) AND Ref(L,-1)>Ref(L,-2) AND L<Ref(L,-1) AND C<Ref(C,-2) ; 
+
+Buy  = pivbuy ;
+Sell = pivsell ;
+
+Buy= ExRem(Buy,Sell) ;
+Sell= ExRem(Sell,Buy) ;
+
+PlotShapes(IIf(Buy,shapeUpArrow,shapeNone),colorBlue,0,L,Offset=-10);
+PlotShapes(IIf(Sell,shapeDownArrow,shapeNone),colorRed,0,H,Offset=-10);
+//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+//PRICE
+
+//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+_SECTION_BEGIN("trending ribbon");
+uptrend= PDI()>MDI() AND MACD()>Signal() ;
+downtrend= MDI()>PDI() AND Signal()>MACD() ;
+Plot( 2, /* defines the height of the ribbon in percent of pane width */"",
+IIf( uptrend AND EMA(C,50)>=Ref(EMA(C,50),-1), colorLime, IIf( downtrend OR EMA(C,50)<Ref(EMA(C,50),-1),
+     colorRed, colorAqua )), /* choose color */
+styleOwnScale|styleArea|styleNoLabel, -0.5, 100 );
+_SECTION_END();
+//xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+SetBarFillColor( IIf(O>C,colorDarkRed, colorBrightGreen ) ); 
+Plot( C, "Price", IIf( O>C,colorRed, colorGreen ), styleCandle );
+
+HaClose =EMA((O+H+L+C)/4,3);
+HaOpen = AMA( Ref( HaClose, -1 ), 0.5 ); 
+HaHigh = Max( H, Max( HaClose, HaOpen ) ); 
+HaLow = Min( L, Min( HaClose, HaOpen ) ); 
+
+_SECTION_BEGIN("Resistance");
+
+supres=ParamToggle("Sup_Res","No|Yes",1);
+if(supres)
+{
+
+
+Prd1=Param("Res_Period1",2,0,200,1);
+                   
+test   = TEMA  ( High , Prd1 ) ;   
+
+PK = test > Ref(test,-1) AND Ref(test,1) < High;//Peak
+PKV0 = ValueWhen(PK,haHigh,0);//PeakValue0
+PKV1 = ValueWhen(PK,haHigh,1);//PeakValue1
+PKV2 = ValueWhen(PK,haHigh,2);//PeakValue2
+
+MPK = PKV2 < PKV1 AND PKV1 > PKV0 ;//MajorPeak
+
+MPKV = ValueWhen(Ref(MPK,-1) == 0 AND MPK == 1, PKV1,1); //MajorPeakValue
+MPKD = ValueWhen(Ref(MPK,-1) == 0 AND MPK == 1, DateNum(),1); //MajorPeakDate
+SD = IIf(DateNum() < LastValue(MPKD,lastmode = True ), Null, LastValue(MPKV,Lastmode = True));//SelectedDate
+Plot(SD, "Resist1",  colorBrown,ParamStyle("ResStyle1",styleLine|styleNoTitle,maskAll));
+
+MPKV2 = ValueWhen(Ref(MPK,-1) == 0 AND MPK == 1, PKV1,2); //MajorPeakValue
+MPKD2 = ValueWhen(Ref(MPK,-1) == 0 AND MPK == 1, DateNum(),2); //MajorPeakDate
+SD2 = IIf(DateNum() < LastValue(MPKD2,lastmode = True ), Null, LastValue(MPKV2,Lastmode = True));//SelectedDate
+Plot(SD2, "Resist2",  colorBrown,ParamStyle("ResStyle2",styleLine|styleNoTitle,maskAll));
+
+
+MPKV3 = ValueWhen(Ref(MPK,-1) == 0 AND MPK == 1, PKV1,3); //MajorPeakValue
+MPKD3 = ValueWhen(Ref(MPK,-1) == 0 AND MPK == 1, DateNum(),3); //MajorPeakDate
+SD3 = IIf(DateNum() < LastValue(MPKD3,lastmode = True ), Null, LastValue(MPKV3,Lastmode = True));//SelectedDate
+Plot(SD3, "Resist3", colorBrown,ParamStyle("ResStyle3",styleLine|styleNoTitle,maskAll));
+
+
+MPKV4 = ValueWhen(Ref(MPK,-1) == 0 AND MPK == 1, PKV1,4); //MajorPeakValue
+MPKD4 = ValueWhen(Ref(MPK,-1) == 0 AND MPK == 1, DateNum(),4); //MajorPeakDate
+SD4 = IIf(DateNum() < LastValue(MPKD4,lastmode = True ), Null, LastValue(MPKV4,Lastmode = True));//SelectedDate
+Plot(SD4, "Resist4",  colorBrown,ParamStyle("ResStyle4",styleLine|styleNoTitle,maskAll));
+
+MPKV5 = ValueWhen(Ref(MPK,-1) == 0 AND MPK == 1, PKV1,5); //MajorPeakValue
+MPKD5 = ValueWhen(Ref(MPK,-1) == 0 AND MPK == 1, DateNum(),5); //MajorPeakDate
+SD5 = IIf(DateNum() < LastValue(MPKD5,lastmode = True ), Null, LastValue(MPKV5,Lastmode = True));//SelectedDate
+Plot(SD5, "Resist5",  colorBrown,ParamStyle("ResStyle5",styleLine|styleNoTitle,maskAll));
+
+MPKV6 = ValueWhen(Ref(MPK,-1) == 0 AND MPK == 1, PKV1,6); //MajorPeakValue
+MPKD6 = ValueWhen(Ref(MPK,-1) == 0 AND MPK == 1, DateNum(),6); //MajorPeakDate
+SD6 = IIf(DateNum() < LastValue(MPKD6,lastmode = True ), Null, LastValue(MPKV6,Lastmode = True));//SelectedDate
+Plot(SD6, "Resist6", colorBrown ,ParamStyle("ResStyle6",styleLine|styleNoTitle,maskAll));
+
+_SECTION_END();
+
+_SECTION_BEGIN("Support");
+//SP=L > Ref(L,-1) AND Ref(L,1) < L;//Peak
+
+Prd2=Param("Sup_Period1",2,0,200,1);
+                   
+test2   = TEMA ( Low , Prd2 ) ;   
+
+SP = Ref(test2,1) > Low AND test2 < Ref(test2,-1);//Peak
+SPV0 = ValueWhen(SP,haLow,0);//PeakValue0
+SPV1 = ValueWhen(SP,haLow,1);//PeakValue1
+SPV2 = ValueWhen(SP,haLow,2);//PeakValue2
+
+//PKV5 = ValueWhen(PK,haHigh,5);//PeakValue5
+//PKV6 = ValueWhen(PK,haHigh,6);//PeakValue6
+
+MSP = SPV2 > SPV1 AND SPV1 < SPV0 ;//MajorPeak
+
+MSPV = ValueWhen(Ref(MSP,-1) == 0 AND MSP == 1, SPV1,1);
+MSPD = ValueWhen(Ref(MSP,-1) == 0 AND MSP == 1, DateNum(),1);
+SD = IIf(DateNum() < LastValue(MSPD,lastmode = True ), Null, LastValue(MSPV,Lastmode = True));
+Plot(SD,"Support1",  colorPlum,ParamStyle("SupportLine1",styleLine|styleNoTitle,maskAll));
+
+MSPV2 = ValueWhen(Ref(MSP,-1) == 0 AND MSP == 1, SPV1,2);
+MSPD2 = ValueWhen(Ref(MSP,-1) == 0 AND MSP == 1, DateNum(),2);
+SD2 = IIf(DateNum() < LastValue(MSPD2,lastmode = True ), Null, LastValue(MSPV2,Lastmode = True));
+Plot(SD2,"Support2",  colorPlum,ParamStyle("SupportLine2",styleLine|styleNoTitle,maskAll));
+
+MSPV3 = ValueWhen(Ref(MSP,-1) == 0 AND MSP == 1, SPV1,3);
+MSPD3 = ValueWhen(Ref(MSP,-1) == 0 AND MSP == 1, DateNum(),3);
+SD3 = IIf(DateNum() < LastValue(MSPD3,lastmode = True ), Null, LastValue(MSPV3,Lastmode = True));
+Plot(SD3,"Support3",  colorPlum,ParamStyle("SupportLine3",styleLine|styleNoTitle,maskAll));
+
+MSPV4 = ValueWhen(Ref(MSP,-1) == 0 AND MSP == 1, SPV1,4);
+MSPD4 = ValueWhen(Ref(MSP,-1) == 0 AND MSP == 1, DateNum(),4);
+SD4 = IIf(DateNum() < LastValue(MSPD4,lastmode = True ), Null, LastValue(MSPV4,Lastmode = True));
+Plot(SD4,"Support4",  colorPlum,ParamStyle("SupportLine4",styleLine|styleNoTitle,maskAll));
+
+MSPV5 = ValueWhen(Ref(MSP,-1) == 0 AND MSP == 1, SPV1,5);
+MSPD5 = ValueWhen(Ref(MSP,-1) == 0 AND MSP == 1, DateNum(),5);
+SD5 = IIf(DateNum() < LastValue(MSPD5,lastmode = True ), Null, LastValue(MSPV5,Lastmode = True));
+Plot(SD5,"Support5",  colorPlum,ParamStyle("SupportLine5",styleLine|styleNoTitle,maskAll));
+
+MSPV6 = ValueWhen(Ref(MSP,-1) == 0 AND MSP == 1, SPV1,6);
+MSPD6 = ValueWhen(Ref(MSP,-1) == 0 AND MSP == 1, DateNum(),6);
+SD6 = IIf(DateNum() < LastValue(MSPD6,lastmode = True ), Null, LastValue(MSPV6,Lastmode = True));
+Plot(SD6,"Support6",  colorPlum,ParamStyle("SupportLine6",styleLine|stylehidden|styleNoTitle,maskAll));
+
+}
+
+_SECTION_END();
+
+/*
+_SECTION_BEGIN("CandlePivots+trendline");
+/////// advance trenlines with candle pivots /////////////////// 
+SetChartOptions(0, chartShowArrows | chartShowDates);
+
+Plot(C, "", IIf(O >= C, colorOrange, colorGreen), styleCandle);
+SetChartBkGradientFill(ParamColor("Inner panel upper", colorBlack), ParamColor("Inner panel lower", colorBlack));
+_N(Title = EncodeColor(colorWhite) + StrFormat(" {{NAME}} - {{INTERVAL}} {{DATE}} Open:%g,high:%g,low:%g, Close:%g ,{{VALUES}}", O, H, L, C));
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+farback = Param("How Far back to go", 100, 50, 5000, 10);
+nBars = Param("Number of bars", 12, 5, 40);
+aHPivs = H - H;
+aLPivs = L - L;
+aHPivHighs = H - H;
+aLPivLows = L - L;
+aHPivIdxs = H - H;
+aLPivIdxs = L - L;
+nHPivs = 0;
+nLPivs = 0;
+lastHPIdx = 0;
+lastLPIdx = 0;
+lastHPH = 0;
+lastLPL = 0;
+curPivBarIdx = 0;
+aHHVBars = HHVBars(H, nBars);
+aLLVBars = LLVBars(L, nBars);
+aHHV = HHV(H, nBars);
+aLLV = LLV(L, nBars);
+aVisBars = Status("barvisible");
+nLastVisBar = LastValue(Highest(IIf(aVisBars, BarIndex(), 0)));
+_TRACE("Last visible bar: " + nLastVisBar);
+//BarCount=-1;
+curBar = (BarCount - 1);
+curTrend = "";
+if (aLLVBars[curBar] < aHHVBars[curBar])
+{
+    curTrend = "D";
+}
+
+else
+{
+    curTrend = "U";
+}
+
+for (i = 0; i < farback; i++)
+{
+    curBar = (BarCount - 1) - i;
+    if (aLLVBars[curBar] < aHHVBars[curBar])
+    {
+        if (curTrend == "U")
+        {
+            curTrend = "D";
+            curPivBarIdx = curBar - aLLVBars[curBar];
+            aLPivs[curPivBarIdx] = 1;
+            aLPivLows[nLPivs] = L[curPivBarIdx];
+            aLPivIdxs[nLPivs] = curPivBarIdx;
+            nLPivs++;
+        }
+    }
+    else
+    {
+        if (curTrend == "D")
+        {
+            curTrend = "U";
+            curPivBarIdx = curBar - aHHVBars[curBar];
+            aHPivs[curPivBarIdx] = 1;
+            aHPivHighs[nHPivs] = H[curPivBarIdx];
+            aHPivIdxs[nHPivs] = curPivBarIdx;
+            nHPivs++;
+        }
+    }
+}
+
+curBar = (BarCount - 1);
+candIdx = 0;
+candPrc = 0;
+lastLPIdx = aLPivIdxs[0];
+lastLPL = aLPivLows[0];
+lastHPIdx = aHPivIdxs[0];
+lastHPH = aHPivHighs[0];
+if (lastLPIdx > lastHPIdx)
+{
+    candIdx = curBar - aHHVBars[curBar];
+    candPrc = aHHV[curBar];
+    if (lastHPH < candPrc AND candIdx > lastLPIdx AND candIdx < curBar)
+    {
+        aHPivs[candIdx] = 1;
+        for (j = 0; j < nHPivs; j++)
+        {
+            aHPivHighs[nHPivs - j] = aHPivHighs[nHPivs - (j + 1)];
+            aHPivIdxs[nHPivs - j] = aHPivIdxs[nHPivs - (j + 1)];
+        }
+        aHPivHighs[0] = candPrc;
+        aHPivIdxs[0] = candIdx;
+        nHPivs++;
+    }
+}
+
+else
+{
+    candIdx = curBar - aLLVBars[curBar];
+    candPrc = aLLV[curBar];
+    if (lastLPL > candPrc AND candIdx > lastHPIdx AND candIdx < curBar)
+    {
+        aLPivs[candIdx] = 1;
+        for (j = 0; j < nLPivs; j++)
+        {
+            aLPivLows[nLPivs - j] = aLPivLows[nLPivs - (j + 1)];
+            aLPivIdxs[nLPivs - j] = aLPivIdxs[nLPivs - (j + 1)];
+        }
+        aLPivLows[0] = candPrc;
+        aLPivIdxs[0] = candIdx;
+        nLPivs++;
+    }
+}
+
+for (k = 0; k < nHPivs; k++)
+{
+    _TRACE("High pivot no. " + k + " at barindex: " + aHPivIdxs[k] + ", " + WriteVal(ValueWhen(BarIndex() == aHPivIdxs[k], DateTime(), 1), formatDateTime) + ", " + aHPivHighs[k]);
+}
+
+a1 = ahpivs == 1;
+a2 = alpivs == 1;
+PlotShapes(a1 *shapeSmallCircle, colorRed, 0, H, Offset = 5);
+PlotShapes(a2 *shapeSmallCircle, colorGreen, 0, L, Offset = -5);
+//////////////////////////////////////////////////////
+
+//Para = ParamToggle("Plot Parallel Lines","Off,n");
+
+Para=ParamToggle("Plot Parallel Lines","No|Yes",1);
+if(Para)
+{
+ColorS= ParamColor("Support",colorLime);
+ColorR= ParamColor("Resistance",colorRed);
+x = Cum(1);
+s1 = L;
+s11 = H;
+pS = a2 == 1;
+endt = LastValue(ValueWhen(ps,x,1));
+startt = LastValue(ValueWhen(ps,x,2));
+ends = LastValue(ValueWhen(ps,S1,1));
+starts = LastValue(ValueWhen(ps,S1,2));
+dtS = endt - startt;
+aS = (endS - startS) / dtS;
+bS = endS;
+trendlineS = aS *(x - endt) + bS;
+g3 = IIf(x > startt - 10, trendlineS,  Null);
+Plot(g3, "", colors, styleThick);
+pR = a1 == 1;
+endt1 = LastValue(ValueWhen(pr,x,1));
+startt1 = LastValue(ValueWhen(pr,x,2));
+endr = LastValue(ValueWhen(pr,S11,1));
+startr = LastValue(ValueWhen(pr,S11,2));
+dtR = endt1 - startt1;
+aR = (endR - startR) / dtR;
+bR = endR;
+trendlineR = aR *(x - endt1) + bR;
+g4 = IIf(x > startT1 - 10, trendlineR,  Null);
+Plot(g4, "", colorr, styleThick);
+
+acd = log(endr/startr)/(endt1-startt1);
+res1 = exp((x-endt1)*acd)*endr;
+RRL = ROC(res1,1);
+bcd = log(ends/starts)/(endt-startt);
+sup1= exp((x-endt)*bcd)*ends;
+RSL = ROC(sup1,1);
+
+Low_Value = LastValue(Ref(LLV(L,endt1-startt1),-(x-endt1)));
+x2 = LastValue(ValueWhen(L==Low_Value & x>startt1 & x<endt1,x));
+PLL = IIf(LastValue(x)-x2>5,exp((x-x2)*acd)*Low_Value,Null);
+Hi_Value = LastValue(Ref(HHV(H,endt-startt),-(x-endt)));
+x3 = LastValue(ValueWhen(H==Hi_Value & x>startt & x<endt,x));
+PHL = IIf(LastValue(x)-x3>5,exp((x-x3)*bcd)*Hi_Value,Null);
+SLabs = sup1-Ref(sup1,-1); RLabs = res1-Ref(res1,-1);
+ROC2SL = (SLabs/C)*100; ROC2RL = (RLabs/C)*100;
+PLLd = abs((LastValue(C)/LastValue(PLL))-1)<0.01*100;
+PHLd = abs((LastValue(C)/LastValue(PHL))-1)<0.01*100;
+barvisible = Status("barvisible");
+firstvisiblebar = barvisible & NOT
+Ref(barvisible,-1);
+HHvisible = LastValue(HighestSince(firstvisiblebar,High));
+LLvisible = LastValue(LowestSince(firstvisiblebar,Low));
+RaH = HHvisible *1.05; RaL = LLVisible *0.95; 
+AnZ= starts==0 OR ends==0 OR startr==0 OR endr==0;
+PLplot = IIf(x-x2>=0 & abs(LastValue(L/PLL)-1) <abs(LastValue((100/1000)*ATR(14))) & PLL>RaL & PLL<RaH & NOT AnZ,PLL,IIf(x-x2>=0 & RaL==0 & PLLd & abs(LastValue(L/PLL)-1) <abs(LastValue((100/1000)*ATR(14)))& NOT AnZ,PLL,Null));
+PHplot = IIf(x-x3>=0 & abs(LastValue(H/PHL)-1) <abs(LastValue((100/1000)*ATR(14))) & PHL>RaL & PHL<RaH & NOT AnZ,PHL,IIf(x-x3>=0 & RaL==0 & PHLd & abs(LastValue(H/PHL)-1) <abs(LastValue((100/1000)*ATR(14)))& NOT AnZ,PHL,Null));
+Plot(IIf(Para,PLplot,Null)," ",colorr,styleDashed,maskDefault+styleNoRescale);
+Plot(IIf(Para,PHplot,Null)," ",colors,styleDashed,maskDefault+styleNoRescale);
+}
+_SECTION_END();
+*/
+Bolingb = ParamToggle("Bollinger Bands","Off|On",1);
+Fibo = ParamToggle("Fibo","Off|On",0);
+
+// 01. MAU NEN
+{
+_SECTION_BEGIN("Background_Setting");
+SetChartBkGradientFill( ParamColor("BgTop", ColorRGB(30,34,45)),
+ParamColor("BgBottom", ColorRGB(30,34,45)),ParamColor("titleblock",ColorRGB(30,34,45) ));
+_SECTION_END();
+}
+// 02. Bollinger Bands
+{
+
+}
+// 04. GIA
+
+///////////////////
+GfxSelectFont("Arial", 8, 700, True );
+y = 160;
+y_space = 15;
+xx = 5;
+function findHighAndLowValue(TimeRange)
+{
+    HH = HHV(Ref(H, -1), TimeRange);
+    printf(NumToStr(HH) + "  " + NumToStr(BarCount) + " ");
+    PlotShapes(IIf(H == HH, shapeDigit1, shapeNone), colorYellow, 0, High, 10);
+
+    HHPercent = (C - HH)*100/HH;      
+    LL = LLV(Ref(L, -1), TimeRange);
+
+    LLPercent = (C - LL)*100/LL;
+    L_H_Ratio = IIf(LLPercent >= 0, LLPercent, 100 + abs(LLPercent))/IIf(HHPercent < 0, abs(HHPercent), 100 + HHPercent);
+      
+    bi = BarIndex();
+    highestBar = ValueWhen(H == LastValue(HH), bi);  
+    i = LastValue(highestBar);
+    PlotText( "H" + NumToStr(TimeRange, 1.0), i, H[ i ], colorYellow,colorrGB(30,34,45), 5);  
+    PlotShapes((BarIndex()==i)*shapeDownTriangle, colorYellow, 0, High, -30);
+  
+    bi = BarIndex();
+    lowestBar = ValueWhen(L == LastValue(LL), bi);  
+    i = LastValue(lowestBar);
+    PlotText( "L" + NumToStr(TimeRange, 1.0), i, L[ i ],colorRed,colorrGB(30,34,45), -20);
+    PlotShapes((BarIndex()==i)*shapeUpArrow, colorGreen, 0, Low, -30);
+  
+    return "H = " + NumToStr(HH, 1.2) + " (" + NumToStr(HHPercent, 1.2) + ") | L = " + NumToStr(LL, 1.2) + " (" + NumToStr(LLPercent, 1.2) + ")" + " | Ty Le L/H: " + NumToStr(L_H_Ratio, 1.2);  
+}
+GfxTextOut("200 Days: " + findHighAndLowValue(200), xx , y + y_space);
+GfxTextOut("100 Days: " + findHighAndLowValue(100)+"  ", xx , y + 2*y_space);
+GfxTextOut("50  Days : " + findHighAndLowValue(50)+"  ", xx , y + 3*y_space);
+GfxTextOut("20  Days : " + findHighAndLowValue(20)+"  ", xx , y + 4*y_space);
+bi = BarIndex();
+cprice = C;
+PlotShapes(shapeDigit3*(bi == (BarCount - 4)), colorYellow, 0, Low, -15);
+///////////////////////
+//_SECTION_BEGIN("SAR in multitimeframe");
+
+Plot(C,"",3,64);
+A1=SAR(0.02,0.2);
+Cond3=Cross(C,A1);
+Cond4=Cross(A1,C);
+//Plot(A1, "sar", colorOrange, 24 );
+//PlotShapes(Cond3*shapeHollowUpArrow,colorBlue,0,L,-10);
+//PlotShapes(Cond4*shapeHollowDownArrow,colorBlack,0,H,-10);
+
+
+TimeFrameSet(inWeekly);
+A=SAR(0.02,0.2);
+TimeFrameRestore();
+K = TimeFrameExpand(A, inWeekly);
+Cond1=Cross(C,K);
+Cond2=Cross(K,C);
+col = IIf(K < L,colorGreen,IIf(K > H,colorRed,colorWhite));
+//Plot(K, "sar H.TR", col, 24 );
+//PlotShapes(Cond1*shapeUpArrow,colorGreen,0,L,-20);
+//PlotShapes(Cond2*shapeDownArrow,colorRed,0,H,-20);
+
+Buysar=Cond1 AND Cond3;
+Sellsar=Cond2 AND Cond4;
+//PlotShapes(Buysar*shapeUpTriangle,colorGreen,0,L,-35);
+//PlotShapes(Sellsar*shapeDownTriangle,colorRed,0,H,-35);
+//_SECTION_END();
+
+/////**************FIBO///////////////////
+
+StartBar=SelectedValue(BarIndex());
+FinishBar = EndValue( BarIndex() );
+i = startbar;
+period = FinishBar - StartBar;
+
+Lo =LLV(L,period);
+Hi = HHV(H,period);
+Line0 = 0;
+Line1 = 0;
+Line2 = 0;
+Line3 = 0;
+Line4= 0;
+Line100 = 0;
+
+for( i = startbar; i < finishbar; i++ )
+{
+if(EndValue(C)<SelectedValue(C))
+{
+Line0  = EndValue(Lo);
+Line100 = EndValue(Hi);
+Line1 = Line0 + abs(Line100-Line0)*0.236;
+Line2 = Line0 + abs(Line100-Line0)*0.382;
+Line3 = Line0 + abs(Line100-Line0)*0.5;
+Line4 = Line0 + abs(Line100-Line0)*0.618;
+
+}
+else
+{
+Line100  = EndValue(Lo);
+Line0 = EndValue(Hi);
+Line1 =Line0 - abs(Line100-Line0)*0.236;
+Line2 = Line0 - abs(Line100-Line0)*0.382;
+Line3 = Line0 - abs(Line100-Line0)*0.5;
+Line4 = Line0 - abs(Line100-Line0)*0.618;
+
+}
+}
+
+
+fib0= LineArray(startbar, Line0, finishbar, Line0, 0, 1);
+fib100 = LineArray(startbar, Line100, finishbar, Line100, 0, 1);
+
+
+n= round((finishbar-startbar)/2);
+
+// middle lines
+fib1= LineArray((finishbar-n), Line1, finishbar, Line1, 0, 1);
+fib2= LineArray((finishbar-n), Line2, finishbar, Line2, 0, 1);
+fib3= LineArray((finishbar-n), Line3, finishbar, Line3, 0, 1);
+fib4= LineArray((finishbar-n), Line4, finishbar, Line4, 0, 1);
+if(Fibo==1)
+{
+Plot(fib0,"", colorWhite);
+Plot(fib100,"", colorRed);
+Plot(fib1,"", colorGrey50);
+Plot(fib2,"", colorGrey50);
+Plot(fib3,"", colorOrange);
+Plot(fib4,"", colorGrey50);
+}
+////***********///////////////
+//_SECTION_BEGIN(" Smart Money Indicator");
+//SetBarsRequired(sbrAll,sbrAll);
+BV = IIf( (H==L), 0, V*(C-L)/(H-L) );
+SV = IIf( (H==L), 0, V*(H-C)/(H-L) );
+//PlotOHLC(SV,SV,0,0,"SellVolume",colorRed,styleCandle|styleNoTitle|styleNoLabel );
+//PlotOHLC(SV,BV+SV,SV,BV+SV,"BuyVolume",colorBrightGreen ,styleCandle|styleNoTitle|styleNoLabel );
+Va = MA(V,30);
+//PlotOHLC( Va, Va, 0, 0, "", ColorBlend( colorWhite , GetChartBkColor(), 0.4 ), styleNoLabel | styleCloud | styleNoRescale, Null, Null, Null, -1 );
+//Plot(Va,"Average Volume",colorRose,styleNoLine|styleNoLabel );
+VI = V/Va;
+
+//GfxSetOverlayMode(1);
+
+//_SECTION_END();
+
+//06. NAME AND FULL NAME//CLICK DAU CONG DE MO RONG CODE
+  {
+
+}
+
+///////////////////////////////////////////////////////
+mfyperiod=Param("MFI period",14,5,100);
+rsyperiod=Param("RSI period",14,5,100);
+
+procedure CalDivergence()
+{
+global stchbulld;
+global stchbeard;
+global rsybulld;
+global rsybeard;
+global mfybulld;
+global mfybeard;
+global ispeak;
+global istrough;
+
+zzg=Zig(C,5);
+ 
+ispeak=zzg>Max(Ref(zzg,-1),Ref(zzg,1));
+istrough=zzg<Min(Ref(zzg,-1),Ref(zzg,1));
+
+ 
+yp2=LastValue(ValueWhen(ispeak,C,2));
+yp1=LastValue(ValueWhen(ispeak,C,1));
+
+yb2=LastValue(ValueWhen(istrough,C,2));
+yb1=LastValue(ValueWhen(istrough,C,1));
+ 
+stchbulld=(yb1<yb2)*(LastValue(ValueWhen(istrough,StochK(15,3),1))>LastValue(ValueWhen(istrough,StochK(15,3),2)));
+stchbeard=(yp1>yp2)*(LastValue(ValueWhen(ispeak,StochK(15,3),1))<LastValue(ValueWhen(ispeak,StochK(15,3),2)));
+
+rsybulld=(yb1<yb2)*(LastValue(ValueWhen(istrough,RSI(rsyperiod),1))>LastValue(ValueWhen(istrough,RSI(rsyperiod),2)));
+rsybeard=(yp1>yp2)*(LastValue(ValueWhen(ispeak,RSI(rsyperiod),1))<LastValue(ValueWhen(ispeak,RSI(rsyperiod),2)));
+
+mfybulld=(yb1<yb2)*(LastValue(ValueWhen(istrough,MFI(mfyperiod),1))>LastValue(ValueWhen(istrough,MFI(mfyperiod),2)));
+mfybeard=(yp1>yp2)*(LastValue(ValueWhen(ispeak,MFI(mfyperiod),1))<LastValue(ValueWhen(ispeak,MFI(mfyperiod),2)));
+
+}
+procedure DrawPrice()
+{
+ 
+x=Cum(1);
+// Get the x-ordinate of Close at Peaks
+xp1=LastValue(ValueWhen(ispeak,x,1))-1;
+xp2=LastValue(ValueWhen(ispeak,x,2))-1;
+//Get the x-ordinate of Close at Troughs
+xb1=LastValue(ValueWhen(istrough,x,1))-1;
+xb2=LastValue(ValueWhen(istrough,x,2))-1;
+
+// Get the value of Price At Peaks
+yp2=LastValue(ValueWhen(ispeak,C,2));
+yp1=LastValue(ValueWhen(ispeak,C,1));
+// Get the value of Price At Troughs
+yb2=LastValue(ValueWhen(istrough,C,2));
+yb1=LastValue(ValueWhen(istrough,C,1));
+
+PlotShapes(IIf(x==xb1+1,shapeStar,shapeNone),colorGreen,0,L,-45);
+//PlotShapes(IIf(istrough,shapeStar,shapeNone),colorDarkGreen,0,L,-8);
+PlotShapes(IIf(x==xb2+1,shapeStar,shapeNone),colorGreen,0,L,-45);
+PlotShapes(IIf(x==xp1+1,shapeStar+shapePositionAbove,shapeNone),colorRed,0,H,-45);
+PlotShapes(IIf(x==xp2+1,shapeStar+shapePositionAbove,shapeNone),colorRed,0,H,-45);
+}
+CalDivergence();
+DrawPrice();
+Filter=mfybulld+mfybeard+rsybulld+rsybeard+stchbulld+stchbeard;
+AddColumn(mfybulld,"MFI Bull.D");
+AddColumn(mfybeard,"MFI Bearish");
+AddColumn(rsybulld,"RSI Bull.D");
+AddColumn(rsybeard,"RSI Bearish");
+AddColumn(stchbulld,"Stoch Bull.D");
+AddColumn(stchbeard,"Stoch Bearish");
+/////////////////////////////////
+
+_SECTION_BEGIN("Small Triggers");
+p1 = Param("TL 1 Periods", 20, 5, 50, 1);
+p2 = Param("TL 2 Periods", 5, 3, 25, 1);
+TL1 = LinearReg(C, p1);
+TL2 = EMA(TL1, p2);
+Col1 = IIf(TL1 > TL2, ParamColor("TL Up Colour", colorBrightGreen), ParamColor("TL Dn Colour", colorCustom12));
+Plot(TL1, "TriggerLine 1", Col1, styleLine|styleLine|styleNoLabel);
+Plot(TL2, "TriggerLine 2", Col1, styleLine|styleLine|styleNoLabel);
+_SECTION_END();
+
+// doubleTop - doubleBottom////
+bi = BarIndex();
+fvb = FirstVisibleValue( bi );
+lvb = LastVisibleValue( bi );
+
+rightstrength = Param( "Right Strength", 5, 1, 50, 1 );
+leftstrength = Param( "Left Strength", 5, 1, 50, 1 );
+fact = Param( "Chart Time Frame Factor", 2, 1, 10, 1 );
+
+rightStrength = rightStrength * fact;
+leftStrength = leftStrength * fact;
+
+pk = H == HHV( H, leftstrength ) AND Ref( HHV( H, rightstrength ), rightstrength ) < H;
+tr = L == LLV( L, leftstrength ) AND Ref( LLV( L, rightstrength ), rightstrength ) > L;
+pkl = H == HHV( H, leftstrength );
+trl = L == LLV( L, leftstrength );
+
+for( i = 0; i < 3; i++ )
+{
+    VarSet( "px" + i, ValueWhen( pk, bi, i ) );
+    VarSet( "tx" + i, ValueWhen( tr, bi, i ) );
+    VarSet( "ph" + i, ValueWhen( pk, H, i ) );
+    VarSet( "tl" + i, ValueWhen( tr, L, i ) );
+}
+
+ll = tr AND tl1 < tl2;
+hl = tr AND tl1 > tl2;
+hh = pk AND ph1 > ph2;
+lh = pk AND ph1 < ph2;
+
+//PlotShapes( shapeSmallCircle * pk, ColorRGB( 255, 0, 0 ), 0, H, 10 );
+
+doubleTopThreshold = 0.75 * Ref( ATR( 20 ), -1 );
+doubleTop = pk && abs( ph1 - ph2 ) < doubleTopThreshold;
+
+doubleBottomThreshold = 0.75 * Ref( ATR( 20 ), -1 );
+doubleBottom = tr && abs( tl1 - tl2 ) < doubleBottomThreshold;
+
+PlotShapes( IIf(doubleBottom, shapeUpArrow, shapeNone), ColorRGB( 250, 125, 0 ), layer = 0, L, offset = -10);
+PlotShapes( IIf(doubleTop, shapeDownArrow, shapeNone), ColorRGB( 250, 125, 0 ), layer = 0, H, offset = -10);
+for( i = lvb; i > fvb; i-- )
+{
+    sz = 8;
+    // troughs
+    
+    if( doubleTop[i] )
+    {
+        str = "Double Top";
+        PlotTextSetFont( str, "Arial", sz, i, H[i], ColorRGB( 250, 125, 0 ), colorDefault, 30 );
+    }
+    
+     if( doubleBottom[i] )
+    {
+        str = "Double Bottom";
+        PlotTextSetFont( str, "Arial", sz, i, L[i], ColorRGB( 250, 125, 0 ), colorDefault, -30 );
+        
+    }
+    
+}
+/////END------// doubleTop - doubleBottom////
+
+_SECTION_BEGIN("Buy-Sell");
+Buy=EMA(C,13)>EMA(EMA(C,13),9) AND Cross (C,Peak(C,5,1));
+Sell=Cross (EMA(EMA(C,13),9),EMA(C,13));
+ shape = Buy * shapeHollowStar + Sell * shapeHollowStar;
+PlotShapes( shape, IIf( Buy, colorGreen, colorRed ),0, IIf( Buy, Low-0.3, High+0.3 ) );
+
+  _SECTION_END();

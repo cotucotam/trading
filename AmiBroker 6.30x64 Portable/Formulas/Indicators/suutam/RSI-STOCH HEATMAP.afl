@@ -1,0 +1,529 @@
+//------------------------------------------------------------------------------
+
+//  Formula Name  : RSI HEATMAP
+
+//  Edit by       : HuyTuan 
+
+//  Phone         : 0937798534
+
+//  Last Update   : 27 Sep 2023
+
+//  Version       : 1.0
+
+// Amibroker Group: https://t.me/amibrokercodevn
+
+// About me		  : https://t.me/huytuanvt
+
+// Moi ung ho xin gui vao stk: 0081001154112 - Le Xuan Tuan - Ngan Hang VCB Vung Tau
+
+//-----------------------------------------------------------------------------
+
+pxwidth = Status( "pxwidth" );
+pxheight = Status( "pxheight" );
+pxl = Status( "pxchartleft" );
+pxr = Status( "pxchartright" );
+pxt = Status( "pxcharttop" );
+pxb = Status( "pxchartbottom" );
+fixx=1/1880*pxwidth;
+fixy=1/870*pxheight;
+procedure SetOrigin(x0, y0) {
+	global _x0, _y0;
+	_x0 = x0; _y0 = y0;
+}
+_cursorMouseButtons = GetCursorMouseButtons();
+DT_CENTER = 1; DT_VCENTER = 4 | 32; 
+function GfxGetState(id) {
+	return Nz(StaticVarGet("GfxState"+id+GetChartID()), 0);
+}
+function PointInside(x0, y0, x, y, width, height) {
+    global _x0, _y0;
+	x = x+_x0; y = y+_y0;
+    x0 = x0+_x0; y0 = y0+_y0;
+	return ((x0 >= x) && (y0 >= y) && (x0 <= (x+width)) && (y0 <= (y+height)));
+}
+function LeftClickInside(x, y, width, height) {
+	global _cursorMouseButtons, _x0, _y0;
+	local px, py, res;
+		//x = x+_x0; y = y+_y0;
+	res = False;
+	if (_cursorMouseButtons & 8) { // click
+		px = GetCursorXPosition(1); 
+		py = GetCursorYPosition(1); 
+		res = PointInside(px, py, x, y, width, height);
+	}
+	return res;
+}
+procedure GfxSetState(id, val) {
+	StaticVarSet("GfxState"+id+GetChartID(), val);
+}
+///MENU DOC
+function GfxHTabs1(id, headers, headheight, x, y, width, height, colorfg, colorbg) {
+	global _x0, _y0;
+	local py,choice,na,i,n,header,w, wi, prevwi;
+	
+	x = x+_x0; y = y+_y0; choice = GfxGetState(id);
+	for(n = 0; (header = StrExtract(headers,n)) != ""; ++n) {};
+	w = width/n; wi = y; prevwi = y;
+	if (LeftClickInside(x,y,width,height)) {
+		py = GetCursorYPosition( 1 );
+		for(i = 0; (header = StrExtract(headers,i)) != ""; ++i) {
+			wi =wi+headheight;			
+			if ((py > prevwi) && (py < wi))  { choice = i; break; }
+		}
+		GfxSetState(id, choice); // StaticVarSet(na, choice);
+	}
+	GfxSetBkMode(1);
+	// Draw Zone & Tabs
+	wi = y; prevwi = y;
+	for(i = 0; (header = StrExtract(headers,i)) != ""; ++i) {
+		wi = wi + headheight;	
+		 GfxSelectSolidBrush(ColorBlend( colorBrightGreen, colorWhite, 0.7 )); 
+		 GfxSelectPen( colorLightGrey, 0 ); // data tooltip round border color
+		GfxRoundRect(x,prevwi-1,x+width,wi,5,5); 
+		GfxSelectSolidBrush( colorbg );
+		if (i != choice) {
+			GfxSelectHatchBrush(colorbg,7); 
+			GfxRoundRect(x,prevwi-1,x+width,wi,5,5);
+			GfxSelectSolidBrush( colorbg );
+		} else {
+			wic = wi; prevwic = prevwi;
+		}
+		GfxSetTextColor( colorDarkGrey );
+		
+		GfxSelectFont("Verdana",8, 500);//Tahoma
+		GfxDrawText(header, x-50, prevwi, x+160, wi, 1|4|32);
+	prevwi = wi;
+	}
+	return choice;
+}
+
+function GfxHTabs(id, headers, headheight, x, y, width, height, colorfg, colorbg,Font,Colortb) {
+	global _x0, _y0;
+	local px,choice,na,i,n,header,w, wi, prevwi;
+	
+	x = x+_x0; y = y+_y0; choice = GfxGetState(id);
+	for(n = 0; (header = StrExtract(headers,n)) != ""; ++n) {};
+	w = width/n; wi = x; prevwi = x;
+	if (LeftClickInside(x,y,width,headheight)) {
+		px = GetCursorXPosition( 1 );
+		//choice = floor((px - x)/w);
+		// wi = x; prevwi = x;
+		for(i = 0; (header = StrExtract(headers,i)) != ""; ++i) {
+			wi = wi + 1.32*GfxGetTextWidth(header);
+			if ((px > prevwi) && (px < wi))  { choice = i; break; }
+		}
+		GfxSetState(id, choice); // StaticVarSet(na, choice);
+	}
+	GfxSetBkMode(1);
+	// Draw Zone & Tabs
+	wi = x; prevwi = x;
+	for(i = 0; (header = StrExtract(headers,i)) != ""; ++i) {
+		wi = wi + 1.32*GfxGetTextWidth(header);
+
+		 GfxSelectSolidBrush(ColorBlend( colorLime, colorWhite, 0.7 )); 
+		 GfxSelectPen( Colortb, 0 ); // data tooltip round border color
+		GfxRoundRect(prevwi,y,wi,y+headheight+5,5,5); 
+		GfxSelectSolidBrush( colorbg );
+		if (i != choice) {
+			GfxSelectHatchBrush(colorbg,7); 
+			GfxRoundRect(prevwi,y,wi,y+headheight+5,5,5); 
+			GfxSelectSolidBrush( colorbg );
+		} else {
+			wic = wi; prevwic = prevwi;
+		}
+		GfxSetTextColor( Colortb );
+		GfxSelectFont("Tahoma",Font, 500);
+		GfxDrawText(header, prevwi, y, wi, y+headheight+5, 1|4|32);
+	prevwi = wi;
+	}
+
+	return choice;
+}
+
+procedure GfxTSI1(x,y,col1,col2,ti) {
+	SetOrigin(x,y);
+indica = ParamList("Chon indica", "RSI|STO|RS",0);
+n = GfxHTabs("HTab", " RSI , STO , RS  ", 20, 0, -25, 1000, 500, colorBlack, ColorBlend( colorLime, colorWhite, 0.9 ),8,ColorBlend( colorBlack, colorWhite, 0.2 )); 
+
+	switch(n) {
+
+		case 0: 
+indica = ParamList("Chon indica", "RSI",0);
+		break;
+
+		case 1:   
+indica = ParamList("Chon indica", "STOCH",0);
+		 break;
+		case 2:   
+indica = ParamList("Chon indica", "RS",0);
+		 break;
+}
+switch (indica)
+{
+case "RSI":
+/////RSI HEATMAP
+pxw = ( pxr - pxl ) / 9;
+pxh = ( pxb - pxt ) / 6;
+GfxFillSolidRect(pxl+102,pxt-5, pxr+70, pxt+pxh, ColorBlend( colorRose, GetChartBkColor(), 0.3 ) );//80
+GfxFillSolidRect(pxl,pxt+pxh*2, pxr+70, pxt+pxh, ColorBlend( colorRose, GetChartBkColor(), 0.6 ) );//70
+GfxFillSolidRect(pxl,pxb, pxr+70, pxt+pxh*2, ColorBlend( colorWhite, GetChartBkColor(), 0.9 ) ); //60
+GfxFillSolidRect(pxr+70,pxb, pxl, pxb-pxh*2, ColorBlend( colorBrightGreen, colorWhite, 0.9 ) );//40 
+GfxFillSolidRect(pxr+70,pxb+5, pxl, pxb-pxh, ColorBlend( colorBrightGreen, colorWhite, 0.8 ) );//30
+////////////////
+for ( i = 0; i < 24; i++ )
+    {
+GfxSelectPen( ColorBlend( colorLightGrey, colorWhite, 0.6 ),1); 
+GfxMoveTo( pxl, pxt+pxh*(i+1)/4 ); 
+GfxLineTo( pxr+70, pxt+pxh*(i+1)/4 );
+}
+GfxSelectPen( colorLightGrey,1); 
+GfxMoveTo( pxl, pxt+pxh ); 
+GfxLineTo( pxr+70, pxt+pxh );
+GfxMoveTo( pxl, pxt+pxh*2 ); 
+GfxLineTo( pxr+70, pxt+pxh*2 );
+GfxMoveTo( pxl, pxb-pxh*2 ); 
+GfxLineTo( pxr+70, pxb-pxh*2 );
+GfxMoveTo( pxl, pxb-pxh ); 
+GfxLineTo( pxr+70, pxb-pxh );
+for ( i = 1; i < 36; i++ )
+    {
+GfxSelectPen(ColorBlend( colorLightGrey, colorWhite, 0.5 ) );
+GfxMoveTo( pxl + pxw*(i+1)/4, pxt );
+GfxLineTo( pxl + pxw*(i+1)/4, pxb );
+}
+GfxMoveTo( pxl + pxw*(1)/4, pxt+50 );
+GfxLineTo( pxl + pxw*(1)/4, pxb );
+GfxSetOverlayMode(0);
+GfxSelectFont("Arial",10, 500);
+GfxSetBkMode(0); // transparent
+GfxSetTextColor( colorLightGrey );
+GfxTextOut("80", pxr+10, pxt+5);
+GfxTextOut("70", pxr+10, pxt+pxh-20);
+GfxTextOut("60", pxr+10, pxt+pxh*2-20);
+GfxTextOut("50", pxr+10, pxb-pxh*3-20);
+GfxTextOut("40", pxr+10, pxb-pxh*2-20);
+GfxTextOut("30", pxr+10, pxb-pxh-20);
+GfxTextOut("20", pxr+10, pxb-20);
+//////////
+GfxSetTextColor( ColorBlend( colorBrightGreen, colorLightGrey, 0.9 ) );
+GfxTextOut("OVERBOUGHT", pxr-150*fixx, pxt+pxh/2);
+GfxTextOut("STRONG", pxr-150*fixx, pxt+pxh*1.5);
+GfxTextOut("NEUTRAL", pxr-150*fixx, pxb-pxh*3);
+GfxTextOut("WEAK", pxr-150*fixx, pxb-pxh*1.5);
+GfxTextOut("OVERSOLD", pxr-150*fixx, pxb-pxh/2);
+/////////
+break;
+case "RS":
+/////RSI HEATMAP
+pxw = ( pxr - pxl ) / 10;
+pxh = ( pxb - pxt ) / 10;
+GfxFillSolidRect(pxl+102,pxt-5, pxr+70, pxt+pxh, ColorBlend( colorRose, GetChartBkColor(), 0.3 ) );//80
+GfxFillSolidRect(pxl,pxt+pxh*2, pxr+70, pxt+pxh, ColorBlend( colorRose, GetChartBkColor(), 0.3 ) );//70
+GfxFillSolidRect(pxl,pxb, pxr+70, pxt+pxh*2, ColorBlend( colorWhite, GetChartBkColor(), 0.9 ) ); //60
+GfxFillSolidRect(pxr+70,pxb, pxl, pxb-pxh*2, ColorBlend( colorBrightGreen, colorWhite, 0.8 ) );//40 
+////////////////
+for ( i = 0; i < 24; i++ )
+    {
+GfxSelectPen( ColorBlend( colorLightGrey, colorWhite, 0.6 ),1); 
+GfxMoveTo( pxl, pxt+pxh*(i+1)/2 ); 
+GfxLineTo( pxr+70, pxt+pxh*(i+1)/2 );
+}
+GfxSelectPen( colorLightGrey,1); 
+GfxMoveTo( pxl, pxt+pxh*2 ); 
+GfxLineTo( pxr+70, pxt+pxh*2 );
+GfxMoveTo( pxl, pxb-pxh*2 ); 
+GfxLineTo( pxr+70, pxb-pxh*2 );
+for ( i = 1; i < 40; i++ )
+    {
+GfxSelectPen(ColorBlend( colorLightGrey, colorWhite, 0.5 ) );
+GfxMoveTo( pxl + pxw*(i+1)/4, pxt );
+GfxLineTo( pxl + pxw*(i+1)/4, pxb );
+}
+GfxMoveTo( pxl + pxw*(1)/4, pxt+50 );
+GfxLineTo( pxl + pxw*(1)/4, pxb );
+GfxSelectFont("Arial",10, 500);
+GfxSetTextColor( colorLightGrey );
+GfxTextOut("80", pxr+10, pxt+pxh*2-30);
+GfxTextOut("20", pxr+10, pxb-pxh*2-30);
+GfxTextOut("0", pxr+10, pxb-20);
+//////////
+GfxSetTextColor( ColorBlend( colorBrightGreen, colorLightGrey, 0.9 ) );
+GfxTextOut("OVERBOUGHT", pxr-200, pxt+pxh);
+//GfxTextOut("STRONG", pxr-200, pxt+pxh*1.5);
+GfxTextOut("NEUTRAL", pxr-200, pxb-pxh*5);
+//GfxTextOut("WEAK", pxr-200, pxb-pxh*1.5);
+GfxTextOut("OVERSOLD", pxr-200, pxb-pxh);
+break;
+case "STOCH":
+/////RSI HEATMAP
+pxw = ( pxr - pxl ) / 10;
+pxh = ( pxb - pxt ) / 10;
+GfxFillSolidRect(pxl+102,pxt-5, pxr+70, pxt+pxh, ColorBlend( colorRose, GetChartBkColor(), 0.3 ) );//80
+GfxFillSolidRect(pxl,pxt+pxh*2, pxr+70, pxt+pxh, ColorBlend( colorRose, GetChartBkColor(), 0.3 ) );//70
+GfxFillSolidRect(pxl,pxb, pxr+70, pxt+pxh*2, ColorBlend( colorWhite, GetChartBkColor(), 0.9 ) ); //60
+GfxFillSolidRect(pxr+70,pxb, pxl, pxb-pxh*2, ColorBlend( colorBrightGreen, colorWhite, 0.8 ) );//40 
+////////////////
+for ( i = 0; i < 24; i++ )
+    {
+GfxSelectPen( ColorBlend( colorLightGrey, colorWhite, 0.6 ),1); 
+GfxMoveTo( pxl, pxt+pxh*(i+1)/2 ); 
+GfxLineTo( pxr+70, pxt+pxh*(i+1)/2 );
+}
+GfxSelectPen( colorLightGrey,1); 
+GfxMoveTo( pxl, pxt+pxh*2 ); 
+GfxLineTo( pxr+70, pxt+pxh*2 );
+GfxMoveTo( pxl, pxb-pxh*2 ); 
+GfxLineTo( pxr+70, pxb-pxh*2 );
+for ( i = 1; i < 40; i++ )
+    {
+GfxSelectPen(ColorBlend( colorLightGrey, colorWhite, 0.5 ) );
+GfxMoveTo( pxl + pxw*(i+1)/4, pxt );
+GfxLineTo( pxl + pxw*(i+1)/4, pxb );
+}
+GfxMoveTo( pxl + pxw*(1)/4, pxt+50 );
+GfxLineTo( pxl + pxw*(1)/4, pxb );
+GfxSelectFont("Arial",10, 500);
+GfxSetTextColor( colorLightGrey );
+GfxTextOut("80", pxr+10, pxt+pxh*2-30);
+GfxTextOut("20", pxr+10, pxb-pxh*2-30);
+GfxTextOut("0", pxr+10, pxb-20);
+//////////
+GfxSetTextColor( ColorBlend( colorBrightGreen, colorLightGrey, 0.9 ) );
+GfxTextOut("OVERBOUGHT", pxr-200, pxt+pxh);
+//GfxTextOut("STRONG", pxr-200, pxt+pxh*1.5);
+GfxTextOut("NEUTRAL", pxr-200, pxb-pxh*5);
+//GfxTextOut("WEAK", pxr-200, pxb-pxh*1.5);
+GfxTextOut("OVERSOLD", pxr-200, pxb-pxh);
+break;
+}
+GfxSetTextColor( colorGold );
+GfxTextOut("0%", pxl + pxw*4.5+5, pxb-25);
+GfxSetTextColor( ColorBlend( colorGreen, colorWhite, 0.4 )  );
+GfxTextOut("2%", pxl + pxw*5+5, pxb-25);
+GfxTextOut("4%", pxl + pxw*5.5+5, pxb-25);
+GfxTextOut("6%", pxl + pxw*6+5, pxb-25);
+GfxTextOut("8%", pxl + pxw*6.5+5, pxb-25);
+GfxTextOut("10%", pxl + pxw*7+5, pxb-25);
+GfxTextOut("12%", pxl + pxw*7.5+5, pxb-25);
+GfxTextOut("14%", pxl + pxw*8+5, pxb-25);
+GfxTextOut("16%", pxl + pxw*8.5+5, pxb-25);
+GfxSetTextColor(ColorBlend( colorRed, colorWhite, 0.7 )   );
+GfxTextOut("-2%", pxl + pxw*4+5, pxb-25);
+GfxTextOut("-4%", pxl + pxw*3.5+5, pxb-25);
+GfxTextOut("-6%", pxl + pxw*3+5, pxb-25);
+GfxTextOut("-8%", pxl + pxw*2.5+5, pxb-25);
+GfxTextOut("-10%", pxl + pxw*2+5, pxb-25);
+GfxTextOut("-12%", pxl + pxw*1.5+5, pxb-25);
+GfxTextOut("-14%", pxl + pxw*1+5, pxb-25);
+GfxTextOut("-16%", pxl + pxw*0.5+5, pxb-25);
+
+NGANHANG=ParamStr("NGAN HANG","ABB,ACB,BID,BVB,CTG,HDB,LPB,MBB,MSB,NAB,OCB,SHB,STB,TCB,TPB,VCB,VIB,VPB,VAB");
+CHUNGKHOAN=ParamStr("CHUNG KHOAN","AAS,AGR,APG,BSI,BVS,CTS,EVF,EVS,FTS,HCM,MBS,SBS,SHS,SSI,VCI,VDS,VIX,VND,APS,HBS,IVS,ORS,TVB,TVS,VIG,BMS,TCI,VFS");
+THEP=ParamStr("THEP","HPG,HSG,NKG,SMC,TLH,TVN,VGS,NSH");
+DAUKHI=ParamStr("DAU KHI","BSR,CNG,GAS,OIL,PET,PLX,POW,PSH,PVB,PVC,PVD,PVS,PVT,PXS,PLC");
+BAOHIEM=ParamStr("BAO HIEM","BVH,BMI,MIG");
+BATDONGSAN=ParamStr("BAT DONG SAN","CCL,CEO,DIG,DLG,DPG,DRH,DTD,DXG,HAR,HBC,HDC,HDG,HLD,HQC,HUT,IJC,KDH,NBB,NDN,NTL,NVL,PDR,SCR,TCH,TDH,VHM,VIC,VPH,VRE,HTN,CRE,HAG,IDJ,ITC,NHA,OGC,SGR,AAV,API,DXS,HPX,KHG,NRC,TEG");
+BDSKCN=ParamStr("BDS-KCN","D2D,GVR,IDC,ITA,KBC,LDG,LHG,NLG,PHR,QCG,REE,SIP,SZC,TDC,TIG,TIP");
+XD_VLXD=ParamStr("XD_VLXD","VCG,VC7,HU4,MST,VC3,ACC,QNC,SCL,VGC,BCE,CSC,TTB,C69,CRC,HID,HVH,LIG,PAS,S99,SCG,SCI,TLD,EVG,CTD,PHC,CKG");
+DAUTUCONG=ParamStr("DAU TU CONG","BCC,BTS,C47,C4G,CII,CTI,DHA,FCN,G36,HOM,HT1,KSB,LCG,SD5,SD6,TCD,THG,TV2");
+CAOSU=ParamStr("CAO SU","DPR,DRC,DRI,GVR,PHR,VHG,HNG");
+DETMAY=ParamStr("DET MAY","ADS,EVE,FTM,GIL,KMR,MSH,STK,TCM,TNG,VGT");
+THANKHOANGSAN=ParamStr("THAN - KHOANG SAN","CLX,KSB,MDC,NBC,NNC,TDN,THT,TVD,VEF,CST,BMC,DHM,KHB,KSQ,MSR,TC6,TNT");
+THUYSAN=ParamStr("THUYSAN","ACL,ANV,ASM,CMX,FMC,IDI,MPC,VHC");
+THUCPHAMXK=ParamStr("THUC PHAM-XK","DBC,DHC,LTG,MHC,MSN,NAF,PTB,TNA,VCS,VLC,VNM,VOC,BNA,TAR,VHE");
+HOACHATPHANBON=ParamStr("HOA CHAT - PHAN BON","BFC,CSV,DCM,DDV,DGC,DPM,LAS,QBS,TSC,SBV,HCD,ABS");
+BLECONGNGHE=ParamStr("CONG NGHE - BAN LE","DGW,ELC,FPT,FRT,ITD,MWG,PET,PNJ,SAM,SRA,TTN,CTR,VGI");
+CANGVANTAI=ParamStr("CANG - VAN TAI","DXP,GMD,HAH,PVP,PVT,SGP,SKG,TCL,VIP,VOS,VSC,VTO,GSP,HHG,TCO,TMS");
+DICHVU=ParamStr("DICH VU","HAX,PAN,TCT,VNG,VTP");
+DIEN_NANGLUONG=ParamStr("DIEN_NANGLUONG","KHP,PPC,PVG,QTP,VSH,TTA,GEG,SJD,NT2,REE,PC1,GEX,VNE");
+DTPT=ParamStr("DTPT","FID,FIT,HHS,SJF");
+DUONGGO=ParamStr("DUONG - GO","GDT,LSS,QNS,SBT,TTF");
+HANGKHONGDULICH=ParamStr("HANG KHONG-DU LICH","HVN,VJC,VTD,DAH,RIC");
+NUOCNHUA=ParamStr("NUOC NHUA","AAA,APH,BMP,BWE,DAG,NTP,TDM,HII,NHH,PLP");
+SXKD=ParamStr("SXKD","DQC,HAP,NAG,RAL,SAV,TLG");
+YTEDUOC=ParamStr("YTEDUOC","AMV,DCL,DHG,DMC,JVC,TNH");
+THEODOI=ParamStr("THEODOI","AMV,JVC,LAS,VC7,KDH");
+VN30=ParamStr("VN30","ACB,BID,BVH,CTG,FPT,GAS,GVR,HDB,HPG,KDH,MBB,MSN,MWG,NVL,PDR,PLX,PNJ,POW,SAB,SSI,STB,TCB,TPB,VCB,VHM,VIC,VJC,VNM,VPB,VRE");
+//////
+m = GfxHTabs1("HTab2", "VN30,NG\u00C2N H\u00C0NG,CH\u1EE8NG KHO\u00C1N,TH\u00C9P,D\u1EA6U KH\u00CD,B\u1EA2O HI\u1EC2M,B\u1EA4T \u0110\u1ED8NG S\u1EA2N,BDS - KCN,XD - VLXD,\u0110\u1EA6U T\u01AF C\u00D4NG,CAO SU, D\u1EC6T MAY,THAN-KS,TH\u1EE6Y S\u1EA2N,TH\u1EF0C PH\u1EA8M-XK,H/CH\u1EA4T-P/B\u00D3N,B/L\u1EBA-C/NGH\u1EC6,C\u1EA2NG-V\u1EACN T\u1EA2I,D\u1ECACH V\u1EE4,\u0110I\u1EC6N-N/L\u01AF\u1EE2NG,DTPT,\u0110\u01AF\u1EDCNG G\u1ED6,H/KH\u00D4NG - DL,N\u01AF\u1EDA\u0043 NH\u1EF0A,SXKD,YT\u1EBE-D\u01AF\u1EE2\u0043,THEO D\u00D5I TU\u1EA6N,THEO D\u00D5I NG\u00C0Y,CP THEO DOI", 22.3, 0, 00, 110, 1200, colorBlack, ColorBlend( colorLime, colorWhite, 0.9 ));
+switch(m) {
+case 0: 
+tickerlist =VN30;
+
+break;
+case 1: 
+tickerlist =NGANHANG;
+break;
+case 2: 
+tickerlist =CHUNGKHOAN;
+break;
+case 3: 
+tickerlist =THEP;
+break;
+case 4: 
+tickerlist =DAUKHI;
+break;
+case 5: 
+tickerlist =BAOHIEM;
+break;
+case 6: 
+tickerlist =BATDONGSAN;
+break;
+case 7: 
+tickerlist =BDSKCN;
+break;
+case 8: 
+tickerlist =XD_VLXD;
+break;
+case 9: 
+tickerlist =DAUTUCONG;
+break;
+case 10: 
+tickerlist =CAOSU;
+break;
+case 11: 
+tickerlist =DETMAY;
+break;
+case 12: 
+tickerlist =THANKHOANGSAN;
+break;
+case 13: 
+tickerlist =THUYSAN;
+break;
+case 14: 
+tickerlist =THUCPHAMXK;
+break;
+case 15: 
+tickerlist =HOACHATPHANBON;
+break;
+case 16: 
+tickerlist =BLECONGNGHE;
+break;
+case 17: 
+tickerlist =CANGVANTAI;
+break;
+case 18: 
+tickerlist =DICHVU;
+break;
+case 19: 
+tickerlist =DIEN_NANGLUONG;
+break;
+case 20: 
+tickerlist =DTPT;
+break;
+case 21: 
+tickerlist =DUONGGO;
+break;
+case 22: 
+tickerlist =HANGKHONGDULICH;
+break;
+case 23: 
+tickerlist =NUOCNHUA;
+break;
+case 24: 
+tickerlist =SXKD;
+break;
+case 25: 
+tickerlist =YTEDUOC;
+break;
+case 26: 
+WatchlistName1 = ParamStr("WL1", "Theo Doi");
+wlnumber = CategoryFind(WatchlistName1, cat = categoryWatchlist); 
+tickerlist =CategoryGetSymbols(cat, wlnumber);
+break;
+case 27: 
+WatchlistName = ParamStr("WL2", "TD New");
+wlnumber = CategoryFind(WatchlistName, cat = categoryWatchlist); 
+tickerlist =CategoryGetSymbols(cat, wlnumber);
+break;
+case 28: 
+WatchlistName = ParamStr("WL3", "CP THEO DOI");
+wlnumber = CategoryFind(WatchlistName, cat = categoryWatchlist); 
+tickerlist =CategoryGetSymbols(cat, wlnumber);
+break;
+}
+
+
+Hor=Param("Horizontal Position",220,1,1200,1);
+Ver=Param("Vertical Position",50,30,1000,1); 
+GfxSelectFont("Tahoma",50, 900);
+GfxSetTextColor( col1 );
+GfxTextOut( ti, Hor, Ver+5);
+GfxSetTextColor( col2);
+GfxSelectFont("Tahoma",8, 600);
+GfxTextOut( "H U Y T U A N", Hor+10, Ver+90);
+GfxSelectFont("Tahoma",8, 500);
+GfxSetTextColor( colorGrey40 );
+GfxTextOut( "0937798534", Hor+20, Ver+105);
+GfxSetTextColor( colorGrey40 ); //GfxSetTextAlign( 6 );
+GfxSelectFont( "Tahoma", 7.5, 600, 0, 0, 900 );
+GfxTextOut( "RSI HEATMAP", Hor-12, Ver+120);
+GfxSelectPen( col1, 0 ); 
+GfxSelectSolidBrush( col1);
+GfxRoundRect( Hor+5, Ver , Hor+21 , Ver+50 , 0, 0 ); 
+GfxPolygon(Hor+13, Ver-10, Hor+36, Ver+20, Hor-10, Ver+20);
+GfxSelectPen( col2,0 );
+GfxSelectSolidBrush( col2);
+GfxRoundRect( Hor+50, Ver+7 , Hor+65 , Ver+25 , 0, 0 ); 
+GfxRoundRect( Hor+75, Ver , Hor+90 , Ver+25 , 0, 0 );
+GfxRoundRect( Hor+100, Ver-10 , Hor+115 , Ver+25 , 0, 0 );
+///////////////
+last_bar = BarCount-1;
+for ( i = 0; ( sym = StrExtract( tickerlist, i ) ) != ""; i++ )
+{
+    SetForeign( sym );
+    fc = Foreign( sym, "C" );
+    chg=LastValue(ROC(fc,1));
+    switch (indica)
+{
+case "RSI":
+rsi14=LastValue(RSIa(fc,14)>Ref(RSIa(fc,14),-1));
+    y=pxb+(LastValue(RSIa(fc,14))-20)/60*(pxt-pxb);
+	x=pxl + pxw*4.5+pxw*0.25*chg;
+	GfxSelectSolidBrush(IIf(rsi14,ColorBlend( colorBrightGreen, colorWhite, 0.7 ),ColorBlend( colorRed, colorWhite, 0.5 )));
+break;
+case "RS":
+	ticker=ParamStr("ticker","vnindex");
+	RSL = C/Foreign(ticker, "C");
+	sig = EMA(RSL, 20);
+	rsi14=LastValue(RSL > Ref(RSL, -1));
+	RSL_lastvalue =  ((LastValue(RSL)-LastValue(sig))/LastValue(sig)*1000+40);
+	if (RSL_lastvalue > 100){
+		RSL_lastvalue = 100;
+	}
+	if (RSL_lastvalue < 0){
+		RSL_lastvalue = 1;
+	}
+    y = pxb + ( RSL_lastvalue)/100  * (pxt - pxb);
+	x=pxl + pxw*4.5+pxw*0.25*chg;
+	GfxSelectSolidBrush(IIf(rsi14,ColorBlend( colorBrightGreen, colorWhite, 0.7 ),ColorBlend( colorRed, colorWhite, 0.5 )));
+break;
+case "STOCH":
+  K=StochK( 15 , 3);
+    D=StochD( 15 , 3, 3 );
+    KCD=LastValue(Cross(K,D));
+    KlD=LastValue(K>D);
+    fc = Foreign( sym, "C" );
+    chg=LastValue(ROC(fc,1));
+    y=pxb+LastValue(K)/100*(pxt-pxb);
+    x=pxl + pxw*4.5+pxw*0.25*chg;
+	GfxSelectSolidBrush(IIf(KCD,ColorBlend( colorBrightGreen, colorWhite, 0.5 ),IIf(KlD,ColorBlend( colorBlue, colorWhite, 0.3 ),ColorBlend( colorRed, colorWhite, 0.5 ))));  
+break;
+    }
+    for ( ii = BarCount - 1; ii < BarCount; ii++ )
+    {
+    GfxSelectFont("Verdana",12, 500);//Tahoma
+    GfxSelectPen( colorGrey40,1); 
+    GfxCircle( x[ii], y[ii], 5 );
+    GfxTextOut( sym, x[ii] + 6 , y[ii] - 3 );
+    if(indica == "RS"){
+    printf("%s: %g \n",sym,RSL_lastvalue);
+    }
+    }
+    RestorePriceArrays( True );
+}
+}
+x = Param("x_origin1", 0, 0, 1980, 20);
+y = Param("y_origin1", 25, 0, 1980, 20);
+GfxTSI1(x,y,ColorRGB(48,199,48),ColorRGB(128,128,255),"UP");
+

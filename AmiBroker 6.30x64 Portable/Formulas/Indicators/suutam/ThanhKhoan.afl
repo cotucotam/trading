@@ -1,0 +1,56 @@
+_SECTION_BEGIN("ThanhKhoan");
+SetChartOptions(0,chartShowArrows | chartShowDates);
+
+	pxwidth = Status( "pxwidth" );
+	pxheight = Status( "pxheight" );
+
+
+	NgayMoc=ParamDate("Ngay ss","11/7/2023");
+	newDay = Day() != Ref( Day(), -1);
+	mydate = DateTimeConvert( 2, ngaymoc );
+	GiaiDoan = BarsSince(newDay);
+	x=Cum(1);
+
+
+VolHqua=TimeFrameGetPrice("V",inDaily);
+
+tg=ValueWhen(newday,x,1);
+tg1=ValueWhen(newday AND DateNum()==NgayMoc,x,1);
+
+
+TongVol=Sum(v,giaiDoan);
+sosanh=Ref(TongVol,-(tg-tg1));
+volHqua=Ref(VolHqua,-(tg-tg1));
+
+ptram=IIf(GiaiDoan==0,null,100*tongVol/volhqua);
+ptramhqua=IIf(GiaiDoan==0,null,100*Sosanh/volhqua);
+
+ptram=round(100*ptram)/100;
+ptramhqua=round(100*ptramhqua)/100;
+
+ptram=IIf(ptram>200 OR ptram<0,null,ptram);
+ptramhqua=IIf(ptramhqua>100 OR ptramhqua<0,null,ptramhqua);
+
+Plot(50,"",colorGold,styleDashed);
+Plot(70,"",colorGold,styleDashed);
+Plot(90,"",colorGold,styleDashed);
+Plot(100,"",colorGold,styleDashed);
+Plot(ptram,"Hnay",colorGreen,styleThick);
+Plot(ptramhqua,"hqua",colorGrey40,styleThick);
+
+mau=IIf(ptram>ptramhqua,colorGreen,colorGrey40);
+
+PlotOHLC(0,ptram,0,ptram,"",colorGreen,styleCloud|styleNoLabel);
+PlotOHLC(0,ptramhqua,0,ptramhqua,"",colorGrey40,styleCloud|styleNoLabel);
+
+
+
+Plot(1,"",colorWhite,styleArea|styleOwnScale,0,1);
+
+
+
+Title="Time " + WriteVal(DateTime(),formatDateTime) + 
+	EncodeColor(colorBlue)+ "  Tong Vol=" + WriteVal(VolHqua,1.0) + 
+	EncodeColor(colorGrey40)+ "  Ngay SS:" +DateTimeToStr(mydate) + " = " + WriteVal(ptramHqua,1.0) + "%" +
+	EncodeColor(colorGreen)+"  Hien Tai=" + WriteVal(ptram,1.0) + "%";
+_SECTION_END();

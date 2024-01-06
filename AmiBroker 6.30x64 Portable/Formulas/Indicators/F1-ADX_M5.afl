@@ -1,0 +1,68 @@
+GraphXSpace=5;
+SetBarsRequired(sbrAll,sbrAll);
+ 
+// BUYING VOLUME AND SELLING VOLUME //
+_SECTION_BEGIN("B_S Volume");
+BV = IIf( (H==L), 0, V*(C-L)/(H-L) );
+SV = IIf( (H==L), 0, V*(H-C)/(H-L) );
+DV = BV - SV; // Effort Volume
+y=-1;
+x=Param("x",11,5,20,1);
+y1 = y+x;
+y2=y1+x;
+PlotText( "BS." + "Vol: " +WriteVal(DV,1.0), BarCount+2 , y2,colorGold);
+PlotText( "back" + "V: " +WriteVal(Ref(DV,-1),1.0), BarCount+2 , y1,colorGold);
+PlotText( "back" + "V: " +WriteVal(Ref(DV,-2),1.0), BarCount+2 , y,colorGold);
+_SECTION_END();
+
+_SECTION_BEGIN("Divergence");
+n=6;
+Buy=Sell=0;
+Var = Zig(RSI(14), n);
+t= Trough(RSI(14), n, 1);
+p= Peak(RSI(14), n, 1);
+x[0] =Var[0];
+price[0] = C[0];
+j=0;
+
+// bearish divergence
+for ( i=0; i<BarCount; i++)
+{
+if(Var[i] == p[i])
+{
+
+j++;
+x[j] =Var[i];
+price[j] =C[i];
+if(x[j] <x[j-1] && price[j-1]< price[j])
+Sell[i] =1;
+}
+}
+
+// bullish divergence
+for ( i=0; i<BarCount; i++)
+{
+if(Var[i] == t[i])
+{
+j++;
+x[j] =Var[i];
+price[j] =C[i];
+if(x[j] >x[j-1] && price[j]<price[j-1])
+Buy[i] =1;
+}
+}
+
+//Plot(Var, "", 39);
+PlotShapes ( IIf(Sell, shapeDigit2, shapeNone), colorYellow);
+PlotShapes( IIf(Buy, shapeDigit2, shapeNone), colorBrightGreen,0,0,10);
+_SECTION_END();
+
+_SECTION_BEGIN("ADX");
+range = Optimize("DI", 17, 8, 26, 1 );
+rangeADX = Optimize("ADX", 14, 14, 26, 1 );
+Color = IIf(ROC(ADX(rangeADX),1) >= 0 AND PDI(RANGE)>=MDI(RANGE), colorBlue, IIf(ROC(ADX(rangeADX),1) >= 0 AND PDI(RANGE)<=MDI(RANGE),colorRed, colorWhite));
+Plot( PDI(range), "+DI", ParamColor( "+DI color", colorBrightGreen), styleDots );
+Plot( MDI(range), "-DI", ParamColor( "-DI color", colorCustom12 ), styleDots );
+Plot( ADX(rangeADX), _DEFAULT_NAME(), Color , ParamStyle("ADX style", styleThick ) );
+PlotOHLC( 0, ADX(rangeADX),0, ADX(rangeADX), "", IIf(PDI(range)<MDI(range) , colorBrown, IIf(PDI(range)>MDI(range), colorGreen, colorDarkGrey)), styleCloud|styleNoLabel);
+_SECTION_END();

@@ -1,0 +1,815 @@
+_SECTION_BEGIN("Background_Setting");
+SetChartBkGradientFill( ParamColor("BgTop", colorWhite),
+ParamColor("BgBottom", colorWhite),ParamColor("titleblock",colorWhite ));
+_SECTION_END();
+
+///////////////////
+
+_SECTION_BEGIN("PRICE");
+PriceStyle = ParamList("Chon kieu gia", "Candle|Bar|Line|Heikin-Ashi",0);
+
+SetChartOptions(0,chartShowArrows|chartShowDates);
+ThisStyle = styleCandle;
+ThisTitle = "";
+_O=O; _C=C; _H=H; _L=L;
+
+ThisColor = IIf( _C>_O, colorGreen, IIf(_C<_O, colorRed, colorBlack)); 
+
+switch (PriceStyle)
+{
+
+  case "Bar": 
+  BarColor=IIf(Close >= Open,colorGreen,colorRed);
+PlotOHLC( Close,  High,  Low,  Close, "", BarColor, styleBar |styleThick );//Price
+       break;
+
+  case "Line": 
+       ThisStyle = styleLine;
+       ThisColor = IIf(_C >= _O,colorGreen, colorRed);       SetBarFillColor( ThisColor );
+       PlotOHLC( _O, _H, _L, _C, ThisTitle, ThisColor, ThisStyle|styleNoLabel,0,-5,0);
+       break;
+   case "Candle": 
+       ThisStyle = styleCandle;
+  Plot( Close, "Close", IIf( Close >= Open, colorGreen, colorRed ), styleCandle | styleThick | styleNoTitle);
+
+       break;     
+
+  case "Heikin-Ashi": 
+       
+       _C = (C+H+L+C)/4; 
+       _O = AMA( Ref( _C, -1 ), 0.5 ); 
+       _H = Max( H, Max( _C, _O ) ); 
+       _L = Min( L, Min( _C, _O ) ); 
+
+       ThisColor = IIf(_C >= _O,colorLime, ColorRGB(255,108,108));
+       SetBarFillColor( ThisColor );
+         
+       ThisColor = IIf(_C >= _O,colorLime, ColorRGB(255,108,108));//cLine
+       ThisTitle = "Heikin-Ashi";
+       PlotOHLC( _O, _H, _L, _C, ThisTitle, ThisColor, ThisStyle|styleNoLabel,0,-5,0);     
+       break;
+
+
+}
+_SECTION_END();  
+
+_SECTION_BEGIN("Vi Tri Khung ");
+Hor=Param("Vi Tri Khung-X",5,1,1200,1);
+Ver=Param("Vi Tri Khung-Y",40,30,1000,1);
+maunenboad=ParamColor("colorkhung", ColorRGB(214,222,224));
+maunenboad1=ParamColor("colorkhung1", colorBlueGrey);
+_SECTION_END();
+
+
+_SECTION_BEGIN("CP1 ");
+CP1=ParamStr("CO PHIEU 1","VNIndex");
+No=0;
+iclose1=0;
+ichange1=0;
+vol1=0;
+for( i = 0; ( sym1 = StrExtract(CP1,i ) ) != ""; i++ )
+{
+iclose1+=Foreign(sym1,"Close");
+ichange1+=ROC(Foreign(sym1,"Close"),1);
+vol1+=Foreign(sym1,"Volume");
+No++;
+};
+GIACP1=Param("CP1-TREN",0,1,3000,0.05);
+CBCP1=ParamStr("CANH BAO CP1","MUA");
+GIACP11=Param("CP1-DUOI",0,1,3000,0.05);
+CBCP11=ParamStr("CANH BAO CP11","BAN");
+CP1S=WriteIf(iclose1>GIACP1,CBCP1,"");
+CP11S=WriteIf(iclose1<GIACP11,CBCP11,"");
+_SECTION_END();
+
+
+_SECTION_BEGIN("CP2 ");
+CP2=ParamStr("CO PHIEU 2","DC4");
+No=0;
+iclose2=0;
+ichange2=0;
+vol2=0;
+for( i = 0; ( sym2 = StrExtract(CP2,i ) ) != ""; i++ )
+{
+iclose2+=Foreign(sym2,"Close");
+ichange2+=ROC(Foreign(sym2,"Close"),1);
+vol2+=Foreign(sym2,"Volume");
+No++;
+};
+GIACP2=Param("CP2-TREN",0,1,3000,0.01);
+CBCP2=ParamStr("CANH BAO CP2","MUA");
+GIACP21=Param("CP2-DUOI",0,1,3000,0.01);
+CBCP21=ParamStr("CANH BAO CP21","BAN");
+CP2S=WriteIf(iclose2>GIACP2,CBCP2,"");
+CP21S=WriteIf(iclose2<GIACP21,CBCP21,"");
+_SECTION_END();
+
+
+_SECTION_BEGIN("CP3 ");
+CP3=ParamStr("CO PHIEU 3","KDH");
+No=0;
+iclose3=0;
+ichange3=0;
+vol3=0;
+for( i = 0; ( sym3 = StrExtract(CP3,i ) ) != ""; i++ )
+{
+iclose3+=Foreign(sym3,"Close");
+ichange3+=ROC(Foreign(sym3,"Close"),1);
+vol3+=Foreign(sym3,"Volume");
+No++;
+};
+GIACP3=Param("CP3-TREN",0,1,3000,0.01);
+CBCP3=ParamStr("CANH BAO CP3","MUA");
+GIACP31=Param("CP3-DUOI",0,1,3000,0.01);
+CBCP31=ParamStr("CANH BAO CP31","BAN");
+CP3S=WriteIf(iclose3>GIACP3,CBCP3,"");
+CP31S=WriteIf(iclose3<GIACP31,CBCP31,"");
+_SECTION_END();
+
+_SECTION_BEGIN("CP4 ");
+CP4=ParamStr("CO PHIEU 4","PTL");
+No=0;
+iclose4=0;
+ichange4=0;
+vol4=0;
+for( i = 0; ( sym4 = StrExtract(CP4,i ) ) != ""; i++ )
+{
+iclose4+=Foreign(sym4,"Close");
+ichange4+=ROC(Foreign(sym4,"Close"),1);
+vol4+=Foreign(sym4,"Volume");
+No++;
+};
+
+GIACP4=Param("CP4-TREN",0,1,3000,0.01);
+CBCP4=ParamStr("CANH BAO CP4","MUA");
+GIACP41=Param("CP4-DUOI",0,1,3000,0.01);
+CBCP41=ParamStr("CANH BAO CP41","BAN");
+CP4S=WriteIf(iclose4>GIACP4,CBCP4,"");
+CP41S=WriteIf(iclose4<GIACP41,CBCP41,"");
+_SECTION_END();
+
+_SECTION_BEGIN("CP5 ");
+CP5=ParamStr("CO PHIEU 5","VRE");
+No=0;
+iclose5=0;
+ichange5=0;
+vol5=0;
+for( i = 0; ( sym5 = StrExtract(CP5,i ) ) != ""; i++ )
+{
+iclose5+=Foreign(sym5,"Close");
+ichange5+=ROC(Foreign(sym5,"Close"),1);
+vol5+=Foreign(sym5,"Volume");
+No++;
+};
+GIACP5=Param("CP5-TREN",0,1,3000,0.01);
+CBCP5=ParamStr("CANH BAO CP5","MUA");
+GIACP51=Param("CP5-DUOI",0,1,3000,0.01);
+CBCP51=ParamStr("CANH BAO CP51","BAN");
+CP5S=WriteIf(iclose5>GIACP5,CBCP5,"");
+CP51S=WriteIf(iclose5<GIACP51,CBCP51,"");
+_SECTION_END();
+
+_SECTION_BEGIN("CP6 ");
+CP6=ParamStr("CO PHIEU 6","BVH");
+No=0;
+iclose6=0;
+ichange6=0;
+vol6=0;
+for( i = 0; ( sym6 = StrExtract(CP6,i ) ) != ""; i++ )
+{
+iclose6+=Foreign(sym6,"Close");
+ichange6+=ROC(Foreign(sym6,"Close"),1);
+vol6+=Foreign(sym6,"Volume");
+No++;
+};
+GIACP6=Param("CP6-TREN",0,1,3000,0.01);
+CBCP6=ParamStr("CANH BAO CP6","MUA");
+GIACP61=Param("CP6-DUOI",0,1,3000,0.01);
+CBCP61=ParamStr("CANH BAO CP61","BAN");
+CP6S=WriteIf(iclose6>GIACP6,CBCP6,"");
+CP61S=WriteIf(iclose6<GIACP61,CBCP61,"");
+_SECTION_END();
+
+_SECTION_BEGIN("CP7 ");
+CP7=ParamStr("CO PHIEU 7","BVH");
+No=0;
+iclose7=0;
+ichange7=0;
+vol7=0;
+for( i = 0; ( sym7 = StrExtract(CP7,i ) ) != ""; i++ )
+{
+iclose7+=Foreign(sym7,"Close");
+ichange7+=ROC(Foreign(sym7,"Close"),1);
+vol7+=Foreign(sym7,"Volume");
+No++;
+};
+GIACP7=Param("CP7-TREN",0,1,3000,0.01);
+CBCP7=ParamStr("CANH BAO CP7","MUA");
+GIACP71=Param("CP7-DUOI",0,1,3000,0.01);
+CBCP71=ParamStr("CANH BAO CP71","BAN");
+CP7S=WriteIf(iclose7>GIACP7,CBCP7,"");
+CP71S=WriteIf(iclose7<GIACP71,CBCP51,"");
+_SECTION_END();
+
+_SECTION_BEGIN("CP8 ");
+CP8=ParamStr("CO PHIEU 8","BVH");
+No=0;
+iclose8=0;
+ichange8=0;
+vol8=0;
+for( i = 0; ( sym8 = StrExtract(CP8,i ) ) != ""; i++ )
+{
+iclose8+=Foreign(sym8,"Close");
+ichange8+=ROC(Foreign(sym8,"Close"),1);
+vol8+=Foreign(sym8,"Volume");
+No++;
+};
+GIACP8=Param("CP8-TREN",0,1,3000,0.01);
+CBCP8=ParamStr("CANH BAO CP8","MUA");
+GIACP81=Param("CP8-DUOI",0,1,3000,0.01);
+CBCP81=ParamStr("CANH BAO CP81","BAN");
+CP8S=WriteIf(iclose8>GIACP8,CBCP8,"");
+CP81S=WriteIf(iclose8<GIACP81,CBCP81,"");
+_SECTION_END();
+
+
+_SECTION_BEGIN("CP9 ");
+CP9=ParamStr("CO PHIEU 9","BVH");
+No=0;
+iclose9=0;
+ichange9=0;
+vol9=0;
+for( i = 0; ( sym9 = StrExtract(CP9,i ) ) != ""; i++ )
+{
+iclose9+=Foreign(sym9,"Close");
+ichange9+=ROC(Foreign(sym9,"Close"),1);
+vol9+=Foreign(sym9,"Volume");
+No++;
+};
+GIACP9=Param("CP9-TREN",0,1,3000,0.01);
+CBCP9=ParamStr("CANH BAO CP9","MUA");
+GIACP91=Param("CP9-DUOI",0,1,3000,0.01);
+CBCP91=ParamStr("CANH BAO CP91","BAN");
+CP9S=WriteIf(iclose9>GIACP9,CBCP9,"");
+CP91S=WriteIf(iclose9<GIACP91,CBCP91,"");
+_SECTION_END();
+
+
+
+
+
+
+//////////////
+cp1s1=WriteIf(ichange1>0,WriteVal(ichange1,1.2)+" %","");
+cp1s2=WriteIf(ichange1<0,WriteVal(ichange1,1.2)+" %","");
+cp1s3=WriteIf(ichange1==0,WriteVal(ichange1,1.2)+" %","");
+
+cp2s1=WriteIf(ichange2>0,WriteVal(ichange2,1.2)+" %","");
+cp2s2=WriteIf(ichange2<0,WriteVal(ichange2,1.2)+" %","");
+cp2s3=WriteIf(ichange2==0,WriteVal(ichange2,1.2)+" %","");
+
+cp3s1=WriteIf(ichange3>0,WriteVal(ichange3,1.2)+" %","");
+cp3s2=WriteIf(ichange3<0,WriteVal(ichange3,1.2)+" %","");
+cp3s3=WriteIf(ichange3==0,WriteVal(ichange3,1.2)+" %","");
+
+cp4s1=WriteIf(ichange4>0,WriteVal(ichange4,1.2)+" %","");
+cp4s2=WriteIf(ichange4<0,WriteVal(ichange4,1.2)+" %","");
+cp4s3=WriteIf(ichange4==0,WriteVal(ichange4,1.2)+" %","");
+
+cp5s1=WriteIf(ichange5>0,WriteVal(ichange5,1.2)+" %","");
+cp5s2=WriteIf(ichange5<0,WriteVal(ichange5,1.2)+" %","");
+cp5s3=WriteIf(ichange5==0,WriteVal(ichange5,1.2)+" %","");
+
+cp6s1=WriteIf(ichange6>0,WriteVal(ichange6,1.2)+" %","");
+cp6s2=WriteIf(ichange6<0,WriteVal(ichange6,1.2)+" %","");
+cp6s3=WriteIf(ichange6==0,WriteVal(ichange6,1.2)+" %","");
+
+cp7s1=WriteIf(ichange7>0,WriteVal(ichange7,1.2)+" %","");
+cp7s2=WriteIf(ichange7<0,WriteVal(ichange7,1.2)+" %","");
+cp7s3=WriteIf(ichange7==0,WriteVal(ichange7,1.2)+" %","");
+
+cp8s1=WriteIf(ichange8>0,WriteVal(ichange8,1.2)+" %","");
+cp8s2=WriteIf(ichange8<0,WriteVal(ichange8,1.2)+" %","");
+cp8s3=WriteIf(ichange8==0,WriteVal(ichange8,1.2)+" %","");
+
+cp9s1=WriteIf(ichange9>0,WriteVal(ichange9,1.2)+" %","");
+cp9s2=WriteIf(ichange9<0,WriteVal(ichange9,1.2)+" %","");
+cp9s3=WriteIf(ichange9==0,WriteVal(ichange9,1.2)+" %","");
+
+
+
+
+GfxSetOverlayMode(0);
+GfxSelectPen( maunenboad, 0 ); // data tooltip round border color
+GfxSelectSolidBrush( maunenboad ); // data tooltip color
+GfxRoundRect( Hor-5, Ver , Hor+300 , Ver+270 , 0, 0 ); // data tooltip size
+
+
+GfxSetOverlayMode(0);
+GfxSelectPen( maunenboad1, 0 ); // data tooltip round border color
+GfxSelectSolidBrush( maunenboad1 ); // data tooltip color
+GfxRoundRect( Hor-5, Ver-25 , Hor+300 , Ver , 0, 0 ); // data tooltip size
+
+GfxSetOverlayMode(0);
+GfxSelectFont("Verdana",10, 500);
+GfxSetBkMode(0); // transparent
+GfxSetTextColor( colorBlack );
+GfxTextOut("CO PHIEU THEO DOI", Hor+20, Ver-20);
+
+GfxSetOverlayMode(0);
+GfxSelectFont("Verdana",9, 500);
+GfxSetBkMode(0); // transparent
+GfxSetTextColor( colorWhite );
+GfxTextOut("CANH BAO", Hor+210, Ver-20);
+
+GfxSetOverlayMode(0);
+GfxSelectFont("Verdana",10, 500);
+GfxSetBkMode(0); // transparent
+
+GfxSetTextColor( colorBlack );
+GfxTextOut(CP1+": "+WriteVal(iclose1,1.2), Hor, Ver+5);
+GfxTextOut(CP2+": "+WriteVal(iclose2,1.2), Hor, Ver+30);
+GfxTextOut(CP3+": "+WriteVal(iclose3,1.2), Hor, Ver+55);
+GfxTextOut(CP4+": "+WriteVal(iclose4,1.2), Hor, Ver+80);
+GfxTextOut(CP5+": "+WriteVal(iclose5,1.2), Hor, Ver+105);
+GfxTextOut(CP6+": "+WriteVal(iclose6,1.2), Hor, Ver+130);
+GfxTextOut(CP7+": "+WriteVal(iclose7,1.2), Hor, Ver+155);
+GfxTextOut(CP8+": "+WriteVal(iclose8,1.2), Hor, Ver+180);
+GfxTextOut(CP9+": "+WriteVal(iclose9,1.2), Hor, Ver+205);
+
+GfxSetTextColor( colorGreen );
+GfxTextOut(cp1s1, Hor+145, Ver+5);
+GfxTextOut(CP1S, Hor+240, Ver+5);
+GfxTextOut(cp2s1, Hor+145, Ver+30);
+GfxTextOut(CP2S, Hor+240, Ver+30);
+GfxTextOut(cp3s1, Hor+145, Ver+55);
+GfxTextOut(CP3S, Hor+240, Ver+55);
+GfxTextOut(cp4s1, Hor+145, Ver+80);
+GfxTextOut(CP4S, Hor+240, Ver+80);
+GfxTextOut(cp5s1, Hor+145, Ver+105);
+GfxTextOut(CP5S, Hor+240, Ver+105);
+GfxTextOut(cp6s1, Hor+145, Ver+130);
+GfxTextOut(CP6S, Hor+240, Ver+130);
+GfxTextOut(cp7s1, Hor+145, Ver+155);
+GfxTextOut(CP7S, Hor+240, Ver+155);
+GfxTextOut(cp8s1, Hor+145, Ver+180);
+GfxTextOut(CP8S, Hor+240, Ver+180);
+GfxTextOut(cp9s1, Hor+145, Ver+205);
+GfxTextOut(CP9S, Hor+240, Ver+205);
+
+GfxSetTextColor( colorRed );
+GfxTextOut(cp1s2, Hor+145, Ver+5);
+GfxTextOut(CP11S, Hor+240, Ver+5);
+GfxTextOut(cp2s2, Hor+145, Ver+30);
+GfxTextOut(CP21S, Hor+240, Ver+30);
+GfxTextOut(cp3s2, Hor+145, Ver+55);
+GfxTextOut(CP31S, Hor+240, Ver+55);
+GfxTextOut(cp4s2, Hor+145, Ver+80);
+GfxTextOut(CP41S, Hor+240, Ver+80);
+GfxTextOut(cp5s2, Hor+145, Ver+105);
+GfxTextOut(CP51S, Hor+240, Ver+105);
+GfxTextOut(cp6s2, Hor+145, Ver+130);
+GfxTextOut(CP61S, Hor+240, Ver+130);
+GfxTextOut(cp7s2, Hor+145, Ver+155);
+GfxTextOut(CP71S, Hor+240, Ver+155);
+GfxTextOut(cp8s2, Hor+145, Ver+180);
+GfxTextOut(CP81S, Hor+240, Ver+180);
+GfxTextOut(cp9s2, Hor+145, Ver+205);
+GfxTextOut(CP91S, Hor+240, Ver+205);
+
+
+GfxSetTextColor( colorDarkYellow );
+GfxTextOut(cp1s3, Hor+145, Ver+5);
+GfxTextOut(cp2s3, Hor+145, Ver+30);
+GfxTextOut(cp3s3, Hor+145, Ver+55);
+GfxTextOut(cp4s3, Hor+145, Ver+80);
+GfxTextOut(cp5s3, Hor+145, Ver+105);
+GfxTextOut(cp6s3, Hor+145, Ver+130);
+GfxTextOut(cp7s3, Hor+145, Ver+155);
+GfxTextOut(cp8s3, Hor+145, Ver+180);
+GfxTextOut(cp9s3, Hor+145, Ver+205);
+
+
+
+
+
+//10. Title
+{
+Chg=Ref(C,-1);
+Title =EncodeColor(colorBlack)+""+" - "+Title =Name()+" - " + " " + EncodeColor
+(colorOrange) + "Date :: "  + Date() +WriteIf(C>O,EncodeColor(colorGreen),WriteIf(C<O,EncodeColor(colorRed),EncodeColor(colorBlack))) +  "  {{INTERVAL}}  " +
+   EncodeColor(ColorRGB(195,158,255))+ "   Open:  "+ EncodeColor(colorBlack)+ WriteVal(O,format=1.2) + 
+   EncodeColor(ColorRGB(195,158,255))+ "   High:  "+ EncodeColor(colorBlack) + WriteVal(H,format=1.2) +
+   EncodeColor(ColorRGB(195,158,255))+ "   Low:  "+ EncodeColor(colorBlack)+ WriteVal(L,format=1.2) + 
+   EncodeColor(ColorRGB(195,158,255))+ "   Close:  "+ WriteIf(C> Chg,EncodeColor(colorLime),EncodeColor
+
+(colorRed))+ WriteVal(C,format=1.2)+  
+   EncodeColor(ColorRGB(195,158,255))+ "   Change:  "+ WriteIf(C> Chg,EncodeColor(colorLime),EncodeColor(colorRed))+ WriteVal(ROC(C,1),format=1.2)+ "%"+
+   EncodeColor(ColorRGB(195,158,255))+ "   Volume: "+ EncodeColor(colorBlack)+ WriteVal(V,1)+
+   EncodeColor(ColorRGB(195,158,255))+ "   GTGD: "+ EncodeColor(colorBlack)+ WriteVal(V*C,1);
+}
+
+_SECTION_BEGIN("MA1");
+P = ParamField("Price field",-1);
+Periods = Param("Periods", 15, 2, 300, 1, 10 );
+Plot( MA( P, Periods ), _DEFAULT_NAME(), ParamColor( "Color", colorCycle ), ParamStyle("Style") ); 
+_SECTION_END();
+
+_SECTION_BEGIN("MA2");
+P = ParamField("Price field",-1);
+Periods = Param("Periods", 15, 2, 300, 1, 10 );
+Plot( MA( P, Periods ), _DEFAULT_NAME(), ParamColor( "Color", colorCycle ), ParamStyle("Style") ); 
+_SECTION_END();
+
+_SECTION_BEGIN("MA3");
+P = ParamField("Price field",-1);
+Periods = Param("Periods", 15, 2, 300, 1, 10 );
+Plot( MA( P, Periods ), _DEFAULT_NAME(), ParamColor( "Color", colorCycle ), ParamStyle("Style") ); 
+_SECTION_END();
+
+
+_SECTION_END();
+
+_SECTION_BEGIN("Bollinger Bands");
+P = ParamField("Price field",-1);
+Periods = Param("Periods", 15, 2, 300, 1 );
+Width = Param("Width", 2, 0, 10, 0.05 );
+Color = ParamColor("Color", colorCycle );
+Style = ParamStyle("Style");
+Plot( BBandTop( P, Periods, Width ), "BBTop" + _PARAM_VALUES(), Color, Style ); 
+Plot( BBandBot( P, Periods, Width ), "BBBot" + _PARAM_VALUES(), Color, Style ); 
+_SECTION_END();
+_SECTION_BEGIN("SupportResistance");
+// START SCRIPT UNTUK SUPPORT / RESISTANT
+ 
+ 
+WarnaResistant = ParamColor("Warna Garis Resistant",colorRed);
+WarnaSupport = ParamColor("Warna Garis Support",colorGreen);
+R1_show = 0;
+S1_show = 0;
+ 
+SRStyle = ParamStyle("S/R Style",styleThick);
+ 
+if (ParamToggle("Garis Support&Resistance", "Tidak|Ya", 1 ))
+{
+	// RESISTANT
+	LastHighestValue = LastVisibleValue(Ref(H,-1));
+	if (LastVisibleValue(H) == H[LastValue(BarIndex())])
+		LastHighestValue = LastVisibleValue(H);
+ 
+	i = 1;
+	
+	if (LastHighestValue < HighestVisibleValue(H))
+	{
+			while (LastVisibleValue(ValueWhen(H <= Ref(H,-1) AND Ref(H,-2) <= Ref(H, -1),Ref(H, -1), i)) < LastHighestValue)
+				i++;
+ 
+	    	R1 = LastVisibleValue(ValueWhen(H <= Ref(H,-1) AND Ref(H,-2) <= Ref(H, -1),Ref(H, -1), i));
+ 
+			R1x = LastVisibleValue(ValueWhen(H <= Ref(H,-1) AND Ref(H,-2) <= Ref(H, -1),Ref(BarIndex(), -1), i));
+			Plot(IIf(BarIndex() >= R1x,LastValue(R1),Null),"R1",WarnaResistant ,SRStyle);
+			PlotText("R1 : " + R1, BarCount + 1, LastValue(R1), WarnaResistant);
+			R1_show = 1;
+ 
+			i++;
+ 
+			if (HighestVisibleValue( H ) > R1)
+			{
+				while (LastVisibleValue(ValueWhen(H <= Ref(H,-1) AND Ref(H,-2) <= Ref(H, -1), Ref(H,-1), i)) <= R1)
+					i++;
+ 
+				R2 = LastVisibleValue(ValueWhen(H <= Ref(H,-1) AND Ref(H,-2) <= Ref(H, -1), Ref(H,-1), i));
+				R2x = LastVisibleValue(ValueWhen(H <= Ref(H,-1) AND Ref(H,-2) <= Ref(H, -1),Ref(BarIndex(), -1), i));
+	
+				Plot(IIf(BarIndex() >= R2x,LastValue(R2),Null),"R2",WarnaResistant ,SRStyle);
+				PlotText("R2 : " + R2, BarCount + 1, LastValue(R2), WarnaResistant);
+				i++;
+				if (HighestVisibleValue( H )> R2)
+				{ 		
+					while (LastVisibleValue(ValueWhen(H <= Ref(H,-1) AND Ref(H,-2) <= Ref(H, -1), Ref(H,-1), i)) <= R2)
+						i++;
+					R3 = LastVisibleValue(ValueWhen(H <= Ref(H,-1) AND Ref(H,-2) <= Ref(H, -1), Ref(H,-1), i));
+					R3x = LastVisibleValue(ValueWhen(H <= Ref(H,-1) AND Ref(H,-2) <= Ref(H, -1),Ref(BarIndex(), -1), i));	
+ 
+					Plot(IIf(BarIndex() >= R3x,LastValue(R3),Null),"R3",WarnaResistant ,SRStyle);
+					PlotText("R3 : " + R3, BarCount + 1, LastValue(R3), WarnaResistant);
+				}
+			}
+	}
+	else if (LastHighestValue == HighestVisibleValue(H))
+	{
+	   	R1 = LastVisibleValue(ValueWhen(H <= Ref(H,-1) AND Ref(H,-2) <= Ref(H, -1),Ref(H, -1), i));
+		R1x = LastVisibleValue(ValueWhen(H <= Ref(H,-1) AND Ref(H,-2) <= Ref(H, -1),Ref(BarIndex(), -1), i));
+		if (R1 == LastHighestValue)
+		{
+			Plot(IIf(BarIndex() >= R1x,LastValue(R1),Null),"R1",WarnaResistant ,SRStyle);
+			PlotText("R1 : " + R1, BarCount + 1, LastValue(R1), WarnaResistant);
+			R1_show = 1;
+		}
+	}
+ 
+	// SUPPORT
+	LastLowestValue = LastVisibleValue(Ref(L,-1));
+	if (LastVisibleValue(L) == L[LastValue(BarIndex())])
+		LastLowestValue = LastVisibleValue(L);
+ 
+	i = 1;
+ 
+	if (LastLowestValue > LowestVisibleValue(L))
+	{	
+			while (LastVisibleValue(ValueWhen(L >= Ref(L,-1) AND Ref(L,-2) >= Ref(L, -1),Ref(L, -1), i)) > LastLowestValue)
+				i++;
+ 
+			S1 = LastVisibleValue(ValueWhen(L >= Ref(L,-1) AND Ref(L,-2) >= Ref(L, -1),Ref(L, -1), i));
+			S1x = LastVisibleValue(ValueWhen(L >= Ref(L,-1) AND Ref(L,-2) >= Ref(L, -1),Ref(BarIndex(), -1), i));
+			Plot(IIf(BarIndex() >= S1x,LastValue(S1),Null),"S1",WarnaSupport ,SRStyle);
+			PlotText("S1 : " + S1, BarCount + 1, LastValue(S1), WarnaSupport);
+			S1_show = 1;
+			i++;
+ 
+			if (LowestVisibleValue( L ) < S1)
+			{
+				while (LastVisibleValue(ValueWhen(L >= Ref(L,-1) AND Ref(L,-2) >= Ref(L, -1), Ref(L,-1), i)) >= S1)
+					i++;
+ 
+				S2 = LastVisibleValue(ValueWhen(L >= Ref(L,-1) AND Ref(L,-2) >= Ref(L, -1), Ref(L,-1), i));
+				S2x = LastVisibleValue(ValueWhen(L >= Ref(L,-1) AND Ref(L,-2) >= Ref(L, -1), Ref(BarIndex(),-1), i));	
+ 
+				Plot(IIf(BarIndex() >= S2x,LastValue(S2),Null),"S2",WarnaSupport ,SRStyle);
+				PlotText("S2 : " + S2, BarCount + 1, LastValue(S2), WarnaSupport);
+				i++;
+				if (LowestVisibleValue( L )< S2)
+				{ 		
+					while (LastVisibleValue(ValueWhen(L >= Ref(L,-1) AND Ref(L,-2) >= Ref(L, -1), Ref(L,-1), i)) >= S2)
+						i++;
+					S3 = LastVisibleValue(ValueWhen(L >= Ref(L,-1) AND Ref(L,-2) >= Ref(L, -1), Ref(L,-1), i));
+					S3x = LastVisibleValue(ValueWhen(L >= Ref(L,-1) AND Ref(L,-2) >= Ref(L, -1), Ref(BarIndex(),-1), i));
+					Plot(IIf(BarIndex() >= S3x,LastValue(S3),Null),"S3",WarnaSupport ,SRStyle);
+					PlotText("S3 : " + S3, BarCount + 1, LastValue(S3), WarnaSupport);
+				}
+			}
+	}
+	else if (LastLowestValue == LowestVisibleValue(L))
+	{
+	   	S1 = LastVisibleValue(ValueWhen(L >= Ref(L,-1) AND Ref(L,-2) >= Ref(L, -1),Ref(L, -1), i));
+		S1x = LastVisibleValue(ValueWhen(L >= Ref(L,-1) AND Ref(L,-2) >= Ref(L, -1),Ref(BarIndex(), -1), i));
+		if (S1 == LastLowestValue)
+		{
+			Plot(IIf(BarIndex() >= S1x,LastValue(S1),Null),"S1",WarnaSupport ,SRStyle);
+			PlotText("S1 : " + S1, BarCount + 1, LastValue(S1), WarnaSupport);
+			S1_show = 1;
+		}
+	}
+ 
+	if (S1_show AND R1_show)
+	{
+		SR = Prec((1-(S1/R1))*100,2);
+	}
+}
+
+_SECTION_BEGIN("Price");
+SetChartOptions(0,chartShowArrows|chartShowDates);
+_N(Title = StrFormat(" - {{INTERVAL}} {{DATE}} Open %g, Hi %g, Lo %g, Close %g (%.1f%%) {{VALUES}}", O, H, L, C, SelectedValue( ROC( C, 1 ) ) ));
+Plot( C, "Close", ParamColor("Color", colorBlack ), styleDots | ParamStyle("Style") | GetPriceStyle() ); 
+_SECTION_END();
+
+mua =   
+ (C > Ref(H,-1) 
+AND C > Ref(H,-2) 
+AND C > Ref(H,-3) 
+AND C > Ref(H,-4)
+AND C>=1
+AND C>=O
+AND C>=1.02*Ref(C,-1)
+AND Ref(C,-1) <= 1.05*Ref(C,-2)
+AND V>=0.8*Ref(V,-1)
+AND V >= 1.3*MA(V,15) 
+AND C*V>=3000000
+AND C*V<500000000
+AND Ref(V,-5)>=50000
+AND Ref(V,-10)>=50000
+AND Ref(V,-15)>=50000
+AND Ref(V,-20)>=50000)
+
+OR
+(
+Ref(RSI(14),-1)<=35
+AND C>1.02*Ref(C,-1)
+AND C*V>=3000000
+)
+
+
+
+;
+ 
+
+
+ban = (C < Ref(L,-1)AND C < Ref(L,-2)AND C < Ref(L,-3)AND C < Ref(L,-4))
+
+OR ( HHV(C,3)>1.1*C)
+;
+ 
+Buy = mua;
+Sell = ExRem(ban, mua);
+
+PlotShapes(IIf(Buy,shapeUpArrow,shapeNone),colorBlue,0,Low,Offset=-10);
+PlotShapes(IIf(Sell,shapeDownArrow,shapeNone),colorRed,0,High,Offset=-10);
+
+Filter = Buy OR Sell ;
+
+
+AddColumn( IIf( Buy, 66,1 ), "buy", formatChar, 1, bkcolor =IIf (Buy,colorGreen, colorRed ));
+AddColumn( IIf( Sell, 83,1 ), "sell", formatChar, 1, bkcolor =IIf (Sell,colorRed, colorGreen ));
+AddColumn(C,"close",1.2);
+
+AddColumn(C*V,"Gia tri GD ");
+
+AddColumn(((C - Ref(C,-1))/Ref(C,-1))*100 ,"% Tang gia ");
+AddColumn(((V - MA(V,50))/MA(V,50))*100 ,"% Dot bien KL");
+SetSortColumns( -3 ) ;
+_SECTION_END();
+
+
+_SECTION_BEGIN("SupportResistance");
+// START SCRIPT UNTUK SUPPORT / RESISTANT
+ 
+ 
+WarnaResistant = ParamColor("Warna Garis Resistant",colorRed);
+WarnaSupport = ParamColor("Warna Garis Support",colorGreen);
+R1_show = 0;
+S1_show = 0;
+ 
+SRStyle = ParamStyle("S/R Style",styleThick);
+ 
+if (ParamToggle("Garis Support&Resistance", "Tidak|Ya", 1 ))
+{
+	// RESISTANT
+	LastHighestValue = LastVisibleValue(Ref(H,-1));
+	if (LastVisibleValue(H) == H[LastValue(BarIndex())])
+		LastHighestValue = LastVisibleValue(H);
+ 
+	i = 1;
+	
+	if (LastHighestValue < HighestVisibleValue(H))
+	{
+			while (LastVisibleValue(ValueWhen(H <= Ref(H,-1) AND Ref(H,-2) <= Ref(H, -1),Ref(H, -1), i)) < LastHighestValue)
+				i++;
+ 
+	    	R1 = LastVisibleValue(ValueWhen(H <= Ref(H,-1) AND Ref(H,-2) <= Ref(H, -1),Ref(H, -1), i));
+ 
+			R1x = LastVisibleValue(ValueWhen(H <= Ref(H,-1) AND Ref(H,-2) <= Ref(H, -1),Ref(BarIndex(), -1), i));
+			Plot(IIf(BarIndex() >= R1x,LastValue(R1),Null),"R1",WarnaResistant ,SRStyle);
+			PlotText("R1 : " + R1, BarCount + 1, LastValue(R1), WarnaResistant);
+			R1_show = 1;
+ 
+			i++;
+ 
+			if (HighestVisibleValue( H ) > R1)
+			{
+				while (LastVisibleValue(ValueWhen(H <= Ref(H,-1) AND Ref(H,-2) <= Ref(H, -1), Ref(H,-1), i)) <= R1)
+					i++;
+ 
+				R2 = LastVisibleValue(ValueWhen(H <= Ref(H,-1) AND Ref(H,-2) <= Ref(H, -1), Ref(H,-1), i));
+				R2x = LastVisibleValue(ValueWhen(H <= Ref(H,-1) AND Ref(H,-2) <= Ref(H, -1),Ref(BarIndex(), -1), i));
+	
+				Plot(IIf(BarIndex() >= R2x,LastValue(R2),Null),"R2",WarnaResistant ,SRStyle);
+				PlotText("R2 : " + R2, BarCount + 1, LastValue(R2), WarnaResistant);
+				i++;
+				if (HighestVisibleValue( H )> R2)
+				{ 		
+					while (LastVisibleValue(ValueWhen(H <= Ref(H,-1) AND Ref(H,-2) <= Ref(H, -1), Ref(H,-1), i)) <= R2)
+						i++;
+					R3 = LastVisibleValue(ValueWhen(H <= Ref(H,-1) AND Ref(H,-2) <= Ref(H, -1), Ref(H,-1), i));
+					R3x = LastVisibleValue(ValueWhen(H <= Ref(H,-1) AND Ref(H,-2) <= Ref(H, -1),Ref(BarIndex(), -1), i));	
+ 
+					Plot(IIf(BarIndex() >= R3x,LastValue(R3),Null),"R3",WarnaResistant ,SRStyle);
+					PlotText("R3 : " + R3, BarCount + 1, LastValue(R3), WarnaResistant);
+				}
+			}
+	}
+	else if (LastHighestValue == HighestVisibleValue(H))
+	{
+	   	R1 = LastVisibleValue(ValueWhen(H <= Ref(H,-1) AND Ref(H,-2) <= Ref(H, -1),Ref(H, -1), i));
+		R1x = LastVisibleValue(ValueWhen(H <= Ref(H,-1) AND Ref(H,-2) <= Ref(H, -1),Ref(BarIndex(), -1), i));
+		if (R1 == LastHighestValue)
+		{
+			Plot(IIf(BarIndex() >= R1x,LastValue(R1),Null),"R1",WarnaResistant ,SRStyle);
+			PlotText("R1 : " + R1, BarCount + 1, LastValue(R1), WarnaResistant);
+			R1_show = 1;
+		}
+	}
+ 
+	// SUPPORT
+	LastLowestValue = LastVisibleValue(Ref(L,-1));
+	if (LastVisibleValue(L) == L[LastValue(BarIndex())])
+		LastLowestValue = LastVisibleValue(L);
+ 
+	i = 1;
+ 
+	if (LastLowestValue > LowestVisibleValue(L))
+	{	
+			while (LastVisibleValue(ValueWhen(L >= Ref(L,-1) AND Ref(L,-2) >= Ref(L, -1),Ref(L, -1), i)) > LastLowestValue)
+				i++;
+ 
+			S1 = LastVisibleValue(ValueWhen(L >= Ref(L,-1) AND Ref(L,-2) >= Ref(L, -1),Ref(L, -1), i));
+			S1x = LastVisibleValue(ValueWhen(L >= Ref(L,-1) AND Ref(L,-2) >= Ref(L, -1),Ref(BarIndex(), -1), i));
+			Plot(IIf(BarIndex() >= S1x,LastValue(S1),Null),"S1",WarnaSupport ,SRStyle);
+			PlotText("S1 : " + S1, BarCount + 1, LastValue(S1), WarnaSupport);
+			S1_show = 1;
+			i++;
+ 
+			if (LowestVisibleValue( L ) < S1)
+			{
+				while (LastVisibleValue(ValueWhen(L >= Ref(L,-1) AND Ref(L,-2) >= Ref(L, -1), Ref(L,-1), i)) >= S1)
+					i++;
+ 
+				S2 = LastVisibleValue(ValueWhen(L >= Ref(L,-1) AND Ref(L,-2) >= Ref(L, -1), Ref(L,-1), i));
+				S2x = LastVisibleValue(ValueWhen(L >= Ref(L,-1) AND Ref(L,-2) >= Ref(L, -1), Ref(BarIndex(),-1), i));	
+ 
+				Plot(IIf(BarIndex() >= S2x,LastValue(S2),Null),"S2",WarnaSupport ,SRStyle);
+				PlotText("S2 : " + S2, BarCount + 1, LastValue(S2), WarnaSupport);
+				i++;
+				if (LowestVisibleValue( L )< S2)
+				{ 		
+					while (LastVisibleValue(ValueWhen(L >= Ref(L,-1) AND Ref(L,-2) >= Ref(L, -1), Ref(L,-1), i)) >= S2)
+						i++;
+					S3 = LastVisibleValue(ValueWhen(L >= Ref(L,-1) AND Ref(L,-2) >= Ref(L, -1), Ref(L,-1), i));
+					S3x = LastVisibleValue(ValueWhen(L >= Ref(L,-1) AND Ref(L,-2) >= Ref(L, -1), Ref(BarIndex(),-1), i));
+					Plot(IIf(BarIndex() >= S3x,LastValue(S3),Null),"S3",WarnaSupport ,SRStyle);
+					PlotText("S3 : " + S3, BarCount + 1, LastValue(S3), WarnaSupport);
+				}
+			}
+	}
+	else if (LastLowestValue == LowestVisibleValue(L))
+	{
+	   	S1 = LastVisibleValue(ValueWhen(L >= Ref(L,-1) AND Ref(L,-2) >= Ref(L, -1),Ref(L, -1), i));
+		S1x = LastVisibleValue(ValueWhen(L >= Ref(L,-1) AND Ref(L,-2) >= Ref(L, -1),Ref(BarIndex(), -1), i));
+		if (S1 == LastLowestValue)
+		{
+			Plot(IIf(BarIndex() >= S1x,LastValue(S1),Null),"S1",WarnaSupport ,SRStyle);
+			PlotText("S1 : " + S1, BarCount + 1, LastValue(S1), WarnaSupport);
+			S1_show = 1;
+		}
+	}
+ 
+	if (S1_show AND R1_show)
+	{
+		SR = Prec((1-(S1/R1))*100,2);
+	}
+}
+
+_SECTION_BEGIN("Price");
+SetChartOptions(0,chartShowArrows|chartShowDates);
+_N(Title = StrFormat("{{Buy4_sell4_chuan}} - {{INTERVAL}} {{DATE}} Open %g, Hi %g, Lo %g, Close %g (%.1f%%) {{VALUES}}", O, H, L, C, SelectedValue( ROC( C, 1 ) ) ));
+Plot( C, "Close", ParamColor("Color", colorBlack ), styleDots | ParamStyle("Style") | GetPriceStyle() ); 
+_SECTION_END();
+
+mua =   
+C >= Ref(H,-1) AND C >= Ref(H,-2) AND C >= Ref(H,-3) AND C >= Ref(H,-4)
+
+
+;
+ 
+
+
+ban = (C <= Ref(L,-1)AND C <= Ref(L,-2)AND C <= Ref(L,-3)AND C <= Ref(L,-4))
+
+OR ( HHV(C,3)>1.1*C)
+;
+ 
+Buy = ExRem(mua, ban);
+Sell = ExRem(ban, mua);
+
+PlotShapes(IIf(Buy,shapeUpArrow,shapeNone),colorBlue,0,Low,Offset=-10);
+PlotShapes(IIf(Sell,shapeDownArrow,shapeNone),colorRed,0,High,Offset=-10);
+
+Filter = Buy OR Sell ;
+
+
+AddColumn( IIf( Buy, 66,1 ), "buy", formatChar, 1, bkcolor =IIf (Buy,colorGreen, colorRed ));
+AddColumn( IIf( Sell, 83,1 ), "sell", formatChar, 1, bkcolor =IIf (Sell,colorRed, colorGreen ));
+AddColumn(C,"close",1.2);
+
+AddColumn(C*V,"Gia tri GD ");
+
+AddColumn(((C - Ref(C,-1))/Ref(C,-1))*100 ,"% Tang gia ");
+AddColumn(((V - MA(V,50))/MA(V,50))*100 ,"% Dot bien KL");
+SetSortColumns( -3 ) ;
+_SECTION_END();
+
+_SECTION_BEGIN("Bollinger Bands");
+P = ParamField("Price field",-1);
+Periods = Param("Periods", 15, 2, 100, 1 );
+Width = Param("Width", 2, 0, 10, 0.05 );
+Color = ParamColor("Color", colorLightGrey );
+Style = ParamStyle("Style") | styleNoRescale;;
+Plot( bbt = BBandTop( P, Periods, Width ), "BBTop" + _PARAM_VALUES(), Color, Style ); 
+Plot( bbb = BBandBot( P, Periods, Width ), "BBBot" + _PARAM_VALUES(), Color, Style ); 
+PlotOHLC( bbt, bbt, bbb, bbb, "", ColorBlend( Color, colorWhite, 0.9 ), styleCloud | styleNoRescale, Null, Null, Null, -1 );
+_SECTION_END();
+
+_SECTION_BEGIN("MA1");
+P = ParamField("Price field",-1);
+Periods = Param("Periods", 15, 2, 300, 1, 10 );
+Plot( MA( P, Periods ), _DEFAULT_NAME(), ParamColor( "Color", colorCycle ), ParamStyle("Style") ); 
+_SECTION_END();

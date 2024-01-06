@@ -1,0 +1,237 @@
+
+_SECTION_BEGIN("Realtime"); //Tach gio phut giay hien tai
+RealtimeClock = ValueWhen(LastValue(V)>0 , LastValue( Now(4)));
+GioHientai = ValueWhen(LastValue(V)>0 , LastValue( int(RealtimeClock/10000)));
+PhutHienTai = ValueWhen(LastValue(V)>0 , LastValue( int((RealtimeClock - GioHientai*10000)/100)));
+GiayHienTai = ValueWhen(LastValue(V)>0 , LastValue( RealtimeClock - (GioHientai*10000 + PhutHienTai*100)));
+Realtime  = LastValue( GioHientai*60 + PhutHienTai);//So phut da dien ra trong ngay
+Ngayhientai = ValueWhen(LastValue(V)>0 , LastValue( Now(6)));
+Thanghientai = ValueWhen(LastValue(V)>0 , LastValue( Now(7)));
+Namhientai = ValueWhen(LastValue(V)>0 , LastValue( Now(8)));
+_SECTION_END();
+SetForeign("VNINDEX");//Ham Lam viec truc tiep voi 1 ma nhat dinh, o day la Vnindex
+testTimeVningay =ValueWhen(LastValue(V)>0 , LastValue(Day()));
+testTimeVnithang =ValueWhen(LastValue(V)>0 , LastValue(Month()));
+testTimeVninam =ValueWhen(LastValue(V)>0 , LastValue(Year()));
+TongthoigianGiaodichVni = (testTimeVninam*100 + testTimeVnithang)*100 + testTimeVningay;
+DieukienThoiGian = IIf(testTimeVningay == Ngayhientai AND testTimeVnithang == Thanghientai AND testTimeVninam == Namhientai,2,-2);
+startTimeVni1 = 9*60; // Th?i gian b?t d?u giao d?ch (9:00 AM)
+endTimeVni1 = 11*60 +30; // Th?i gian k?t thúc giao d?ch (11:30 PM)
+startTimeVni2 = 13*60; // Th?i gian b?t d?u giao d?ch (13:00 PM)
+endTimeVni2 = 14*60+45; // Th?i gian k?t thúc giao d?ch (14:45 PM)
+PhienSangVni = (endTimeVni1 - startTimeVni1);
+PhienChieuVni = (endTimeVni2 - startTimeVni2);
+FulltimeVni = (endTimeVni1 - startTimeVni1) + (endTimeVni2 - startTimeVni2);
+InTimeVni  = IIf(DieukienThoiGian==2 AND LastValue(V)>0 AND  Realtime>= startTimeVni1 AND Realtime <= endTimeVni1,Realtime -startTimeVni1,
+				IIf(DieukienThoiGian==2 AND LastValue(V)>0 AND Realtime > endTimeVni1 AND Realtime < startTimeVni2,PhienSangVni,
+				IIf(DieukienThoiGian==2 AND LastValue(V)>0 AND Realtime >= startTimeVni2 AND Realtime<= endTimeVni2,PhienSangVni + (Realtime - startTimeVni2),FulltimeVni)));	
+RestorePriceArrays();//tra lai lam viec chung cho toan thi truong 
+SetForeign("HNXINDEX");
+testTimeHNXngay =ValueWhen(LastValue(V)>0 , LastValue(Day()));
+testTimeHNXthang =ValueWhen(LastValue(V)>0 , LastValue(Month()));
+testTimeHNXnam =ValueWhen(LastValue(V)>0 , LastValue(Year()));
+TongthoigianGiaodichHNX = (testTimeHNXnam*100 + testTimeHNXthang)*100 + testTimeHNXngay;
+startTimeHNX1 = 9*60; 
+endTimeHNX1 = 11*60 +30;
+startTimeHNX2 = 13*60; 
+endTimeHNX2 = 15*60;
+PhienSangHNX = (endTimeHNX1 - startTimeHNX1);
+PhienChieuHNX = (endTimeHNX2 - startTimeHNX2);
+FulltimeHNX = (endTimeHNX1 - startTimeHNX1) + (endTimeHNX2 - startTimeHNX2);
+InTimeHNX  = IIf(DieukienThoiGian==2 AND LastValue(V)>0 AND  Realtime>= startTimeHNX1 AND Realtime <= endTimeHNX1,Realtime -startTimeHNX1,
+				IIf(DieukienThoiGian==2 AND LastValue(V)>0 AND Realtime > endTimeHNX1 AND Realtime < startTimeHNX2,PhienSangHNX,
+				IIf(DieukienThoiGian==2 AND LastValue(V)>0 AND Realtime >= startTimeHNX2 AND Realtime<= endTimeHNX2,PhienSangHNX + (Realtime - startTimeHNX2),FulltimeHNX)));
+RestorePriceArrays();//tra lai lam viec chung cho toan thi truong 
+SetForeign("UPINDEX");
+testTimeUpcomngay =ValueWhen(LastValue(V)>0 , LastValue(Day()));
+testTimeUpcomthang =ValueWhen(LastValue(V)>0 , LastValue(Month()));
+testTimeUpcomnam =ValueWhen(LastValue(V)>0 , LastValue(Year()));
+TongthoigianGiaodichUpcom = (testTimeUpcomnam*100 + testTimeUpcomthang)*100 + testTimeUpcomngay;
+startTimeUpcom1 = 9*60; 
+endTimeUpcom1 = 11*60 +30;
+startTimeUpcom2 = 13*60; 
+endTimeUpcom2 = 15*60;
+PhienSangUpcom = (endTimeUpcom1 - startTimeUpcom1);
+PhienChieuUpcom = (endTimeUpcom2 - startTimeUpcom2);
+FulltimeUpcom = (endTimeUpcom1 - startTimeUpcom1) + (endTimeUpcom2 - startTimeUpcom2);
+InTimeUpcom  = IIf(DieukienThoiGian==2 AND LastValue(V)>0 AND  Realtime>= startTimeUpcom1 AND Realtime <= endTimeUpcom1,Realtime -startTimeUpcom1,
+				IIf(DieukienThoiGian==2 AND LastValue(V)>0 AND Realtime > endTimeUpcom1 AND Realtime < startTimeUpcom2,PhienSangUpcom,
+				IIf(DieukienThoiGian==2 AND LastValue(V)>0 AND Realtime >= startTimeUpcom2 AND Realtime<= endTimeUpcom2,PhienSangUpcom + (Realtime - startTimeUpcom2),FulltimeUpcom)));	
+RestorePriceArrays();//tra lai lam viec chung cho toan thi truong 
+////////////Lay time cua ma tren san GD hien tai 
+LaySGD = MarketID( 1 );
+SanHNX = "HNXINDEX";
+SanUpcom = "UPINDEX";
+SanHSX = "VNINDEX";
+testSan1 = WriteIf(LaySGD == "HSX","VNINDEX","");
+testSan2 = WriteIf(LaySGD == "HNX","HNXINDEX","");
+testSan3 = WriteIf(LaySGD == "UPCOM","UPINDEX","");
+testSan = testSan1 + testSan2 + testSan3;
+InTime =  IIf(LaySGD == "HSX",InTimeVni, IIf(LaySGD == "HNX",InTimeHNX,InTimeUpcom));
+OutTime = IIf(LaySGD == "HSX",FulltimeVni, IIf(LaySGD == "HNX",FulltimeHNX,FulltimeUpcom));
+MorningTime = IIf(LaySGD == "HSX",PhienSangVni, IIf(LaySGD == "HNX",PhienSangHNX,PhienSangUpcom));
+TongthoigianGiaodich3San =  IIf(LaySGD == "HSX",TongthoigianGiaodichVni, IIf(LaySGD == "HNX",TongthoigianGiaodichHNX,TongthoigianGiaodichUpcom));
+////////////////////////////////////////////////////////////////////////
+///////////////////////////DanhGiaVol
+_SECTION_BEGIN("Danh Gia Vol");
+VolcuaPhut = IIf(InTime < OutTime ,Volume/InTime,Volume/OutTime);
+_SECTION_END();
+_SECTION_BEGIN("Danh Gia OBV");
+OBVcuaPhut = IIf(InTime < OutTime ,OBV()/InTime,OBV()/OutTime);
+_SECTION_END();
+HesoRank = 14;
+SetOption( "Nodefaultcolumns", True ); 
+AddTextColumn( Name(), "Ma CK",1.2,IIf(Close>Ref(Close,-1), colorGreen, IIf(Close<Ref(Close,-1), colorRed, colorDefault))); // Ten
+AddTextColumn( FullName(), "Ten Cty"); //Ful ten
+AddTextColumn( MarketID( 1 ), "San GD");
+AddTextColumn( IndustryID( 1 ), "Nganh nghe" );// Nganh nghe
+chuyenngay1 = NumToStr( Datetime(), formatDateTime );// chuyen ngay qua chuoi
+cutngay1 = StrTrim( chuyenngay1, " 00:00:00" ); // cut gio phut giay
+AddTextColumn(cutngay1 , "Date",  colorDefault, colorDefault);
+RankingCl = RSIa(C,HesoRank) ;
+WarnaText = colorBlack ;
+WarnaBackGround = ColorHSB(RankingCl, 255, 255);
+RankingTD = PercentRank (( ( C - Ref ( C ,-1 )) / Ref ( C ,-1 ) ) * 100, HesoRank) ;
+AddColumn (Close, "Gia", 1.2, IIf(Close>Ref(Close,-1), colorGreen, IIf(Close<Ref(Close,-1), colorRed, colorDefault)), WarnaBackGround, -1, RankingCL) ;
+//AddColumn(Close,"Gia",1.2,IIf(Close>Ref(Close,-1), colorGreen, IIf(Close<Ref(Close,-1), colorRed, colorDefault)));
+AddColumn( ( ( C - Ref ( C ,-1 )) / Ref ( C ,-1 ) ) * 100 , " % Change " , 1.2 ,IIf(Close>Ref(Close,-1), colorGreen, IIf(Close<Ref(Close,-1), colorRed, colorDefault)));
+RankingVol = RSIa( VolcuaPhut,HesoRank);
+WarnaBackGroundVol = ColorHSB(RankingVol , 255, 255);
+VolCo = IIf(VolcuaPhut > Ref(VolcuaPhut,-1), colorGreen, IIf(VolcuaPhut < Ref(VolcuaPhut,-1),colorRed,colorDefault));
+AddColumn (Volume, "Volume", 1, VolCo, WarnaBackGroundVol, -1, RankingVol) ;
+RankingGTGD = RSIa(VolcuaPhut*Avg, HesoRank) ;
+WarnaBackGroundGTGD = ColorHSB(RankingGTGD, 255, 255);
+GTGDCo = IIf(VolcuaPhut*Avg > Ref(VolcuaPhut*Avg,-1), colorGreen, IIf(VolcuaPhut*Avg < Ref(VolcuaPhut*Avg,-1),colorRed,colorDefault));
+AddColumn (Volume*Avg, "GTGD", 1, GTGDCo, WarnaBackGroundGTGD, -1, RankingGTGD) ;
+RSICo = IIf(RankingCl > Ref(RankingCl,-1), colorGreen, IIf(RankingCl < Ref(RankingCl,-1),colorRed,colorDefault));
+AddColumn (RankingCl, "RSI14", 1.2, RSICo, WarnaBackGround, -1,RankingCl) ;
+RSIVolCo = IIf(RankingVol > Ref(RankingVol,-1), colorGreen, IIf(RankingVol < Ref(RankingVol,-1),colorRed,colorDefault));
+//AddColumn (RankingVol, "RSIVol", 1.2, RSIVolCo, WarnaBackGroundVol, -1,RankingVol) ;
+RSIGTGDCo = IIf(RankingGTGD > Ref(RankingGTGD,-1), colorGreen, IIf(RankingGTGD < Ref(RankingGTGD,-1),colorRed,colorDefault));
+//AddColumn (RankingGTGD, "RSIGTGD", 1.2, RSIGTGDCo, WarnaBackGroundGTGD, -1,RankingGTGD) ;
+Tonghop =  (RankingCl + RankingVol + RankingGTGD )/3;
+WarnaBackGroundTH = ColorHSB(Tonghop , 255, 255);
+TangGiam = Tonghop - Ref(Tonghop,-1);
+Rankingtangiam = PercentRank (TangGiam, HesoRank) ;
+WarnaBackGroundTG = ColorHSB(Rankingtangiam * 64/100, 255, 255);
+TangGiamRSI = RankingCl - Ref(RankingCl,-1);
+//AddColumn(TangGiamRSI,"RSI+/-",1.2,IIf(TangGiamRSI > 0, colorGreen, IIf(TangGiamRSI < 0, colorRed, colorDefault)));
+TangGiamVol = RankingVol - Ref(RankingVol,-1);
+//AddColumn(TangGiamVol,"Vol+/-",1.2,IIf(TangGiamVol > 0, colorGreen, IIf(TangGiamVol < 0, colorRed, colorDefault)));
+tanggiamGTGD = 	RankingGTGD - Ref(	RankingGTGD,-1);	
+//AddColumn(tanggiamGTGD,"GTGD+/-",1.2,IIf(tanggiamGTGD > 0, colorGreen, IIf(tanggiamGTGD < 0, colorRed, colorDefault)));
+diemTH = 	 (TangGiamRSI +  TangGiamVol + tanggiamGTGD)/3;
+//AddColumn(diemTH,"TH Tang giam",1.2,IIf(diemTH > 0, colorGreen, IIf(diemTH < 0, colorRed, colorDefault)));
+SetSortColumns(-8);
+//AddRankColumn(); 
+dieukienbb = IIf(Ref(MA(V,20),-1)>=300000  ,2,-2);// Dieu kien de loai bien cac ma xau, thanh khoan kem, ma mat thanh khoan, thanh khoan khong on dinh
+testTime2023ngay =ValueWhen(V>0 , LastValue(Day()));
+testTime2023thang =ValueWhen(V>0 , LastValue(Month()));
+testTime2023nam =ValueWhen(V>0 , LastValue(Year()));
+TongthoigianHienTai = (Namhientai*100+Thanghientai)*100+Ngayhientai;
+TongthoigianGiaodich = (testTime2023nam*100 + testTime2023thang)*100 + testTime2023ngay;
+DoiCHieuVni = TongthoigianHienTai - TongthoigianGiaodich3San;
+DoichieuTructiep = TongthoigianHienTai - TongthoigianGiaodich;
+Dieukienthoigianvanhanh = IIf( DoiCHieuVni == DoichieuTructiep AND DoichieuTructiep<= 75,2,-2);
+Filter = MA(C,20) >=5  AND dieukienbb>=2  AND Dieukienthoigianvanhanh>=2 ;
+////////////Tinh diem theo cong thuc da banh trong 20 game
+Diem1 	= IIf(	C 				> 	Ref(C,	-1),3,IIf(	C 				== Ref(C,	-1),1,0));
+Diem2 	= IIf(	Ref(C,	-1) 	> 	Ref(C,	-2),3,IIf(	Ref(C,	-1)		== Ref(C,	-2),1,0));
+Diem3 	= IIf(	Ref(C,	-2) 	> 	Ref(C,	-3),3,IIf(	Ref(C,	-2)		== Ref(C,	-3),1,0));
+Diem4 	= IIf(	Ref(C,	-3) 	> 	Ref(C,	-4),3,IIf(	Ref(C,	-3)		== Ref(C,	-4),1,0));
+Diem5 	= IIf(	Ref(C,	-4) 	> 	Ref(C,	-5),3,IIf(	Ref(C,	-4)		== Ref(C,	-5),1,0));
+Diem6 	= IIf(	Ref(C,	-5) 	> 	Ref(C,	-6),3,IIf(	Ref(C,	-5)		== Ref(C,	-6),1,0));
+Diem7 	= IIf(	Ref(C,	-6) 	> 	Ref(C,	-7),3,IIf(	Ref(C,	-6)		== Ref(C,	-7),1,0));
+Diem8 	= IIf(	Ref(C,	-7) 	> 	Ref(C,	-8),3,IIf(	Ref(C,	-7)		== Ref(C,	-8),1,0));
+Diem9 	= IIf(	Ref(C,	-8) 	> 	Ref(C,	-9),3,IIf(	Ref(C,	-8)		== Ref(C,	-9),1,0));
+Diem10 	= IIf(	Ref(C,	-9) 	> 	Ref(C,	-10),3,IIf(	Ref(C,	-9)		== Ref(C,	-10),1,0));
+Diem11 	= IIf(	Ref(C,	-10) 	> 	Ref(C,	-11),3,IIf(	Ref(C,	-10)	== Ref(C,	-11),1,0));
+Diem12 	= IIf(	Ref(C,	-11) 	> 	Ref(C,	-12),3,IIf(	Ref(C,	-11)	== Ref(C,	-12),1,0));
+Diem13 	= IIf(	Ref(C,	-12) 	> 	Ref(C,	-13),3,IIf(	Ref(C,	-12)	== Ref(C,	-13),1,0));
+Diem14 	= IIf(	Ref(C,	-13) 	> 	Ref(C,	-14),3,IIf(	Ref(C,	-13)	== Ref(C,	-14),1,0));
+Diem15 	= IIf(	Ref(C,	-14) 	> 	Ref(C,	-15),3,IIf(	Ref(C,	-14)	== Ref(C,	-15),1,0));
+Diem16 	= IIf(	Ref(C,	-15) 	> 	Ref(C,	-16),3,IIf(	Ref(C,	-15)	== Ref(C,	-16),1,0));
+Diem17 	= IIf(	Ref(C,	-16) 	> 	Ref(C,	-17),3,IIf(	Ref(C,	-16)	== Ref(C,	-17),1,0));
+Diem18 	= IIf(	Ref(C,	-17) 	> 	Ref(C,	-18),3,IIf(	Ref(C,	-17)	== Ref(C,	-18),1,0));
+Diem19 	= IIf(	Ref(C,	-18) 	> 	Ref(C,	-19),3,IIf(	Ref(C,	-18)	== Ref(C,	-19),1,0));
+Diem20 	= IIf(	Ref(C,	-19) 	> 	Ref(C,	-20),3,IIf(	Ref(C,	-19)	== Ref(C,	-20),1,0));
+Diem3ngay = Diem1 + Diem2 + Diem3;
+Diem5ngay = Diem1 + Diem2 + Diem3  + Diem4  + Diem5;
+Diem10ngay = Diem1 + Diem2 + Diem3  + Diem4  + Diem5 + Diem6 + Diem7 +  Diem8 + Diem9 + Diem10 ; 
+Diem15ngay = Diem1 + Diem2 + Diem3  + Diem4  + Diem5 + Diem6 + Diem7 +  Diem8 + Diem9 + Diem10 + Diem11 + Diem12 + Diem13 + Diem14 + Diem15;  
+Diem20ngay = Diem1 + Diem2 + Diem3  + Diem4  + Diem5 + Diem6 + Diem7 +  Diem8 + Diem9 + Diem10 + Diem11 + Diem12 + Diem13 + Diem14 + Diem15 + Diem16 + Diem17 + Diem18 + Diem19 + Diem20;   
+////////////Tinh hieu so % thang thua trong 20 game
+HieuSo1 = ((	C				-	Ref(C,	-1))	/	Ref(C,	-1))	*	100;
+HieuSo2 = ((	Ref(C,	-1)		-	Ref(C,	-2))	/	Ref(C,	-2))	*	100;
+HieuSo3 = ((	Ref(C,	-2)		-	Ref(C,	-3))	/	Ref(C,	-3))	*	100;
+HieuSo4 = ((	Ref(C,	-3)		-	Ref(C,	-4))	/	Ref(C,	-4))	*	100;
+HieuSo5 = ((	Ref(C,	-4)		-	Ref(C,	-5))	/	Ref(C,	-5))	*	100;
+HieuSo6 = ((	Ref(C,	-5)		-	Ref(C,	-6))	/	Ref(C,	-6))	*	100;
+HieuSo7 = ((	Ref(C,	-6)		-	Ref(C,	-7))	/	Ref(C,	-7))	*	100;
+HieuSo8 = ((	Ref(C,	-7)		-	Ref(C,	-8))	/	Ref(C,	-8))	*	100;
+HieuSo9 = ((	Ref(C,	-8)		-	Ref(C,	-9))	/	Ref(C,	-9))	*	100;
+HieuSo10 = ((	Ref(C,	-9)		-	Ref(C,	-10))	/	Ref(C,	-10))	*	100;
+HieuSo11 = ((	Ref(C,	-10)	-	Ref(C,	-11))	/	Ref(C,	-11))	*	100;
+HieuSo12 = ((	Ref(C,	-11)	-	Ref(C,	-12))	/	Ref(C,	-12))	*	100;
+HieuSo13 = ((	Ref(C,	-12)	-	Ref(C,	-13))	/	Ref(C,	-13))	*	100;
+HieuSo14 = ((	Ref(C,	-13)	-	Ref(C,	-14))	/	Ref(C,	-14))	*	100;
+HieuSo15 = ((	Ref(C,	-14)	-	Ref(C,	-15))	/	Ref(C,	-15))	*	100;
+HieuSo16 = ((	Ref(C,	-15)	-	Ref(C,	-16))	/	Ref(C,	-16))	*	100;
+HieuSo17 = ((	Ref(C,	-16)	-	Ref(C,	-17))	/	Ref(C,	-17))	*	100;
+HieuSo18 = ((	Ref(C,	-17)	-	Ref(C,	-18))	/	Ref(C,	-18))	*	100;
+HieuSo19 = ((	Ref(C,	-18)	-	Ref(C,	-19))	/	Ref(C,	-19))	*	100;
+HieuSo20 = ((	Ref(C,	-19)	-	Ref(C,	-20))	/	Ref(C,	-20))	*	100;
+HieuSo3ngay = Prec(HieuSo1 + HieuSo2 + HieuSo3,2);
+HieuSo5ngay = Prec(HieuSo1 + HieuSo2 + HieuSo3 + HieuSo4 + HieuSo5,2);
+HieuSo10ngay = Prec(HieuSo1 + HieuSo2 + HieuSo3 + HieuSo4 + HieuSo5 + HieuSo6 + HieuSo7 + HieuSo8 + HieuSo9 + HieuSo10,2);
+HieuSo15ngay = Prec(HieuSo1 + HieuSo2 + HieuSo3 + HieuSo4 + HieuSo5 + HieuSo6 + HieuSo7 + HieuSo8 + HieuSo9 + HieuSo10 + HieuSo11 + HieuSo12 + HieuSo13 + HieuSo14 + HieuSo15,2);
+HieuSo20ngay = Prec(HieuSo1 + HieuSo2 + HieuSo3 + HieuSo4 + HieuSo5 + HieuSo6 + HieuSo7 + HieuSo8 + HieuSo9 + HieuSo10 + HieuSo11 + HieuSo12 + HieuSo13 + HieuSo14 + HieuSo15 + HieuSo16 + HieuSo17 + HieuSo18 + HieuSo19 + HieuSo20,2);
+/////////////Nhap diem va hieu so
+Maudiem3ngay = IIf(Diem3ngay >=3 AND Ref(Diem3ngay,-1) <3, colorBrightGreen,IIf(Diem3ngay < 3 AND Ref(Diem3ngay,-1) >= 3, colorCustom1,colorDefault));
+MauHS3ngay = IIf(Cross( HieuSo3ngay ,0), colorBrightGreen,IIf(Cross( 0,HieuSo3ngay), colorCustom1,colorDefault));
+AddColumn(Diem3ngay,"Diem3day",1,IIf(Diem3ngay> Ref(Diem3ngay,-1),colorGreen, IIf(Diem3ngay < Ref(Diem3ngay,-1),colorRed,colorDefault)),Maudiem3ngay);
+AddColumn(HieuSo3ngay,"Hs%3day",1.2,IIf(HieuSo3ngay> Ref(HieuSo3ngay,-1),colorGreen, IIf(HieuSo3ngay < Ref(HieuSo3ngay,-1),colorRed,colorDefault)),MauHS3ngay);
+
+Maudiem5ngay = IIf(Diem5ngay >=5 AND Ref(Diem5ngay,-1) <5, colorBrightGreen,IIf(Diem5ngay < 5 AND Ref(Diem5ngay,-1) >= 5, colorCustom1,colorDefault));
+MauHS5ngay = IIf(Cross( HieuSo5ngay ,0), colorBrightGreen,IIf(Cross( 0,HieuSo5ngay), colorCustom1,colorDefault));
+AddColumn(Diem5ngay,"Diem5day",1,IIf(Diem5ngay> Ref(Diem5ngay,-1),colorGreen, IIf(Diem5ngay < Ref(Diem5ngay,-1),colorRed,colorDefault)),Maudiem5ngay);
+AddColumn(HieuSo5ngay,"Hs%5day",1.2,IIf(HieuSo5ngay> Ref(HieuSo5ngay,-1),colorGreen, IIf(HieuSo5ngay < Ref(HieuSo5ngay,-1),colorRed,colorDefault)),MauHS5ngay);
+
+Maudiem10ngay = IIf(Diem10ngay >=10 AND Ref(Diem10ngay,-1) <10, colorBrightGreen,IIf(Diem10ngay < 10 AND Ref(Diem10ngay,-1) >= 10, colorCustom1,colorDefault));
+MauHS10ngay = IIf(Cross( HieuSo10ngay ,0), colorBrightGreen,IIf(Cross( 0,HieuSo10ngay), colorCustom1,colorDefault));
+AddColumn(Diem10ngay,"Diem10day",1,IIf(Diem10ngay> Ref(Diem10ngay,-1),colorGreen, IIf(Diem10ngay < Ref(Diem10ngay,-1),colorRed,colorDefault)),Maudiem10ngay);
+AddColumn(HieuSo10ngay,"Hs%10day",1.2,IIf(HieuSo10ngay> Ref(HieuSo10ngay,-1),colorGreen, IIf(HieuSo10ngay < Ref(HieuSo10ngay,-1),colorRed,colorDefault)),MauHS10ngay);
+
+Maudiem15ngay = IIf(Diem15ngay >=15 AND Ref(Diem15ngay,-1) <15, colorBrightGreen,IIf(Diem15ngay < 15 AND Ref(Diem15ngay,-1) >= 15, colorCustom1,colorDefault));
+MauHS15ngay = IIf(Cross( HieuSo15ngay ,0), colorBrightGreen,IIf(Cross( 0,HieuSo15ngay), colorCustom1,colorDefault));
+AddColumn(Diem15ngay,"Diem15day",1,IIf(Diem15ngay> Ref(Diem15ngay,-1),colorGreen, IIf(Diem15ngay < Ref(Diem15ngay,-1),colorRed,colorDefault)),Maudiem15ngay);
+AddColumn(HieuSo15ngay,"Hs%15day",1.2,IIf(HieuSo15ngay> Ref(HieuSo15ngay,-1),colorGreen, IIf(HieuSo15ngay < Ref(HieuSo15ngay,-1),colorRed,colorDefault)),MauHS15ngay);
+
+Maudiem20ngay = IIf(Diem20ngay >=20 AND Ref(Diem20ngay,-1) <20, colorBrightGreen,IIf(Diem20ngay < 20 AND Ref(Diem20ngay,-1) >= 20, colorCustom1,colorDefault));
+MauHS20ngay = IIf(Cross( HieuSo20ngay ,0), colorBrightGreen,IIf(Cross( 0,HieuSo20ngay), colorCustom1,colorDefault));
+AddColumn(Diem20ngay,"Diem20day",1,IIf(Diem20ngay> Ref(Diem20ngay,-1),colorGreen, IIf(Diem20ngay < Ref(Diem20ngay,-1),colorRed,colorDefault)),Maudiem20ngay);
+AddColumn(HieuSo20ngay,"Hs%20day",1.2,IIf(HieuSo20ngay> Ref(HieuSo20ngay,-1),colorGreen, IIf(HieuSo20ngay < Ref(HieuSo20ngay,-1),colorRed,colorDefault)),MauHS20ngay);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

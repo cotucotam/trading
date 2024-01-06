@@ -1,0 +1,13 @@
+_SECTION_BEGIN("So Sanh Vni");
+chuky=50;//thay doi chu ky theo so ngay giam gia VNI
+Fc=Foreign("VNINDEX","Close");
+rocvni=ROC(Fc,chuky);
+rocstock=ROC(C,chuky);
+dkroc=WriteIf(rocstock>rocvni,"Tang Toc","Giam Toc");
+Filter =1;
+AddColumn(C,"GIA",1.2,colorBlack,colorDefault,60);
+ AddColumn(V,"VOLUME",1,colorBlack,colorDefault,90);
+ AddColumn(C*V,"GIA TRI GD ",1,colorBlack,colorDefault,90);
+ AddColumn(ROC(C,1),"%TG ",1.2,colorBlack,colorDefault,60);
+AddtextColumn(dkroc,"So Sanh Vni",1.0,colorBlack,IIf(rocstock>rocvni,colorLime,colorDefault),60);
+_SECTION_END();

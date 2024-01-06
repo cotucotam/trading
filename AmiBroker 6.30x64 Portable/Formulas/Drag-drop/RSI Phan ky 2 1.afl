@@ -1,0 +1,186 @@
+func1 =rsi() ;
+Plot(func1, _DEFAULT_NAME(),colorRED,
+ParamStyle( "Style", styleline )
+);
+bi=BarIndex();
+_SECTION_BEGIN(" ");
+H= O;
+L=ValueWhen(HHV(H,14),H,2);
+SetBarsRequired(sbrAll,sbrAll);
+xx = Cum(1);
+nbar = PARAM("nbar",30,1,50,2); 
+pk=phigh=H>Ref(HHV(H,nbar),-1) AND Ref(HHV(H,nbar),nbar)<=H;
+tr=plow=L<Ref(LLV(L,nbar),-1) AND Ref(LLV(L,nbar),nbar)>=L;
+
+    px0=ValueWhen(pk,bi,0); tx0=ValueWhen(tr,bi,0);
+px1=ValueWhen(pk,bi,1); tx1=ValueWhen(tr,bi,1);
+px2=ValueWhen(pk,bi,2); tx2=ValueWhen(tr,bi,2);
+ph0=ValueWhen(pk,H,0); tl0=ValueWhen(tr,L,0);
+ph1=ValueWhen(pk,H,1); tl1=ValueWhen(tr,L,1);
+ph2=ValueWhen(pk,H,2); tl2=ValueWhen(tr,L,2);
+
+ll=tr AND tl1<tl2;
+hl=tr AND tl1>tl2;
+hh=pk AND ph1>ph2;
+lh=pk AND ph1<ph2;
+dt=pk AND ph1==ph2;
+db=tr AND tl1==tl2;
+
+// lower trendline, segment 1: between fractal points
+startval_L = ValueWhen(PLow,L,1); 
+endval_L = ValueWhen(PLow,L,0); 
+startbar_L = ValueWhen(PLow,xx,1); 
+endbar_L = ValueWhen(PLow,xx,0); 
+aa_L = (endval_L-startval_L)/(endbar_L-startbar_L);
+bb_L = startval_L;
+trendline_L = aa_L * (xx - startbar_L) + bb_L;
+// slope calculations for display purpose only
+dtrendline_L = trendline_L - Ref(trendline_L,-1);
+
+
+// upper trendline, segment 1: between fractal points
+startval_H = ValueWhen(PHigh,H,1); 
+endval_H = ValueWhen(PHigh,H,0); 
+startbar_H = ValueWhen(PHigh,xx,1); 
+endbar_H = ValueWhen(PHigh,xx,0); 
+aa_H = (endval_H-startval_H)/(endbar_H-startbar_H);
+bb_H = startval_H;
+trendline_H = aa_H * (xx - startbar_H) + bb_H; 
+// slope calculations for display purpose only
+dtrendline_H = trendline_H - Ref(trendline_H,-1);
+
+_SECTION_END();
+
+
+_SECTION_BEGIN("rsidiv");
+H= rsi();
+L=ValueWhen(HHV(H,14),H,2);
+SetBarsRequired(sbrAll,sbrAll);
+xx = Cum(1);
+
+// define fractals
+pkm=PHighM = H > Ref(HHV(H,nbar),-1) AND Ref(HHV(H,nbar),nbar) <= H;
+PHighPrice = ValueWhen(PHighM,H);
+trm=PLowM = L < Ref(LLV(L,nbar),-1) AND Ref(LLV(L,nbar),nbar) >= L;
+PLowPrice = ValueWhen(PLowM,L); 
+    px0=ValueWhen(pkm,bi,0); txm0=ValueWhen(trm,bi,0);
+pxm1=ValueWhen(pkm,bi,1); txm1=ValueWhen(trm,bi,1);
+pxm2=ValueWhen(pkm,bi,2); txm2=ValueWhen(trm,bi,2);
+phm0=ValueWhen(pkm,H,0); tlm0=ValueWhen(trm,L,0);
+phm1=ValueWhen(pkm,H,1); tlm1=ValueWhen(trm,L,1);
+phm2=ValueWhen(pkm,H,2); tlm2=ValueWhen(trm,L,2);
+// lower trendline, segment 1: between fractal points
+startval_L1 = ValueWhen(PLowM,L,1); 
+endval_L1 = ValueWhen(PLowM,L,0); 
+startbar_L1 = ValueWhen(PLowM,xx,1); 
+endbar_L1 = ValueWhen(PLowM,xx,0); 
+aa_L1 = (endval_L1-startval_L1)/(endbar_L1-startbar_L1);
+bb_L1 = startval_L1;
+trendline_L1 = aa_L1 * (xx - startbar_L1) + bb_L1;
+// slope calculations for display purpose only
+dtrendline_L1 = trendline_L1 - Ref(trendline_L1,-1);
+// lower extended trendline, segment 2: extend segment 1 to next fractals pivot 
+startval_L_extend = ValueWhen(PLowm,L,2); 
+endval_L_extend = ValueWhen(PLowm,L,1); 
+startbar_L_extend = ValueWhen(PLowm,xx,2); 
+endbar_L_extend = ValueWhen(PLowm,xx,1); 
+aa_L_extend = (endval_L_extend-startval_L_extend)/(endbar_L_extend-startbar_L_extend);
+bb_L_extend = startval_L1;
+trendline_L_extend = aa_L_extend * (xx - startbar_L1) + endval_L_extend; 
+// slope calculations for display purpose only
+dtrendline_L_extend = trendline_L_extend - Ref(trendline_L_extend,-1);
+dtrendline_L_extend = IIf(PLowm,Ref(dtrendline_L1,-1),dtrendline_L_extend);
+
+// lower extended trendline, segment 3: extend segment 2 nbars past the fractal pivot
+startval_L_extend2 = ValueWhen(PLowm,L,3); 
+endval_L_extend2 = ValueWhen(PLowm,L,2); 
+startbar_L_extend2 = ValueWhen(PLowm,xx,3); 
+endbar_L_extend2 = ValueWhen(PLowm,xx,2); 
+aa_L_extend2 = (endval_L_extend2-startval_L_extend2)/(endbar_L_extend2-startbar_L_extend2);
+bb_L_extend2 = endval_L_extend2;
+trendline_L_extend2 = aa_L_extend2 * (xx - endbar_L_extend2) + endval_L_extend2; 
+// slope calculations for display purpose only
+dtrendline_L_extend2 = trendline_L_extend2 - Ref(trendline_L_extend2,-1);
+dtrendline_L_extend2 = IIf(PLowm,Ref(dtrendline_L_extend,-1),dtrendline_L_extend2);
+// upper trendline, segment 1: between fractal points
+startval_H1 = ValueWhen(PHighM,H,1); 
+endval_H1 = ValueWhen(PHighM,H,0); 
+startbar_H1 = ValueWhen(PHighM,xx,1); 
+endbar_H1 = ValueWhen(PHighM,xx,0); 
+aa_H1 = (endval_H1-startval_H1)/(endbar_H1-startbar_H1);
+bb_H1 = startval_H1;
+trendline_H1 = aa_H1 * (xx - startbar_H1) + bb_H1; 
+// slope calculations for display purpose only
+dtrendline_H1 = trendline_H1 - Ref(trendline_H1,-1);
+// upper extended trendline, segment 2: extend segment 1 to next fractals pivot 
+startval_H_extend = ValueWhen(PHighm,H,2); 
+endval_H_extend = ValueWhen(PHighm,H,1); 
+startbar_H_extend = ValueWhen(PHighm,xx,2); 
+endbar_H_extend = ValueWhen(PHighm,xx,1); 
+aa_H_extend = (endval_H_extend-startval_H_extend)/(endbar_H_extend-startbar_H_extend);
+bb_H_extend = startval_H1;
+trendline_H_extend = aa_H_extend * (xx - startbar_H1) + endval_H_extend; 
+// slope calculations for display purpose only
+dtrendline_H_extend = trendline_H_extend - Ref(trendline_H_extend,-1);
+dtrendline_H_extend = IIf(PHighm,Ref(dtrendline_H1,-1),dtrendline_H_extend);
+
+// upper extended trendline, segment 3: extend segment 2 nbars past the fractal pivot
+startval_H_extend2 = ValueWhen(PHighm,H,3); 
+endval_H_extend2 = ValueWhen(PHighm,H,2); 
+startbar_H_extend2 = ValueWhen(PHighm,xx,3); 
+endbar_H_extend2 = ValueWhen(PHighm,xx,2); 
+aa_H_extend2 = (endval_H_extend2-startval_H_extend2)/(endbar_H_extend2-startbar_H_extend2);
+bb_H_extend2 = endval_H_extend2;
+trendline_H_extend2 = aa_H_extend2 * (xx - endbar_H_extend2) + endval_H_extend2; 
+// slope calculations for display purpose only
+dtrendline_H_extend2 = trendline_H_extend2 - Ref(trendline_H_extend2,-1);
+dtrendline_H_extend2 = IIf(PHighm,Ref(dtrendline_H_extend,-1),dtrendline_H_extend2);
+//Plot(trendline_L, "\nLower Trendline", colorBrightGreen,styleLine);
+// segment 2, grey dots unconfirmed trend, green confirmed trend
+trendline_L_extend0=IIf(BarsSince(Plowm) <= nbar,trendline_L_extend,Null);
+trendline_L_extend1=IIf(BarsSince(Plowm) > nbar,trendline_L_extend,Null);
+trendline_L_extend2=IIf(BarsSince(Plowm) <= nbar,trendline_L_extend2,Null);
+l_extend=trendline_L_extend0+trendline_L_extend1+trendline_L_extend2;
+Plot(IIf(BarsSince(Plowm) <= nbar,trendline_L_extend,Null), "", colorLightGrey,styleLine | styleDashed);///ho tro
+Plot(IIf(BarsSince(Plowm) > nbar,trendline_L_extend,Null), "",colorDarkGreen, styleLine | styleDASHED );
+// segment 3
+Plot(IIf(BarsSince(Plowm) <= nbar,trendline_L_extend2,Null), "",colorDarkGreen,styleLine | styledashed| styleThick);
+// segment 1
+//Plot(trendline_H, "\nUpper Trendline", colorRed,styleLine);
+// segment 2, grey dots unconfirmed trend, green confirmed trend
+trendline_H_extend0=IIf(BarsSince(PHighm) <= nbar,trendline_H_extend,Null);
+trendline_H_extend1=IIf(BarsSince(PHighm) > nbar,trendline_H_extend,Null);
+trendline_H_extend2=IIf(BarsSince(PHighm) <= nbar,trendline_H_extend2,Null);
+H_extend=trendline_H_extend0+trendline_H_extend1+trendline_H_extend2;
+Plot(IIf(BarsSince(PHighm) <= nbar,trendline_H_extend,Null), "", colorLightGrey, styleLine | styleDASHED );
+Plot(IIf(BarsSince(PHighm) > nbar,trendline_H_extend,Null), "",colorOrange, styleLine | styleDASHED);
+// segment 3
+Plot(IIf(BarsSince(PHighm) <= nbar,trendline_H_extend2,Null), "",colorOrange, styleLine | styleDashed | styleThick);
+
+
+
+_SECTION_END();
+
+FHPDIV=IIf(dtrendline_L<0 AND dtrendline_L1<0 ,1,0); 
+HTHB=IIf(dtrendline_L>0 AND dtrendline_L1>0 ,1,0); 
+
+HPDIV=IIf(dtrendline_L>0 AND dtrendline_L1<0 ,1,0); 
+FHNDIV=iif(dtrendline_H>0 AND dtrendline_h1>0 ,1, 0);
+LTLB=iif(dtrendline_H<0 AND dtrendline_h1<0 ,1, 0);
+
+HNDIV=iif(dtrendline_H<0 AND dtrendline_h1>0 ,1, 0);
+SPDIV=IIf(dtrendline_L<0 AND dtrendline_L1>0 ,1, 0)   ; 
+
+SNDIV=iif(dtrendline_H>0 AND dtrendline_h1<0 ,1, 0) ;
+NDIV=LTLB OR  sndiv OR  hndiv OR   fhndiv;
+PDIV=HTHB  OR  spdiv OR  hpdiv OR  fhpdiv;
+color=IIf(SPDIV ,colorBRIGHTGreen,IIf(FHPDIV ,colorBLUE , IIf(HPDIV ,colorYELLOW, IIf(HTHB ,colorWHITE,NULL)))); 
+color1=iif(SNDIV ,colorRED,IIf(FHNDIV ,colorBLUE , IIf(HNDIV ,colorYELLOW,IIf(LTLB ,colorWHITE,NULL)))); 
+
+
+
+// segment 1
+Plot(trendline_L1, "\nLower Trendline", color,styleLine|styleThick|styleNoRescale);
+// segment 1
+Plot(trendline_H1, "\nUpper Trendline", color1,styleLine|styleTHICK|styleNoRescale);
+tit="";

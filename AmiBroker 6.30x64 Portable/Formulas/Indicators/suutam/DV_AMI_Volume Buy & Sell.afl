@@ -1,0 +1,39 @@
+// Modified by DV
+
+_SECTION_BEGIN("DV_Smart money");
+SetBarsRequired(sbrAll,sbrAll);
+BV = IIf( (H==L), 0, V*(C-L)/(H-L) );
+SV = IIf( (H==L), 0, V*(H-C)/(H-L) );
+PlotOHLC(SV,SV,0,0,"SellVolume",colorRed,styleCandle|styleNoTitle|styleNoLabel );
+PlotOHLC(SV,BV+SV,SV,BV+SV,"BuyVolume",colorbrightgreen ,styleCandle|styleNoTitle|styleNoLabel );
+Periods = Param("Periods", 30, 2, 300, 1, 10 );
+Va = MA(V,Periods);
+PlotOHLC( Va, Va, 0, 0, "", ColorBlend( ColorRGB(0,128,255) , GetChartBkColor(), 0.4 ), styleNoLabel | styleCloud | styleNoRescale, Null, Null, Null, -1 );
+Plot(Va,"Average Volume",ColorRGB(0,128,255) ,style = 1+4 );
+Plot(V,"",colorWhite, styleNoLine);
+VI = V/Va;
+BV_P = 100*BV/(BV+SV);
+SV_P = 100*SV/(BV+SV);
+BV_X = (V >= Va) AND (BV_P > SV_P);
+V_status = WriteIf(BV_X,"X", "");
+Buy = BV_X;
+Price_percent = ROC (Close,1);
+Price_PercentTxT= NumToStr(Price_percent,1.2)+"%";
+Price_percent5 = ROC (Close,5);
+Price_percent10 = ROC (Close,10);
+Price_PercentTxT5= NumToStr(Price_percent5,1.2)+"%";
+Price_PercentTxT10= NumToStr(Price_percent10,1.2)+"%";
+AlertIf( Buy ,"SOUND C:\\Windows\\Media\\Ring08.wav", "Audio alert", 1 ); 
+Filter =  1;
+AddColumn(Close,"Gia",1.2, colorDefault);
+AddTextColumn(Price_PercentTxT,"Tang/Giam T0 voi T1", 1.2,colorDefault, IIf(Price_percent > 0 , colorLime, IIf (Price_percent == 0, colorDefault, colorRed)));
+AddTextColumn(Price_PercentTxT5,"Tang/Giam T0 voi T5", 1.2,colorDefault, IIf(Price_percent5 > 0 , colorLime, IIf (Price_percent5 == 0, colorDefault, colorRed)));
+AddTextColumn(Price_PercentTxT10,"Tang/Giam T0 voi T10", 1.2,colorDefault, IIf(Price_percent10 > 0 , colorLime, IIf (Price_percent10 == 0, colorDefault, colorRed)));
+AddColumn(Volume,"Volume T0",1.0, colorDefault);
+AddTextColumn(V_status,"Vol T0 vuot Tr/b 30 ngày",1.0,colorDefault, bkcolor = IIf( Buy, 34, 55 )); 
+AddTextColumn(FullName(),"Name");
+Title =  "Volume: "+WriteVal(V,1.2) +  EncodeColor(ColorRGB(0,128,255)) + ";  Vol Tr/b " + Periods+ " ngay: " + WriteVal(Va,1.2) + 
+         "\n" + EncodeColor(colorLime) + "BuyVolume: "+WriteVal(BV_P,2.0)+"%" + WriteIf(BV_P > SV_P , EncodeColor(colorCustom12) + " - KL Mua chu dong lon hon ", " ")
+                                                                              + WriteIf(V >= Va , EncodeColor(colorGold) + " - Vol vuot Tr/b " + Periods + " ngày ", " ") +
+         "\n" + EncodeColor(colorRed) + "SellVolume: "+WriteVal(SV_P,2.0)+"%" ; 
+_SECTION_END();

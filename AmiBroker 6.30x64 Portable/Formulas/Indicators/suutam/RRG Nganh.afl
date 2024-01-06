@@ -1,0 +1,587 @@
+_SECTION_BEGIN( "RRG Chart" );
+
+//==========================
+ 
+_N( base = ParamStr( "Base", "vnindex" ) );
+tbar = Param( "Trailing Bar", 12, 1, 100, 1 );
+ 
+EnableTextOutput( False );
+GfxSetOverlayMode( 2 );
+ 
+pxl = Status( "pxchartleft" );
+pxr = Status( "pxchartright" );
+pxt = Status( "pxcharttop" );
+pxb = Status( "pxchartbottom" );
+pxw = ( pxr - pxl ) / 2;
+pxh = ( pxb - pxt ) / 2;
+xm = pxl + pxw;
+ym = pxt + pxh;
+
+GfxSelectPen(colorGreen); 
+
+// ve mau cho chart
+GfxSelectSolidBrush(ColorRGB(231,255,255));
+GfxRectangle( xm, ym, pxr, pxt );
+GfxSelectSolidBrush(ColorRGB(231,255,231));
+GfxRectangle( xm, ym, pxl, pxb );
+GfxSelectSolidBrush(ColorRGB(255,231,231));
+GfxRectangle( xm, ym, pxr, pxb );
+GfxSelectSolidBrush(ColorRGB(255,255,231));
+GfxRectangle( xm, ym, pxl, pxt );
+
+
+
+GfxSelectFont("Arial", Status("pxheight")/60 );
+GfxSetTextColor( ParamColor( "Text Color", colorBlack ) );
+GfxSetBkMode(0); // transparent
+GfxSetBkColor(colorPaleGreen);
+GfxTextOut( "D\u1EAAN D\u1EAET", pxr-120 , pxt +50 );			// DAN DAT
+GfxSetBkColor(colorPink);
+GfxTextOut( "T\u1ee4T H\u1EACU", pxl+15, pxb-65 );				// TUT HAU
+GfxSetBkColor(colorLightYellow);
+GfxTextOut( "SUY Y\u1EBEU", pxr-120, pxb-65);					// SUY YEU
+GfxSetBkColor(colorLightBlue);
+GfxTextOut( "C\u1EA2I THI\u1EC6N", pxl+15, pxt+50 );			// CAI THIEN
+GfxSelectFont("", Status("pxheight")/90 );
+//GfxTextOut( "Developed by QU\u00C2N \u0110\u1EB6NG - Website: https://wuado.net", Status("pxwidth")/80, Status("pxheight")/1.04 );  
+//GfxTextOut( "Developed by QU\u00C2N \u0110\u1EB6NG", Status("pxwidth")/80, Status("pxheight")/1.04 );  
+_SECTION_BEGIN("Title");
+GfxSelectFont("", Status("pxheight")/40 );
+GfxSetBkMode(1);
+
+GfxSelectSolidBrush(colorDarkRed);
+GfxRectangle(pxl,pxt,pxr,50);
+GfxSetTextColor(colorWhite);
+GfxSetTextAlign(6);
+GfxTextOut("RRG NGHANH", Status("pxwidth")/2, Status("pxheight")/80 ); 
+
+//GfxSelectPen(colorGreen);
+//GfxSelectSolidBrush(colorBrightGreen);
+//GfxRectangle( pxw, pxt, pxr, pxh );
+
+//GfxSelectSolidBrush(ColorRGB(255,250,179));
+//GfxRectangle( pxw, pxh, pxr, pxb );
+
+//GfxSelectSolidBrush(ColorRGB(235,113,83));
+//GfxRectangle( pxl,pxh, pxw, pxb );
+
+//GfxSelectSolidBrush(ColorRGB(103,191,127));
+//GfxRectangle( pxl,pxt, pxw, pxh );
+
+// Viet chu cac goc phan tu
+CoChu=Status("pxheight")/20;
+XuongHang=Status("pxheight")/12-Status("pxheight")/9;
+QuaCot=Status("pxwidth")/4-Status("pxwidth")/6;
+
+//GfxSetBkMode( 1 );
+//GfxSelectFont("Tahoma", CoChu );
+//GfxSetTextColor( colorViolet);
+//GfxTextOut( "DAN DAT +/+", pxr-3*quaCot, pxt-1.2*XuongHang );
+//GfxTextOut( "SUY YEU +/-", pxr-3*quaCot, pxb+2.6*XuongHang );
+//GfxTextOut( "TUT HAU -/-", pxl+0.2*quaCot, pxb+2.6*XuongHang );
+//GfxTextOut( "CAI THIEN -/+", pxl+0.2*quaCot, pxt-1.2*XuongHang );
+
+GfxSetTextColor( colorBlack );
+GfxSelectFont("Tahoma", CoChu/2 );
+
+// danh sach nghanh
+Vnindex=ParamStr("VnIndex","VNINDEX");
+THUCPHAM=ParamStr("THUC PHAM","MSN,TNA,VNM,LSS,QNS,SBT,MCH,VOC,NAF,SCD,SAB,SMB,KDC");
+BAOHIEM=ParamStr("BAO HIEM","VNR,ABI,BIC,BMI,MIG,PGI,PVI,BVH");
+NGANHANG=ParamStr("NGAN HANG","ACB,BID,CTG,HDB,MBB,SSB,SHB,STB,TCB,TPB,VCB,VIB,VPB,ABB,EIB,BVB,KLB,LPB,MSB,NAB,BAB,NVB,OCB,PGB,SGB,VAB,VBB");
+CHUNGKHOAN=ParamStr("CHUNG KHOAN","AGR,ART,BSI,BVS,CTS,FTS,HCM,MBS,SBS,SHS,SSI,TVB,TVS,VCI,VDS,VIX,VND");
+BATDONGSAN=ParamStr("BAT DONG SAN","IJC,LDG,NVT,AMD,C21,CEO,D2D,DIG,DRH,DXG,FLC,HAR,HDC,HDG,HLD,HQC,ITC,KDH,NBB,NDN,NLG,NTL,NVL,PDR,QCG,SCR,SJS,TDH,TIG,VIC,VPH,IDV,ITA,KBC,LHG,VC3,LGL");
+DAUKHI=ParamStr("DAU KHI","PVB,PVC,PVD,PVS,ASP,CNG,GAS,PGC,PGS,PLX,PVG,PVO");
+CANG=ParamStr("CANG","HAH,STG,GMD,PDN,PHP,SGP,VSC");
+XAYDUNG=ParamStr("XAY DUNG","C32,C47,CII,CTD,CTI,FCN,HBC,HC3,HTI,HUT,L14,MCG,LCG,PC1,DPG,PHC,PVX,PXS,SD5,SD6,SD9,TCD,UIC,VCG,VMC,VNE,THG,VPD,TV2");
+THEP=ParamStr("THEP","HPG,HSG,NKG,POM,SHA,TIS,TVN,VGS,HMC,SHI,SMC,TLH");
+NHUA=ParamStr("NHUA","AAA,BMP,DAG,DNP,NTP,RDP");
+THUYSAN=ParamStr("THUYSAN","ANV,ASM,FMC,HVG,IDI,SSN,VHC");
+CAOSU=ParamStr("CAO SU","DPR,DRI,HRC,PHR,TRC,GVR");
+CONGNGHE=ParamStr("CONG NGHE","CMG,SGT,ITD,VEC,FPT,ELC,ABC");
+DUOCPHAM=ParamStr("DUOC PHAM","DCL,DHG,DHT,IMP,TRA,DVN,DBD,JVC");
+HANGKHONG=ParamStr("HANG KHONG","NCT,ACV,HVN,SCS,VJC");
+HOACHAT=ParamStr("HOA CHAT","HAI,LTG,TSC,VFG,BFC,DCM,DDV,DPM,LAS,QBS,SFG,CSM,DRC,SRC,CSV,DGC,PLC,LIX,NET");
+MAYMAC=ParamStr("MAY MAC","ADS,EVE,FTM,GMC,HTG,KMR,STK,TCM,TNG,TVT,VGG,VGT,MSH");
+DIENNUOC=ParamStr("DIEN NUOC","BWE,VCW,DQC,GDT,RAL,CHP,NT2,REE,PPC,SBA,SJD,VSH");
+VANTAI=ParamStr("VAN TAI","PVT,GSP,SWC,VIP,VOS,VTO,SKG,SRT,VNS,SAS");
+BDSKCN=ParamStr("BDS KCN","SZC,SAL,IDC,TIP,NTC,LHG,D2D,KBC,ITA,BCM");
+BANLE=ParamStr("BAN LE","MWG,FPT,FRT,PET,DGW,PIV");
+PHANBON=ParamStr("PHAN BON","DPM,DCM,LAS,BFC,DDV");
+THAN=ParamStr("THAN","TDN,TC6,TVD,THT,NBC");
+VLXD=ParamStr("VLXD","ACC,BCC,BTS,CTI,DC4,DHA,GMX,HOM,HT1,MVC,NNC,QNS,SCJ,VCS,VGC,KSB");
+DAUTUCONG=ParamStr("DAU TU CONG","FCN,KSB,PLC,BCC,HT1,DHA,LCG,C4G,C32");
+function DebugPrint( str )
+{
+    printf("Value of var: %s\n", str);
+}
+
+
+//tinh gia watchlist
+Sowl=6;
+function TinhCList( Sowl )
+{	
+	if(Sowl == "Ngan Hang") {
+		listNganh = NGANHANG;
+	} 
+	else if (Sowl ==  "BDS"){
+		listNganh = BATDONGSAN;
+	} 
+	else if (Sowl ==  "Chung Khoan"){
+		listNganh = CHUNGKHOAN;
+	} 
+	else if (Sowl ==  "Thuc Pham"){
+		listNganh = THUCPHAM;
+	} 
+	else if (Sowl ==  "Bao Hiem"){
+		listNganh = BAOHIEM;
+	} 
+	else if (Sowl ==  "Dau Khi"){
+		listNganh = DAUKHI;
+	} 
+	else if (Sowl ==  "Cang"){
+		listNganh = CANG;
+	} 
+	else if (Sowl ==  "Xay Dung"){
+		listNganh = XAYDUNG;
+	} 
+	else if (Sowl ==  "Thep"){
+		listNganh = THEP;
+	} 
+	else if (Sowl ==  "Nhua"){
+		listNganh = NHUA;
+	} 
+	else if (Sowl ==  "Thuy San"){
+		listNganh = THUYSAN;
+	} 
+	else if (Sowl ==  "Cao Su"){
+		listNganh = CAOSU;
+	} 
+	else if (Sowl ==  "Cong Nghe"){
+		listNganh = CONGNGHE;
+	} 
+	else if (Sowl ==  "Duoc Pham"){
+		listNganh = DUOCPHAM;
+	} 
+	else if (Sowl ==  "Hang Khong"){
+		listNganh = HANGKHONG;
+	} 
+	else if (Sowl ==  "Hoa Chat"){
+		listNganh = HOACHAT;
+	} 
+	else if (Sowl ==  "May Mac"){
+		listNganh = MAYMAC;
+	} 
+	else if (Sowl ==  "Dien Nuoc"){
+		listNganh = DIENNUOC;
+	} 
+	else if (Sowl ==  "Van Tai"){
+		listNganh = VANTAI;
+	} 
+	else if (Sowl ==  "BDS KCN"){
+		listNganh = BDSKCN;
+	} 
+	else if (Sowl ==  "Ban Le"){
+		listNganh = BANLE;
+	} 
+	else if (Sowl ==  "Phan Bon"){
+		listNganh = PHANBON;
+	} 
+	else if (Sowl ==  "Than"){
+		listNganh = THAN;
+	} 
+	else if (Sowl ==  "Vl Xd"){
+		listNganh = VLXD;
+	} 
+	else if (Sowl ==  "Dau Tu Cong"){
+		listNganh = DAUTUCONG;
+	} 
+	
+	//listNganh = CategoryGetSymbols( categoryWatchlist, Sowl );
+	// listNganh = ParamStr( Sowl, "" );
+	DebugPrint(listNganh);
+    for( a = 0; ( MAcp = StrExtract( Listnganh, a ) ) != ""; a++ )
+    { DebugPrint( MAcp );
+        Vol= MA(Foreign( MAcp, "V" ),50);
+        giatri = Foreign( MAcp, "C" )*Vol;
+        if( a == 0 ) {TongVol = 1;
+                TongGtri=0;}
+        else {TongGtri = tongGtri + GiaTri;
+                 TongVol=TongVol+Vol;}
+    }
+    return (TongGtri / TongVol);
+}
+
+//ham tinh chi so RS, giai quyet cho wl
+ 
+function getrs ( sowl, t )
+{
+    
+    bc = Foreign( base, "C" );
+    sbr = tinhCList(sowl) / bc;
+ 
+    rs1 = MA( sbr, 12 );
+    rs2 = MA( sbr, 26 );
+    rs = 100 * ( ( rs1 - rs2 ) / rs2 + 1 );
+ 
+    rm1 = MA( rs, 1 );
+    rm2 = MA( rs, 9 );
+    rm = 100 * ( ( rm1 - rm2 ) / rm2 + 1 );
+ 
+    return IIf( t, rs , rm ) - 100;
+}
+ // ham ve do thi
+function drawpos (sowl, x, y, text )
+{
+    rsl = VarGet( "rsl" );
+    rsh = VarGet( "rsh" );
+    rml = VarGet( "rml" );
+    rmh = VarGet( "rmh" );
+ 
+    xx = pxl + pxw + x * ( pxw / ( Max( rsh, -rsl ) * 1.10 ) );
+    yy = pxb - pxh - y * ( pxh / ( Max( rmh, -rml ) * 1.10 ) );
+     
+    //Ten=CategoryGetName( categoryWatchlist, sowl );
+    Ten = sowl;
+    xp = Nz( VarGet( "xp" + ten ), xx );// neu bien xp+sym ko co thi no = xx
+    yp = Nz( VarGet( "yp" + ten ), yy );
+ 
+    VarSet( "xp" + ten, xx );
+    VarSet( "yp" + ten, yy );
+ 
+    GfxMoveTo( xp, yp );
+    GfxLineTo( xx, yy );
+      GfxSelectSolidBrush(colorRed);
+    GfxCircle( xx, yy, IIf( text == "", 1, 6 ) );//ve nhung cham nho
+	
+	GfxSelectFont("Tahoma", 10 );
+	GfxSetTextColor( colorViolet);
+    if ( text != "" ) GfxTextOut( ten, xx + 6 , yy - 3 );// viet chu cuoi dthi
+}
+//=====================================
+function Ve(sowl)
+{
+    rs = getrs( sowl, 1 );
+    rm = getrs( sowl, 0 );
+
+    
+    for ( ii = BarCount - tbar; ii < BarCount; ii++ )
+    {
+        rs_ = rs[ ii ];
+        rm_ = rm[ ii ];
+ 
+        rsh = Nz( VarGet( "rsh" ), rs_ );
+        if ( rs_ >= rsh )
+            VarSet( "rsh", rs_ );
+ 
+        rsl = Nz( VarGet( "rsl" ), rs_ );
+        if ( rs_ <= rsl )
+            VarSet( "rsl", rs_ );
+ 
+        rmh = Nz( VarGet( "rmh" ), rm_ );
+        if ( rm_ >= rmh )
+            VarSet( "rmh", rm_ );
+ 
+        rml = Nz( VarGet( "rml" ), rm_ );
+        if ( rm_ <= rml )
+            VarSet( "rml", rm_ );
+
+        drawpos(sowl, rs[ ii ], rm[ ii ], WriteIf( ii == BarCount - 1, "yes", "" ) );
+    }
+}
+
+Color1=Param("colortext1:",colorDarkBlue);
+Color2=Param("colortext2:",colorDarkGreen);
+Color3 = ParamColor("Color3", colorBrown );
+Color4 = ParamColor("Color4", colorPink );
+Color5 = ParamColor("Color5", colorCustom1 );
+Color6 = ParamColor("Color6", colorCustom9 );
+Color7 = ParamColor("Color7", colorOrange );
+Color8 = ParamColor("Color8", colorGold );
+Color9 = ParamColor("Color9", colorTan );
+Color10 = ParamColor("Color10", colorCustom11 );
+Color11 = ParamColor("Color11", colorTeal );
+Color12 = ParamColor("Color12", colorCustom5 );
+Color13 = ParamColor("Color13", colorCustom13 );
+Color14 = ParamColor("Color14", colorPaleGreen );
+Color15 = ParamColor("Color15", colorCustom4 );
+Color16 = ParamColor("Color16", colorCustom12 );
+Color17 = ParamColor("Color17", colorBlue );
+Color18 = ParamColor("Color18", colorDarkRed );
+Color19 = ParamColor("Color19", colorIndigo );
+Color20 = ParamColor("Color20", colorViolet );
+Color21 = ParamColor("Color21", colorDarkGrey );
+Color22 = ParamColor("Color22", colorLightOrange );
+Color23 = ParamColor("Color23", colorWhite );
+Color24 = ParamColor("Color24", colorSkyblue );
+Color25 = ParamColor("Color25", colorAqua );
+Color26 = ParamColor("Color26", colorTurquoise );
+Color27 = ParamColor("Color27", colorLime );
+Color28 = ParamColor("Color28", colorRose );
+
+
+VeThucPham=ParamList("Thuc Pham","Hien|An");
+VeNganHang=ParamList("Ngan Hang","Hien|An");
+VeBDS=ParamList("BDS","Hien|An");
+VeBaoHiem=ParamList("Bao Hiem","Hien|An");
+VeChungKhoan=ParamList("Chung Khoan","Hien|An");
+VeDauKhi=ParamList("Dau Khi","Hien|An");
+VeCang=ParamList("Cang","Hien|An");
+VeXayDung=ParamList("Xay Dung","Hien|An");
+VeThep=ParamList("Thep","Hien|An");
+VeNhua=ParamList("Nhua","Hien|An");
+VeThuySan=ParamList("Thuy San","Hien|An");
+VeCaoSu=ParamList("Cao Su","Hien|An");
+VeCongNghe=ParamList("Cong Nghe","Hien|An");
+VeDuocPham=ParamList("Duoc Pham","Hien|An");
+VeHangKhong=ParamList("Hang Khong","Hien|An");
+VeHoaChat=ParamList("Hoa Chat","Hien|An");
+VeMayMac=ParamList("May Mac","Hien|An");
+VeDienNuoc=ParamList("Dien Nuoc","Hien|An");
+VeVanTai=ParamList("Van Tai","Hien|An");
+VeCangBien=ParamList("Cang Bien","Hien|An");
+VeBDSKCN=ParamList("BDS KCN","Hien|An");
+VeBanLe=ParamList("Ban Le","Hien|An");
+VePhanBon=ParamList("Phan Bon","Hien|An");
+VeThan=ParamList("Than","Hien|An");
+VeVLXD=ParamList("Vl Xd","Hien|An");
+VeDauTuCong=ParamList("Dau Tu Cong","Hien|An");
+
+//1
+switch(VeThucPham)
+{
+case  "Hien":
+GfxSelectPen(Color1,width=2);
+Ve("Thuc Pham");
+break;
+case "An":
+break;
+}
+//2
+switch(VeNganHang)
+{
+case  "Hien":
+GfxSelectPen(Color2,width=2);
+Ve("Ngan Hang");
+break;
+case "An":
+break;
+}
+//3
+switch(VeBDS)
+{
+case  "Hien":
+GfxSelectPen(Color3,width=2);
+Ve("BDS");
+break;
+case "An":
+break;
+}
+//4
+switch(VeBaoHiem)
+{
+case  "Hien":
+GfxSelectPen(Color4,width=2);
+Ve("Bao Hiem");
+break;
+case "An":
+break;
+}
+//5
+switch(VeChungKhoan)
+{
+case  "Hien":
+GfxSelectPen(Color5,width=2);
+Ve("Chung Khoan");
+break;
+case "An":
+break;
+}
+//6
+switch(VeDauKhi)
+{
+case  "Hien":
+GfxSelectPen(Color6,width=2);
+Ve("Dau Khi");
+break;
+case "An":
+break;
+}
+//7
+switch(VeCang)
+{
+case  "Hien":
+GfxSelectPen(Color7,width=2);
+Ve("Cang");
+break;
+case "An":
+break;
+}
+
+switch(VeXayDung)
+{
+case  "Hien":
+GfxSelectPen(Color8,width=2);
+Ve("Xay Dung");
+break;
+case "An":
+break;
+}
+switch(VeThep)
+{
+case  "Hien":
+GfxSelectPen(Color9,width=2);
+Ve("Thep");
+break;
+case "An":
+break;
+}
+switch(VeNhua)
+{
+case  "Hien":
+GfxSelectPen(Color10,width=2);
+Ve("Nhua");
+break;
+case "An":
+break;
+}
+switch(VeThuySan)
+{
+case  "Hien":
+GfxSelectPen(Color11,width=2);
+Ve("Thuy San");
+break;
+case "An":
+break;
+}
+switch(VeCaoSu)
+{
+case  "Hien":
+GfxSelectPen(Color12,width=2);
+Ve("Cao Su");
+break;
+case "An":
+break;
+}
+switch(VeCongNghe)
+{
+case  "Hien":
+GfxSelectPen(Color13,width=2);
+Ve("Cong Nghe");
+break;
+case "An":
+break;
+}
+switch(VeDuocPham)
+{
+case  "Hien":
+GfxSelectPen(Color14,width=2);
+Ve("Duoc Pham");
+break;
+case "An":
+break;
+}
+switch(VeHangKhong)
+{
+case  "Hien":
+GfxSelectPen(Color15,width=2);
+Ve("Hang Khong");
+break;
+case "An":
+break;
+}
+switch(VeHoaChat)
+{
+case  "Hien":
+GfxSelectPen(Color16,width=2);
+Ve("Hoa Chat");
+break;
+case "An":
+break;
+}
+switch(VeMayMac)
+{
+case  "Hien":
+GfxSelectPen(Color17,width=2);
+Ve("May Mac");
+break;
+case "An":
+break;
+}
+switch(VeDienNuoc)
+{
+case  "Hien":
+GfxSelectPen(Color18,width=2);
+Ve("Dien Nuoc");
+break;
+case "An":
+break;
+}
+switch(VeVanTai)
+{
+case  "Hien":
+GfxSelectPen(Color19,width=2);
+Ve("Van Tai");
+break;
+case "An":
+break;
+}
+
+switch(VeBDSKCN)
+{
+case  "Hien":
+GfxSelectPen(Color20,width=2);
+Ve("BDS KCN");
+break;
+case "An":
+break;
+}
+switch(VeBanLe)
+{
+case  "Hien":
+GfxSelectPen(Color21,width=2);
+Ve("Ban Le");
+break;
+case "An":
+break;
+}
+switch(VePhanBon)
+{
+case  "Hien":
+GfxSelectPen(Color22,width=2);
+Ve("Phan Bon");
+break;
+case "An":
+break;
+}
+switch(VeThan)
+{
+case  "Hien":
+GfxSelectPen(Color23,width=2);
+Ve("Than");
+break;
+case "An":
+break;
+}
+switch(VeVLXD)
+{
+case  "Hien":
+GfxSelectPen(Color1,width=2);
+Ve("Vl Xd");
+break;
+case "An":
+break;
+}
+
+switch(VeDauTuCong)
+{
+case  "Hien":
+GfxSelectPen(colorAqua);
+Ve("Dau Tu Cong");
+break;
+case "An":
+break;
+}
+
+
+_SECTION_END();
